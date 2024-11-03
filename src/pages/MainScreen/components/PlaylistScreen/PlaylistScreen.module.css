@@ -1,0 +1,139 @@
+#playlistScreen {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    overflow-x: hidden;
+}
+
+.playlistAvatarPic {
+    width: 232px;
+    height: 232px;
+    border-radius: 12px;
+}
+
+.infoPlaylist {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.textSpace {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.infoPlaylistWrapper {
+    display: flex;
+    gap: 20px;
+    align-items: flex-end;
+}
+
+.listOfTool button {
+    border: none;
+}
+
+.buttonPlay {
+    width: 64px;
+    height: 64px;
+    background-color: #296265;
+    border-radius: 64px;
+}
+
+.icon {
+    background-color: transparent;
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+}
+
+.leftTools {
+    display: flex;
+    gap: 47px;
+    align-items: center;
+}
+
+.listOfTool {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.leftInfo {
+    display: flex;
+    gap: 34px;
+}
+
+#playlistScreen header {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin: 0 12px;
+}
+
+/* PLAYLIST ITEM */
+.itemPlaylist {
+    justify-content: space-between;
+}
+
+.infoItemPlaylist img {
+    width: 64px;
+    height: 64px;
+    border-radius: 4px;
+}
+
+.infoItemPlaylist .textInfoPlaylist {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.infoItemPlaylist {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    flex: 10;
+}
+
+.leftItemPlaylist {
+    display: flex;
+    gap: 34px;
+    align-items: center;
+    width: fit-content;
+}
+
+.rightItemPlaylist button {
+    border: none;
+}
+
+.rightItemPlaylist .icon {
+    background-color: transparent;
+    width: 28px;
+    height: 28px;
+}
+
+.rightItemPlaylist {
+    display: flex;
+    gap: 32px;
+    align-items: center;
+    margin-right: 16px;
+}
+
+.itemPlaylist {
+    display: flex;
+    width: 100%;
+}
+
+#playlistScreen main {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 32px;
+}
+
+.itemPlaylistContainer:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    cursor: pointer;
+}

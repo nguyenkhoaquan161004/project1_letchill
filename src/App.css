@@ -1,38 +1,143 @@
-.App {
-  text-align: center;
+/* GENERAL CSS */
+
+* {
+  background-color: #000;
+  color: #fff;
+  font-family: 'Inter', 'Helvetica Neue', Helvetica;
+  margin: 0;
+  padding: 0;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+h1 {
+    font-style: normal;
+    font-weight: 800;
+    font-size: 120px;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+h2 {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 800;
+    font-size: 92px;
+    line-height: 110%;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+h3 {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 800;
+    font-size: 40px;
+    line-height: 110%;
 }
 
-.App-link {
-  color: #61dafb;
+h4 {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 800;
+    font-size: 24px;
+    line-height: 110%;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+h5, h6 {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 20px;
+    line-height: 110%;
+}
+
+.p1 {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 22px;
+    line-height: 150%;
+}
+
+.p2 {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 20px;
+    line-height: 150%;
+}
+
+.p3 {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 150%;
+}
+
+.uiSemibold {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 150%;
+}
+
+.uiMedium {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 150%;
+}
+
+.uiRegular {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 150%;
+}
+
+.o75 {
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.o50 {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.o25 {
+  color: rgba(255, 255, 255, 0.25);
+}
+
+h1, h2, h3, h4, h5, p, a, button, img, div, span, label, header, nav, main {
+  background-color: transparent;
+}
+
+.noBG {
+  background-color: transparent;
+}
+
+.w0 {
+  width: 0;
+}
+
+.w20 {
+  width: 20vw;
+}
+
+.w60 {
+  width: 60vw;
+}
+
+.w76 {
+  width: 76vw;
+}
+
+.w24{
+  width: 24vw;
+}
+
+.ml20 {
+  margin-left: 20px;
+}
+
+.hoverPoiter {
+  cursor: pointer;
 }

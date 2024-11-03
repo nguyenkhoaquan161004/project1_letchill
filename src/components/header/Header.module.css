@@ -1,0 +1,69 @@
+.headerContainer .icon {
+    width: 32px;
+    height: 32px;
+    padding: 6px;
+    background: rgba(255, 255, 255, 0.25);
+    border-radius: 100px;
+}
+
+.headerContainer .nonBGIcon {
+    width: 32px;
+    height: 32px;
+    padding: 6px;
+    background: none;
+    border-radius: 100px;
+}
+
+.headerContainer input {
+    border: none;
+    width: 100%;
+    height: 44px;
+    background: none;
+    outline: none;
+}
+
+.searchingInput {
+    display: flex;
+    align-items: center;
+    width: 340px;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.25);
+    border-radius: 100px;
+    outline: none;
+    padding: 0 10px;
+}
+
+.searchingOption {
+    display: flex;
+    align-items: center;
+    width: fit-content;
+    border-radius: 100px;
+    gap: 16px;
+}
+
+.headerContainer .otherOption button {
+    border: none;
+}
+
+.headerContainer .otherOption {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+}
+
+.headerContainer {
+    display: flex;
+    gap: 114px;
+    width: fit-content;
+    padding: 10px 55px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 24px;
+    justify-self: center;
+}
+
+#header {
+    position: relative;
+    margin-top: 24px;
+    z-index: 1;
+}

@@ -1,0 +1,38 @@
+.mainContainer {
+    height: 100%; 
+    overflow: hidden;
+    display: flex;
+    margin: 30px 30px 20px 30px;
+}
+
+.graBG {
+    position: absolute;
+    width: 1030px;
+    height: 651px;
+    left: 318px;
+    top: 80px;
+    background: conic-gradient(from 24.89deg at 50% 50%, #3A2145 -6.85deg, #296265 31.06deg, #000000 109.37deg, #000000 139.56deg, #233949 214.7deg, #000000 244.08deg, #3A2145 353.15deg, #296265 391.06deg);
+    filter: blur(40px);
+    z-index: 0;
+}
+
+.mainSpace {
+    margin-left: 20px;
+    z-index: 1;
+    flex: 1;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 10px;
+    overflow-y: hidden;
+}
+
+#main {
+    display: flex; 
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.mainSpaceContainer {
+    margin: 24px;
+}

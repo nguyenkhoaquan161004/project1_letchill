@@ -1,0 +1,55 @@
+.searchingWrapper {
+    width: 100%;
+}
+
+.topicContainer button {
+    border: none;
+    margin: 0;
+    padding: 0;
+}
+
+.topicContainer button p:hover {
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.topicContainer {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    align-items: flex-end;
+}
+
+.listOfHistory img {
+    width: 180px;
+    height: 180px;
+    border-radius: 10px;
+    object-fit: cover;
+    object-position: top;
+}
+
+.infoContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+}
+
+.itemContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: 180px;
+}
+
+.listOfHistory {
+    display: flex;
+    gap: 30px;
+    overflow-y: hidden;
+}
+
+.searchingWrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 38px;
+}

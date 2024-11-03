@@ -1,0 +1,409 @@
+/* GENARAL CSS */
+* {
+    background: #000;
+    color: #fff;
+    margin: 0;
+    transition: all 0.2s ease;
+}
+
+/* Rectangle 2 */
+.graBG1{
+    position: absolute;
+    width: 877.58px;
+    height: 480.64px;
+    left: 400px;
+    top: 280px;
+
+    background: conic-gradient(from 52.89deg at 50% 50%, #296265 -6.46deg, #26595F 18.56deg, #000000 84.46deg, #000000 178.02deg, #3A2145 310.22deg, #471C4B 324.49deg, #296265 353.54deg, #26595F 378.56deg);
+    filter: blur(50px);
+    transform: rotate(-28.96deg);
+    z-index: 0;
+}
+
+.graBG2 {
+    position: absolute;
+    width: 1047.31px;
+    height: 484.72px;
+    left: 120px;
+    top: 1300px;
+
+    background: conic-gradient(from 52.89deg at 50% 50%, #296265 -6.46deg, #471C4B 54deg, #000000 136.8deg, #000000 190.8deg, #26595F 248.4deg, #3A2145 310.22deg, #296265 353.54deg, #471C4B 414deg);
+    filter: blur(50px);
+    transform: rotate(164.65deg);
+    z-index: 0;
+}
+
+.graBG3 {
+    position: absolute;
+    width: 1398.7px;
+    height: 525px;
+    left: -86.88px;
+    top: 2280.29px;
+
+    background: conic-gradient(from 83.43deg at 50% 50%, #000000 -131.53deg, #000000 5.3deg, #27263E 30.6deg, #471C4B 189.53deg, #000000 228.47deg, #000000 365.3deg);
+    filter: blur(100px);
+    transform: rotate(10.66deg);
+    z-index: 0;
+}
+
+.stuff1 {
+    position: absolute;
+    width: 1398.7px;
+    height: 525px;
+    left: -350px;
+    top: 2280.29px;
+    z-index: 1;
+}
+
+.graBG4 {
+    position: absolute;
+    width: 1390.63px;
+    height: 459.81px;
+    left: -160px;
+    top: 3228.06px;
+
+    background: conic-gradient(from 32.01deg at 50% 50%, #000000 -131.53deg, #000000 21.99deg, rgba(36, 81, 90, 0.8) 46.23deg, rgba(35, 57, 73, 0.9) 189.53deg, #000000 228.47deg, #000000 381.99deg);
+    filter: blur(100px);
+    transform: rotate(-6.41deg);
+    z-index: 0;
+}
+
+#startScreen .mainContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 250px;
+    justify-self: center;
+    top: 216px;
+    position: relative;
+}
+
+/* HEADER */
+#header .genaralOption {
+    display: flex;
+    flex-direction: row;
+    gap: 48px;
+    align-items: center;
+}
+
+#header .inOutOption {
+    display: flex;
+    gap: 24px;
+    align-items: center;
+}
+
+#header .inOutOption .btnLogin{
+    border: none;
+    padding: 0;
+}
+
+#header .inOutOption .btnLogin:hover {
+    color: #fff;
+    cursor: pointer;
+}
+
+
+#header .inOutOption .btnSignUp {
+    border: none;
+    padding: 10px 24px;
+    background: rgba(255,255,255,0.25);
+    border-radius: 4px;
+}
+
+#header .inOutOption .btnSignUp:hover {
+    background-color: #26595F;
+    cursor: pointer;
+}
+
+#header .headerContainer {
+    display: flex;
+    gap: 145px;
+    align-items: center;
+    padding: 10px 55px;
+    background: rgba(255, 255, 255, 0.05);
+    width: fit-content;
+    justify-self: center;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 24px;;
+}
+
+#header {
+    display: grid;
+    position: fixed;
+    top: 24px;
+    left: 0;
+    right: 0;
+    backdrop-filter: blur(10px);
+    z-index: 2;
+}
+
+/* HERO SECTION */
+#heroSection .info,
+#voiceSearching .info {
+    width: 1040px;
+    display: flex;
+    flex-direction: column;
+    gap: 51px;
+    position: relative;
+}
+
+#heroSection .info p {
+    width: 688px;
+    margin: 0;
+}
+
+#heroSection button,
+#voiceSearching button{
+    border: none;
+    padding: 16px 50px;
+    opacity: 80%;
+    background: linear-gradient(263.39deg, #296265 3.83%, #344A5C 32%, #3F2F52 56.42%, #471C4B 78.95%);
+    color: #fff;
+    border-radius: 12px;
+    font-weight: 700;
+    position: relative;
+    width: fit-content;
+}
+
+#heroSection button:hover,
+#voiceSearching button:hover {
+    opacity: 100%;
+    cursor: pointer;
+}
+
+#heroSection, #voiceSearching {
+    display: flex;
+    flex-direction: column;
+    gap: 81px;
+    width: fit-content;
+    justify-self: center;
+    position: relative;
+    z-index: 1;
+}
+
+/* TREANDING SONGS */
+
+#trendingSong .topic .highlight,
+#personalLib .topic .highlight{
+background: linear-gradient(90.98deg, #296265 13.07%, #344A5C 40.71%, #3F2F52 64.66%, #471C4B 86.77%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-fill-color: transparent;
+}
+
+#trendingSong .topic {
+    display: flex;
+    flex-direction: column;
+    gap: 51px;
+    width: 606px;
+    justify-self: center;
+}
+
+#trendingSong .listSong .picSong1,
+#trendingSong .listSong .picSong2,
+#trendingSong .listSong .picSong3 {
+    width: 225px;
+    height: 300px;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    border-radius: 10px;
+    display: grid;
+    align-items: center;
+    justify-content: center;
+}
+
+#trendingSong .listSong .picSong1 {
+    background-image: url('./assets/447790069_1027130828769310_4097339274374498801_n.jpg');
+}
+
+#trendingSong .listSong .picSong2 {
+    background-image: url('./assets/8f1f0fe67357851dccf6af6070e7d6ac.jpg');
+}
+
+#trendingSong .listSong .picSong3 {
+    background-image: url('./assets/453453003_1016582499838473_105461805927749707_n.jpg');
+
+}
+
+#trendingSong .genaralInfo .name,
+#trendingSong .genaralInfo .author {
+    width: 100%;
+}
+
+#trendingSong .infoSong .numberOfListen{
+    display: flex;
+    flex-direction: row;
+    gap: 12px;
+    bottom: 0;
+}
+
+#trendingSong .infoSong .genaralInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+#trendingSong .infoSong {
+    display: flex;
+    flex-direction: column;
+    height: 200px;
+    justify-content: space-between;
+}
+
+#trendingSong .listSong .item {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 225px;
+    padding: 50px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+}
+
+#trendingSong .listSong .item:hover {
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+#trendingSong .listSong {
+    display: flex;
+    flex-direction: row;
+    gap: 33px;
+}
+
+#trendingSong {
+    display: flex;
+    flex-direction: column;
+    gap: 83px;
+    align-items: center;
+    z-index: 1;
+}
+
+/* VOICE SEARCHING */
+
+#voiceSearching .info h1,
+#voiceSearching .info p{
+    text-align: right;
+
+}
+
+#voiceSearching .info p {
+    width: 774px;
+}
+
+#voiceSearching,
+#voiceSearching .info {
+    align-items: end;
+}
+
+.topicHighlight {
+    background: linear-gradient(180deg, #FFFFFF 50%, rgba(255, 255, 255, 0.5) 91.67%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-fill-color: transparent;
+}
+
+/* PERSONAL LIBRARY */
+#personalLib .topic {
+    display: flex;
+    flex-direction: column;
+    gap: 51px;
+    width: 1040px;
+    justify-self: center;
+}
+
+#personalLib .listItem .iconPic {
+    width: 78px;
+    height: 68px;
+    padding: 43px 38px;
+    background: linear-gradient(69.93deg, #296265 1.75%, #344A5C 34.18%, #3F2F52 62.3%, #471C4B 88.25%);
+    border-radius: 37px;
+    filter: drop-shadow(0px 20px 20px #37435A);
+}
+
+#personalLib .listItem .favoriteItem .itemInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: 100%;
+}
+
+#personalLib .listItem .favoriteItem h4,
+#personalLib .listItem .favoriteItem p {
+    width: 100%;
+    text-align: center;
+}
+
+#personalLib .listItem .favoriteItem {
+    width: 154px;
+    display: flex;
+    flex-direction: column;
+    gap: 42px;;
+}
+
+#personalLib .listItem .noneItem { 
+    width: 155px;
+    height: 155px;
+    border-radius: 155px;
+    background: linear-gradient(180deg, #FFFFFF 0%, rgba(118, 118, 118, 0.5) 90%);
+}
+
+#personalLib .listItem {
+    display: flex;
+    flex-direction: row;
+    gap: 115px;
+    align-items: center;
+}
+
+#personalLib {
+    display: flex;
+    flex-direction: column;
+    gap: 46px;
+    justify-content: center;
+    z-index: 1;
+}
+
+#footer .line {
+    width: 1040px;
+    height: 0px;
+    border: 1px solid rgba(255, 255, 255, 0.9);
+}
+
+#footer .footerContainer .space {
+    display: flex;
+    flex-direction: column;
+    gap: 13px;
+
+}
+
+#footer .space p:hover {
+    color: #fff;
+    cursor: pointer;
+}
+
+#footer .footerContainer .itemLogo {
+    width: 26px;
+    height: 26px;
+}
+
+#footer .footerContainer .socialSpace {
+    display: flex;
+    gap: 30px;
+}
+
+#footer .footerContainer {
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    align-items: start;
+}
+
+#footer {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+    padding-bottom: 40px;
+}

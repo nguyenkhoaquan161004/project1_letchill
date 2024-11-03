@@ -1,0 +1,38 @@
+.textTrendingSong .icon {
+    background-color: transparent;
+    width: 24px;
+    height: 27px;
+}
+
+.textTrendingSong span {
+    color: #007d79;
+}
+
+.textTrendingSong {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    width: 100%;
+}
+
+.trendingSong { 
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    align-items: center;
+    width: 100%;
+}
+
+.popularAuthor {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+#mainHomeScreen {
+    width: 100%;
+    overflow-x: hidden;
+    flex-direction: column;
+    display: flex;
+    gap: 12px;
+}

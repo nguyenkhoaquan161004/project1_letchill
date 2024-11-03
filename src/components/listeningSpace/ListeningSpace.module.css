@@ -1,0 +1,141 @@
+.listeningSpace {
+    position: relative;
+    display: flex;
+    background: #000;;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 12px 0;
+    z-index: 1;
+}
+
+/* INFOMATION */
+
+.info img {
+    width: 60px;
+    height: 60px;
+    border-radius: 60px;
+}
+
+.infoText {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.info {
+    display: flex;
+    gap: 18px;
+    align-items: center;
+    margin-left: 30px;
+}
+
+.addToPlaylist .iconAdd {
+    width: 26px;
+    height: 26px;
+}
+
+.info .name, .info .author {
+    text-wrap: nowrap;
+    overflow: hidden;
+    width: fit-content;
+}
+
+/* MUSIC PLAYER */
+
+.musicPlayer .controlbar button {
+    width: 40px;
+    height: 40px;
+    border: none;
+    align-items: center;
+}
+
+.musicPlayer .controlbar .icon {
+    width: 24px;
+    height: 24px;
+    background-color: transparent;
+}
+
+.iconActive path {
+    color: #296265;
+}
+
+.musicPlayer .controlbar .iconMain path {
+    color: #000;
+}
+
+.controlbar {
+    display: flex;
+    gap: 40px;
+    justify-content: center;
+}
+
+.listeningSpace .progressContainer {
+    width: 100%;
+    height: 5px;
+    background-color: #296265;
+    border-radius: 5px;
+    margin: 8px 0;
+    position: relative;
+}
+
+.listeningSpace .progress {
+    background: #ffffff;
+    height: 100%;
+    width: auto;
+    border-radius: 5px;
+}
+
+.listeningSpace .timeDisplay {
+    display: flex;
+    justify-content: space-between;
+    width: 534px;
+    min-width: 240px;
+    gap: 14px;
+}
+
+.listeningSpace .musicPlayer {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    left: 0;
+    right: 0;
+    margin: auto;
+    gap: 4px;
+}
+
+/* GENARAL */
+.listeningSpace .volumnContainer {
+    width: 100%;
+    height: 4px;
+    background: #296265;
+    border-radius: 5px;
+    position: relative;
+}
+
+.listeningSpace .general .volumnSpace {
+    display: flex;
+    flex-direction: row;
+    width: 160px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+
+}
+
+.listeningSpace .general {
+    display: flex;
+    margin: auto;
+    margin-right: 30px;
+    gap: 28px;
+}
+
+.general .icon {
+    width: 20px;
+    height: 20px;
+    background-color: transparent;
+}
+
+.general button {
+    border: none;
+}

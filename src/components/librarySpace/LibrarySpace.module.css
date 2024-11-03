@@ -1,0 +1,70 @@
+#leftBar {
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.10);
+    border-radius: 10px;
+    z-index: 1;
+}
+
+.leftBarContainer {
+    margin: 24px 12px 24px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+    overflow: hidden;
+    height: 100%;
+}
+
+#leftBar header .topic {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    
+}
+
+#leftBar header {
+    display: flex;
+    justify-content: space-between;
+    margin-right: 12px;
+}
+
+#leftBar nav {
+    display: flex;
+    gap: 20px
+}
+
+#leftBar .optionFill {
+    background: rgba(255, 255, 255, 0.25);
+    width: fit-content;
+    border-radius: 30px;
+}
+
+.topicContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.listOfPlaylist {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    overflow-x: hidden;
+    height: 100%;
+    margin-bottom: 32px;
+}
+
+/* Tùy chỉnh thanh cuộn cho toàn bộ trang hoặc một phần tử */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background-color: transparent;
+    border-radius: 6px;
+}

@@ -1,0 +1,106 @@
+#rightBar {
+    overflow: hidden;
+    z-index: 1;
+    margin-left: 20px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 10px;
+}
+
+.infoContainer {
+    margin: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    height: 100%;
+}
+
+.icon {
+    width: 26px;
+    height: 26px;
+    background-color: transparent;
+    cursor: pointer;
+}
+
+.infoContainer header {
+    display: flex;
+    gap: 20px;
+    justify-content: right;
+}
+
+.infoContainer main {
+    overflow-x: hidden;
+    margin-bottom: 32px;
+} 
+
+.infoSong img {
+    width: 100%;
+    border-radius: 10px;
+}
+
+.infoSong .nameAndSinger {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.infoSong {
+    display: flex;
+    gap: 20px;
+    flex-direction: column;
+}
+
+.rating header {
+    width: 100%;
+    justify-content: space-between;
+}
+
+.rating {
+    background-color: black;
+    border-radius: 10px;
+    padding: 16px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.active:hover {
+    text-decoration: underline;
+}
+
+.authorInfo .authorPic {
+    width: 100%;
+    height: 160px;
+    background-size: cover;
+    background-position: center;
+    border-radius: 10px;
+    background-image: url("https://cloudfront-eu-central-1.images.arcpublishing.com/irishtimes/BDE7MCM5FJEUNEX3Y4NSB3UZZA.jpeg");
+}
+
+.authorInfo p {
+    padding: 16px 16px;
+}
+
+.authorName button {
+    border: 1px solid #fff;
+    padding: 5px 16px;
+    border-radius: 20px;
+}
+
+.authorName button:hover {
+    cursor: pointer;
+    background-color: #fff;
+    color: black;
+}
+
+.authorName {
+    display: flex;
+    justify-content: space-between;
+}
+
+.authorInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}

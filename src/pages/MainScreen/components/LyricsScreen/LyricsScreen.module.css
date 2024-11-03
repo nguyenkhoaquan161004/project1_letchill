@@ -1,0 +1,13 @@
+.lyricsContainer {
+    transition: flex 0.3s ease; 
+    overflow-x: hidden;
+    margin-bottom: 32px;
+    width: 100%;
+}
+
+.lyricsOfSong {
+    margin-bottom: 24px;
+    width: 100%;
+    text-wrap: wrap;
+    line-height: 130%;
+}

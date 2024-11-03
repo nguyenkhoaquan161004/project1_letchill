@@ -1,0 +1,29 @@
+.infoSong {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.itemContainer img {
+    width: 72px;
+    height: 72px;
+    border-radius: 12px;
+}
+
+.itemContainer p {
+    text-wrap: nowrap;
+}
+
+.itemContainer {
+    display: flex;
+    gap: 20px;
+    border-top-left-radius: 12px;
+    border-bottom-left-radius: 12px;
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+    align-items: center;
+}
+
+.itemContainer:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}

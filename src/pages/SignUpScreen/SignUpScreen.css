@@ -1,0 +1,209 @@
+#signUpScreen h2 {
+    width: 1040px;
+    justify-self: center;
+    position: relative;
+    text-align: center;
+    z-index: 1;
+}
+
+.highlight {
+    background: linear-gradient(90.98deg, #296265 13.07%, #344A5C 40.71%, #3F2F52 64.66%, #471C4B 86.77%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-fill-color: transparent;
+}
+
+.icon {
+    width: 48px;
+    height: 48px;
+    padding: 10px;
+    background-color: transparent;
+    backdrop-filter: blur(10px);
+    border-radius: 50px;
+}
+
+.arrow {
+    display: flex;
+    position: fixed;
+    top: 112px;
+    left: 100px;
+    z-index: 2;
+}
+
+.graBG {
+        position: absolute;
+        width: 1523px;
+        height: 1191px;
+        left: -161px;
+        top: 235px;
+
+        background: conic-gradient(from 76.38deg at 50% 50%, #000000 -21.44deg, #2F2342 14.37deg, #242F43 102.07deg, #296265 172.98deg, #000000 268.36deg, #000000 338.56deg, #2F2342 374.37deg);
+        filter: blur(100px);
+        z-index: 0;
+}
+
+#signUpScreen .mainContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 90px;
+    padding-top: 200px;
+    justify-self: center;
+    align-items: center;
+}
+
+/* GENARAL SCREEN */
+#signUpScreen .mainContainer .mainSpace .step {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    justify-content: center;
+    width: 552px;
+    gap: 60px;
+    padding: 50px 80px;
+    z-index: 1;
+    justify-self: center;
+    background: rgba(255, 255, 255, 0.05);
+    border: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;;
+}
+
+
+
+#signUpScreen .mainContainer .inputSpace input {
+    width: 100%;
+    height: 80px;
+    border: 2px solid rgba(255, 255, 255, 0.8);
+    background: none;
+    border-radius: 10px;
+    text-indent: 30px;
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 20px;
+    line-height: 150%;
+    padding: 0;
+    outline: none;
+}
+
+#signUpScreen .mainContainer .inputSpace input:hover {
+    cursor: pointer;
+}
+
+#signUpScreen .mainContainer .btn {
+    width: 100%;
+    height: 80px;
+    border: none;
+    background: linear-gradient(91.88deg, #296265 16.3%, #344A5C 41.64%, #3F2F52 63.61%, #471C4B 83.88%);
+    border-radius: 50px;
+    opacity: 60%;
+}
+
+#signUpScreen .mainContainer .btn:hover {
+    opacity: 100%;
+    cursor: pointer
+}
+
+.inputSpace .addInfoSpace {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.inputSpace {
+    display: flex;
+    flex-direction: column;
+    gap: 50px;
+}
+
+/* EMAIL SCREEN */
+.anotherWay .lineOr .line {
+    width: 200px;
+    height: 0px;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.anotherWay .lineOr {
+    display: flex;
+    gap: 50px;
+    align-items: center;
+    justify-content: center;
+}
+
+.anotherWay .btnOtherWay{
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    width: 100%;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 30px;
+    border-radius: 200px;;
+}
+
+.anotherWay .btnOtherWay:hover {
+    background: #fff;
+    cursor: pointer;
+}
+
+.anotherWay .btnOtherWay:hover h4 {
+    color:#000000;
+}
+
+.anotherWay .btnOtherWay .iconOtherWay {
+    width: 33px;
+    height: 33px;
+    background-color: transparent;
+}
+
+.anotherWay .listOfWay {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.anotherWay {
+    display: flex;
+    flex-direction: column;
+    gap: 50px;
+}
+
+.wayToLogin .lineEnd {
+    width: 505px;
+    height: 0;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.wayToLogin span {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 800;
+    font-size: 24px;
+    line-height: 110%;
+}
+
+.wayToLogin span:hover {
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.wayToLogin {
+    display: flex;
+    flex-direction: column;
+    gap: 58px;
+    align-items: center;
+}
+
+/* PASSWORD SCRREN */
+
+/* INOFMATION SCREEN */
+.react-datepicker__header {
+    width: 250px;
+}
+
+.addInfoSpace label {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
