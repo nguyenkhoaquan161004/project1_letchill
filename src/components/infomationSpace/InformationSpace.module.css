@@ -1,6 +1,6 @@
 #rightBar {
     overflow: hidden;
-    z-index: 1;
+    z-index: 2;
     margin-left: 20px;
     background-color: rgba(255, 255, 255, 0.1);
     border: 1px solid rgba(255, 255, 255, 0.15);
@@ -53,6 +53,10 @@
 .rating header {
     width: 100%;
     justify-content: space-between;
+}
+
+.rating header button {
+    border: none;
 }
 
 .rating {

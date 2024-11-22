@@ -1,0 +1,115 @@
+.backgroundSpace {
+    background-color: rgba(0, 0, 0, 0.5);
+    width: 100vw;
+    height: 100vh;
+    position: absolute;
+    top: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mainBoxContainer {
+    width: 440px;
+    height: 674px;
+    background-color: #000;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+}
+
+.backgroundSpace button {
+    border: none;
+    cursor: pointer;
+}
+
+.closeBtn {
+    width: 50px;
+    height: 50px;
+    margin-top: 40px;
+    margin-left: 30px;
+    position: absolute;
+}
+
+.iconBack {
+    width: 30px;
+    height: 30px;
+}
+
+.mainBoxContainer h4 {
+    margin-top: 104px;
+    text-align: center;
+}
+
+.avatarPlaylistPic {
+    width: 104px;
+    height: 104px;
+    border-radius: 100px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    object-fit: cover;
+}
+
+.avatarContainer {
+    position: relative;
+    text-align:  center;
+    margin-top: 30px;
+}
+
+.avatarContainer button {
+    position: absolute;
+    width: 104px;
+    height: 104px;
+    opacity: 50%;
+}
+
+.icon {
+    background-color: transparent;
+    width: 28px;
+    height: 28px;
+}
+
+.nameInputContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    width: 285px;
+    justify-self: center;
+}
+
+.inputName,
+.inputDiscription {
+    padding: 0 20px;
+    height: 56px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 5px;
+}
+
+.inputDiscription {
+    height: 140px;
+    padding: 10px 20px;
+    text-wrap: wrap;
+}
+
+.createBtn {
+    padding: 6px 24px;
+    background-color: #296265;
+    border-radius: 5px;
+}
+
+.inputFillContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    align-items: center;
+}
+
+.createContainer {
+    margin-top: 13px;
+    display: flex;
+    flex-direction: column;
+    gap: 27px;
+    align-items: flex-end;
+    width: fit-content;
+    justify-self: center;
+}

@@ -1,15 +1,27 @@
-import React, { memo } from 'react';
+import React, { memo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './Header.module.css';
 import { Icon } from '@iconify/react';
 import clsx from 'clsx';
 import logo from '../../assets/logo_doan1.svg';
+import VoiceSearchingBox from './partials/VoiceSearchingBox/VoiceSearchingBox';
 
 const Header = memo(({ onLogoAndHomeButtonClick, onSearchingSpaceClick, onAccountButtonClick }) => {
     const navigate = useNavigate();
+    const [isVoiceSearchingBoxOpen, setIsVoiceSearchingBoxOpen] = useState(false);
+
+    const handleOnClickVoiceSearching = () => {
+        setIsVoiceSearchingBoxOpen(true);
+    }
+
+    const handleCloseVoiceSearching = () => {
+        setIsVoiceSearchingBoxOpen(false);
+    }
 
     return (
-        <div id={styles.header}>
+        <div id={styles.header} style={{
+            zIndex: isVoiceSearchingBoxOpen ? 3 : 2
+        }}>
             <div className={styles.headerContainer}>
                 <div className="logo hoverPoiter" onClick={onLogoAndHomeButtonClick}>
                     <img src={logo} alt="logo" />
@@ -24,7 +36,12 @@ const Header = memo(({ onLogoAndHomeButtonClick, onSearchingSpaceClick, onAccoun
                             placeholder='Tìm kiếm nội dung của bạn'
                             onClick={onSearchingSpaceClick}></input>
                     </div>
-                    <Icon className={styles.icon} icon="lets-icons:mic-fill"></Icon>
+                    <button>
+                        <Icon
+                            className={styles.icon}
+                            icon="lets-icons:mic-fill"
+                            onClick={handleOnClickVoiceSearching}></Icon>
+                    </button>
                 </div>
 
                 <div className={styles.otherOption}>
@@ -37,6 +54,9 @@ const Header = memo(({ onLogoAndHomeButtonClick, onSearchingSpaceClick, onAccoun
                     </div>
                 </div>
             </div>
+            <VoiceSearchingBox
+                isOpen={isVoiceSearchingBoxOpen}
+                onClose={handleCloseVoiceSearching} />
         </div>
     );
 });

@@ -1,0 +1,71 @@
+.backgroundSpace {
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    top: 0;
+    left: 0;
+    z-index: 5;
+}
+
+.mainBox {
+    width: 440px;
+    height: 534px;
+    background-color: #000;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 10px;
+    margin-top: 100px;
+}
+
+.iconClose {
+    width: 26px;
+    height: 26px;
+}
+
+.buttonClose {
+    border: none;
+    width: 26px;
+    height: 26px;
+    position: relative;
+    margin-right: 30px;
+}
+
+.mainBox header {
+    display: flex;
+    width: 100%;
+    justify-content: right;
+    margin-top: 30px;
+}
+
+.buttonVoiceSearching {
+    width: 276px;
+    height: 276px;
+    border-radius: 300px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.iconVoiceSearching {
+    width: 60px;
+    height: 60px;
+    background-color: transparent;
+}
+
+.searchingContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 50px;
+    align-items: center;
+    margin-top: 60px;
+}
+
+.buttonVoiceSearching.active {
+    background-color: rgba(255, 255, 255, 0.5);
+    color: #000;
+}
+
+.iconVoiceSearching.iconActive {
+    color: #000000;
+}

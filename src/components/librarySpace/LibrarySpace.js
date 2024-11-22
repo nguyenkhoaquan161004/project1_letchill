@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styles from './LibrarySpace.module.css';
 import Playlist from './components/Playlist/Playlist';
-import { Icon } from '@iconify/react';
+import { InlineIcon } from '@iconify/react';
 import favoritePlaylist from './assets/favoritePlaylist.svg';
 import clsx from 'clsx';
+import AddPlaylistBox from './components/AddPlaylistBox/AddPlaylistBox';
 
 const LibrarySpace = ({ onPlaylistClick }) => {
     const playlists = [
@@ -37,16 +38,32 @@ const LibrarySpace = ({ onPlaylistClick }) => {
         },
     ]
 
+    const [isAddPlaylistOpen, setIsAddPlaylistOpen] = useState(false);
+
+    const handleOpenAddPlaylistBox = () => {
+        setIsAddPlaylistOpen(true);
+    }
+
+    const handleCloseAddPlaylistBox = () => {
+        setIsAddPlaylistOpen(false);
+    }
+
     return (
-        <div id={styles.leftBar} className={clsx('w24')}>
+        <div id={styles.leftBar}
+            className={clsx('w24')}
+            style={{
+                zIndex: isAddPlaylistOpen ? 3 : 1
+            }} >
             <div className={styles.leftBarContainer}>
                 <div className={styles.topicContainer}>
                     <header>
                         <div className={styles.topic}>
-                            <Icon icon="fluent:library-24-filled" style={{ width: 26, height: 26, backgroundColor: 'transparent' }}></Icon>
+                            <InlineIcon icon="fluent:library-24-filled" style={{ width: 26, height: 26, backgroundColor: 'transparent' }}></InlineIcon>
                             <h4>Thư viện</h4>
                         </div>
-                        <Icon icon="ic:round-add" style={{ width: 26, height: 26, backgroundColor: 'transparent' }}></Icon>
+                        <button onClick={handleOpenAddPlaylistBox} style={{ border: 'none' }}>
+                            <InlineIcon icon="ic:round-add" style={{ width: 26, height: 26, backgroundColor: 'transparent' }}></InlineIcon>
+                        </button>
                     </header>
 
                     <nav>
@@ -74,6 +91,9 @@ const LibrarySpace = ({ onPlaylistClick }) => {
                 </div>
 
             </div>
+            <AddPlaylistBox
+                isOpen={isAddPlaylistOpen}
+                onClose={handleCloseAddPlaylistBox}></AddPlaylistBox>
         </div>
     );
 };

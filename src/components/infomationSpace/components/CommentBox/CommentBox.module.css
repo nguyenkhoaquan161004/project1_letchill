@@ -1,0 +1,99 @@
+.commentBoxMainContainer {
+    width: 800px;
+    height: 660px;
+    background-color: black;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 10px;
+}
+
+.backgroundSpace {
+    background-color: rgba(0, 0, 0, 0.5);
+    position: absolute;
+    width: 100vw;
+    height: 100vh;
+    top: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.commentBoxContentSpace {
+    margin: 24px 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 26px;
+}
+
+.buttonClose {
+    width: 26px;
+    height: 26px;
+    border: none;   
+}
+
+.icon {
+    width: 24px;
+    height: 24px;
+    background-color: transparent;
+}
+
+.commentBoxContentSpace header {
+    display: flex;
+    justify-content: space-between;
+}
+
+.allOfComments {
+    height: 432px;
+    overflow-x: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.commentContainer {
+    margin: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.buttonComment {
+    width: 44px;
+    height: 44px;
+    border: 0;
+    background-color: #296265;
+    border-radius: 100px;
+}
+
+.fillComment {
+    width: 641px;
+    height: 42px;
+    padding: 0 20px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 30px;
+}
+
+.commentBar {
+    height: fit-content;
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.inputComment {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    align-items: center;
+}
+
+.commentBoxContentSpace main {
+    display: flex;
+    flex-direction: column;
+    gap: 19px;
+}
+
+button {
+    cursor: pointer;
+}

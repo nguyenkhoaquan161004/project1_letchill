@@ -3,12 +3,23 @@ import styles from '../infomationSpace/InformationSpace.module.css'
 import clsx from 'clsx';
 import { Icon } from '@iconify/react';
 import Comment from './components/Comment/Comment';
+import CommentBox from './components/CommentBox/CommentBox.js';
 
 const InformationSpace = ({ isOpen, onClose }) => {
 
     const ratings = [
         { name: 'Nguyen Khoa Quan', stars: 3, comment: 'good' },
     ]
+
+    const [isCommentBoxOpen, setIsCommentBoxOpen] = useState(false);
+
+    const handleOnClickShowAllCommentButton = () => {
+        setIsCommentBoxOpen(true);
+    }
+
+    const handleCloseCommentBox = () => {
+        setIsCommentBoxOpen(false);
+    }
 
     return (
         <div
@@ -40,10 +51,12 @@ const InformationSpace = ({ isOpen, onClose }) => {
                             <p className={clsx('p3', 'o75')}>Taylor Swift</p>
                         </div>
 
-                        <div className={styles.rating}>
+                        <div className={styles.rating} onClick={handleOnClickShowAllCommentButton}>
                             <header>
                                 <p className={clsx('uiSemibold')}>Đánh giá</p>
-                                <p className={clsx('uiSemibold', styles.active)} >Tất cả</p>
+                                <button onClick={handleOnClickShowAllCommentButton}>
+                                    <p className={clsx('uiSemibold', styles.active)} >Tất cả</p>
+                                </button>
                             </header>
 
                             <div viewOnly={true}>
@@ -72,7 +85,9 @@ const InformationSpace = ({ isOpen, onClose }) => {
 
                 </main>
             </div>
-
+            <CommentBox
+                isOpen={isCommentBoxOpen}
+                onClose={handleCloseCommentBox} ></CommentBox>
         </div>
     );
 };
