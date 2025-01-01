@@ -51,6 +51,16 @@ const InformationSpace = ({ isOpen, onClose }) => {
                             <p className={clsx('p3', 'o75')}>Taylor Swift</p>
                         </div>
 
+                        <div className={styles.authorName}>
+                            <p className='uiRegular'>Thể loại</p>
+                            <h5>Pop</h5>
+                        </div>
+
+                        <div className={styles.authorName}>
+                            <p className='uiRegular'>Nhạc sĩ</p>
+                            <h5>Taylor Swift</h5>
+                        </div>
+
                         <div className={styles.rating} onClick={handleOnClickShowAllCommentButton}>
                             <header>
                                 <p className={clsx('uiSemibold')}>Đánh giá</p>
