@@ -2,7 +2,7 @@
     width: 100vw;
     height: 100vh;
     background-color: rgba(0, 0, 0, 0.5);
-    position: absolute;
+    position: fixed;
     display: flex;
     justify-content: center;
     top: 0;
@@ -12,7 +12,7 @@
 
 .mainBox {
     width: 440px;
-    height: 534px;
+    height: fit-content;
     background-color: #000;
     border: 1px solid rgba(255, 255, 255, 0.25);
     border-radius: 10px;
@@ -58,7 +58,14 @@
     flex-direction: column;
     gap: 50px;
     align-items: center;
-    margin-top: 60px;
+    margin-top: 40px;
+}
+
+.searchingContainer header {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    align-items: center;
 }
 
 .buttonVoiceSearching.active {
@@ -68,4 +75,8 @@
 
 .iconVoiceSearching.iconActive {
     color: #000000;
+}
+
+.languageSelector {
+    padding: 12px 20px;
 }

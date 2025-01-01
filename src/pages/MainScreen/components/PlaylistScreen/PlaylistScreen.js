@@ -3,11 +3,24 @@ import styles from './PlaylistScreen.module.css';
 import { Icon } from '@iconify/react';
 import clsx from 'clsx';
 import PlaylistItem from './PlaylistItem';
+import UpdatePlaylist from './UpdatePlaylist';
+import { useNavigate } from 'react-router-dom';
 
-const PlaylistScreen = ({ isOpen, playlistPic, namePlaylist }) => {
+const PlaylistScreen = ({ isOpen, playlistPic, namePlaylist, description, onUpdatePlaylist, onDeletePlaylist }) => {
     const [isPlaying, setIsPlaying] = useState(false);
+    const [isOptionsOpen, setIsOptionsOpen] = useState(false);
+    const [isUpdatePlaylistOpen, setIsUpdatePlaylistOpen] = useState(false);
 
-    const playlistData = [
+    const [updateName, setUpdateName] = useState(namePlaylist);
+    const [updateDescription, setUpdateDescription] = useState(description);
+    const [updatePlaylistPic, setUpdatePlaylistPic] = useState(playlistPic);
+
+    const [playlistId, setPlaylistId] = useState(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const nav = useNavigate();
+
+    const songsData = [
         {
             cover: 'https://images.genius.com/9420386437e633e438609a4ab103fc37.1000x1000x1.jpg', // Đường dẫn ảnh cho bài hát
             title: 'What a wonderful world',
@@ -76,14 +89,86 @@ const PlaylistScreen = ({ isOpen, playlistPic, namePlaylist }) => {
         }
     ];
 
-    const countPlaylist = playlistData.length;
+    const countPlaylist = songsData.length;
 
     if (!isOpen) {
         return null;
     }
 
+    const fetchData = async () => {
+        try {
+            const response = await fetch('http://localhost:4000/api/playlist');
+            if (!response.ok) {
+                const errorMessage = await response.text();
+                console.error('Failed to fetch playlists:', errorMessage);
+                throw new Error('Failed to fetch playlists');
+            }
+            const data = await response.json();
+            onUpdatePlaylist(data.playlist);
+        } catch (err) {
+            console.error('Error fetching playlists: ', err);
+        }
+    };
+
+
     const togglePlay = () => {
         setIsPlaying(!isPlaying);
+    };
+
+    const toggleOptions = () => {
+        setIsOptionsOpen(!isOptionsOpen);
+    }
+
+    const handleOpenUpdatePlaylist = () => {
+        setIsUpdatePlaylistOpen(true);
+        setIsOptionsOpen(false);
+    }
+
+    const handleCloseUpdatePlaylist = () => {
+        setIsUpdatePlaylistOpen(false);
+        setIsOptionsOpen(false);
+        setIsModalOpen(false);
+        setPlaylistId(null);
+    }
+
+    const handleEditClick = (id) => {
+        setPlaylistId(id);
+        console.log(id);
+        setIsModalOpen(true);
+    }
+
+    const handleSaveChanges = (updatedPlaylist) => {
+        console.log('Dữ liệu đã được cập nhật:', updatedPlaylist);
+        fetchData(); // Fetch lại danh sách phát mới từ server
+    };
+
+    const handleDeletePlaylist = async (playlistId) => {
+        const confirmDelete = window.confirm("Bạn có chắc chắn muốn xóa danh sách phát này?");
+        if (!confirmDelete) return;
+
+        try {
+            const response = await fetch(`http://localhost:4000/api/playlist/${playlistId}`, {
+                method: 'DELETE',
+            });
+
+            if (!response.ok) {
+                const errorMessage = await response.text();
+                throw new Error(`Không thể xóa danh sách phát: ${errorMessage}`);
+            }
+
+            await fetchData();
+            alert('Danh sách phát đã được xóa thành công.');
+
+            // Gọi callback để thông báo cho MainScreen
+            if (onDeletePlaylist) {
+                onDeletePlaylist(playlistId);
+            }
+        } catch (err) {
+            console.error('Error deleting playlist:', err);
+            alert('Xóa danh sách phát thất bại.');
+        }
+
+        setIsOptionsOpen(false);
     };
 
     return (
@@ -100,6 +185,7 @@ const PlaylistScreen = ({ isOpen, playlistPic, namePlaylist }) => {
                     <p className='p1'>Danh sách phát</p>
                     <div className={styles.infoPlaylist}>
                         <h3 className={styles.nameOfUsesr}>{namePlaylist}</h3>
+                        <p className="p3 o75">{description}</p>
                         <p className='uiSemibold o50'>
                             <span className='uiSemibold o50'>{countPlaylist}</span> bài hát</p>
                     </div>
@@ -115,9 +201,21 @@ const PlaylistScreen = ({ isOpen, playlistPic, namePlaylist }) => {
                         />
                     </button>
 
-                    <button>
-                        <Icon icon="ri:more-fill" className={styles.icon}></Icon>
-                    </button>
+                    <div className={styles.optionsWrapper}>
+                        <button onClick={toggleOptions} className={styles.btnOptions}>
+                            <Icon icon="ri:more-fill" className={styles.icon}></Icon>
+                        </button>
+                        {isOptionsOpen && (
+                            <div className={styles.optionsMenu}>
+                                <button className={styles.optionItem} onClick={handleOpenUpdatePlaylist}>
+                                    Cập nhật danh sách phát
+                                </button>
+                                <button className={styles.optionItem} onClick={handleDeletePlaylist}>
+                                    Xóa danh sách phát
+                                </button>
+                            </div>
+                        )}
+                    </div>
                 </div>
 
                 <button>
@@ -135,9 +233,13 @@ const PlaylistScreen = ({ isOpen, playlistPic, namePlaylist }) => {
             </header>
 
             <main>
-                {playlistData.map((playlist, index) => {
+                {songsData.map((playlist, index) => {
                     return (
-                        <div key={index} className={styles.itemPlaylistContainer} style={{ padding: "8px 12px", borderRadius: 8 }}>
+                        <div key={index}
+                            className={styles.itemPlaylistContainer}
+                            style={{ padding: "8px 12px", borderRadius: 8 }}
+                            onClick={() => handleEditClick(playlist.id)}
+                        >
                             <PlaylistItem
                                 index={index + 1}
                                 cover={playlist.cover}
@@ -149,6 +251,15 @@ const PlaylistScreen = ({ isOpen, playlistPic, namePlaylist }) => {
                 })}
             </main>
 
+            <UpdatePlaylist
+                isOpen={isUpdatePlaylistOpen}
+                playlistId={playlistId}
+                onClose={handleCloseUpdatePlaylist}
+                playlistPic={updatePlaylistPic}
+                namePlaylist={updateName}
+                description={updateDescription}
+                onUpdatePlaylist={handleSaveChanges}
+            />
         </div>
     );
 };

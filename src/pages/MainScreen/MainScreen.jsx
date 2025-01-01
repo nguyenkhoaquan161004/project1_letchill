@@ -8,6 +8,7 @@ import LyricsScreen from './components/LyricsScreen/LyricsScreen.js';
 import SearchingScreen from './components/SearchingScreen/SearchingScreen.js';
 import AccountScreen from './components/AccountScreen/AccountScreen.js';
 import PlaylistScreen from './components/PlaylistScreen/PlaylistScreen.js';
+import playlistdData from '../../components/librarySpace/assets/playlistData.js';
 import clsx from 'clsx';
 import styles from '../MainScreen/MainScreen.module.css'
 
@@ -20,6 +21,8 @@ const MainScreen = memo(() => {
     const [isPlaylistScreenOpen, setIsPlaylistScreenOpen] = useState(false);
 
     const [previousScreen, setPreviousScreen] = useState("home");
+
+    const [playlists, setPlaylists] = useState(playlistdData);
     const [selectedPlaylist, setSelectedPlaylist] = useState(null);
 
     const toggleRightBar = () => {
@@ -61,6 +64,7 @@ const MainScreen = memo(() => {
         setIsHomeScreenOpen(false);
         setIsLyricsScreenOpen(false);
         setIsAccountScreenOpen(false);
+        setIsPlaylistScreenOpen(false);
         setPreviousScreen("search");
     }
 
@@ -69,6 +73,7 @@ const MainScreen = memo(() => {
         setIsLyricsScreenOpen(false);
         setIsSearchingScreenOpen(false);
         setIsAccountScreenOpen(false);
+        setIsPlaylistScreenOpen(false);
         setPreviousScreen("home");
     }
 
@@ -77,6 +82,7 @@ const MainScreen = memo(() => {
         setIsHomeScreenOpen(false);
         setIsLyricsScreenOpen(false);
         setIsSearchingScreenOpen(false);
+        setIsPlaylistScreenOpen(false);
         setPreviousScreen("account");
     }
 
@@ -90,6 +96,38 @@ const MainScreen = memo(() => {
         setPreviousScreen("playlist");
     }
 
+    const handleAddPlaylist = (newPlaylist) => {
+        setPlaylists((prevPlaylists) => [...prevPlaylists, newPlaylist]);
+    }
+
+    const handleUpdatePlaylist = (updatedPlaylist) => {
+        setPlaylists((prevPlaylists) =>
+            prevPlaylists.map((playlist) =>
+                playlist.namePlaylist === selectedPlaylist.namePlaylist
+                    ? { ...playlist, ...updatedPlaylist }
+                    : playlist
+            )
+        );
+        setSelectedPlaylist((prev) => ({ ...prev, ...updatedPlaylist }));
+    };
+
+    const handleRefreshPlaylists = (updatedPlaylists) => {
+        setPlaylists(updatedPlaylists);
+    };
+
+    const handleDeletePlaylist = (deletedPlaylistName) => {
+        const updatedPlaylists = playlists.filter(
+            (playlist) => playlist.namePlaylist !== deletedPlaylistName
+        );
+        setPlaylists(updatedPlaylists);
+        toggleHomeScreen();
+        setSelectedPlaylist(null);
+
+        // Thông báo LeftBar cập nhật
+        handleRefreshPlaylists(updatedPlaylists);
+    };
+
+
     return (
         <div id={styles.main}>
             <Header
@@ -100,6 +138,9 @@ const MainScreen = memo(() => {
             <div className={clsx(styles.mainContainer)}>
                 <LeftBar
                     onPlaylistClick={togglePlaylistScreen}
+                    onAddPlaylist={handleAddPlaylist}
+                    playlistsData={playlists}
+                    onRefreshPlaylists={handleRefreshPlaylists}
                 ></LeftBar>
                 <div className={styles.mainSpace}>
                     <div className={styles.mainContainer}>
@@ -111,7 +152,10 @@ const MainScreen = memo(() => {
                             <PlaylistScreen
                                 isOpen={isPlaylistScreenOpen}
                                 playlistPic={selectedPlaylist.playlistPic}
-                                namePlaylist={selectedPlaylist.namePlaylist}></PlaylistScreen>
+                                namePlaylist={selectedPlaylist.namePlaylist}
+                                description={selectedPlaylist.description}
+                                onUpdatePlaylist={handleUpdatePlaylist}
+                                onDeletePlaylist={handleDeletePlaylist}></PlaylistScreen>
                         )}
 
                     </div>

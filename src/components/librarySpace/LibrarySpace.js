@@ -1,44 +1,14 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from './LibrarySpace.module.css';
 import Playlist from './components/Playlist/Playlist';
 import { InlineIcon } from '@iconify/react';
-import favoritePlaylist from './assets/favoritePlaylist.svg';
 import clsx from 'clsx';
 import AddPlaylistBox from './components/AddPlaylistBox/AddPlaylistBox';
+import favoritePlaylist from './assets/favoritePlaylist.svg';
 
-const LibrarySpace = ({ onPlaylistClick }) => {
-    const playlists = [
-        {
-            playlistPic: favoritePlaylist,
-            name: "Danh sách yêu thích"
-        },
-        {
-            playlistPic: 'https://www.neonvibes.co.uk/cdn/shop/products/NV-Chillneonvibes.co.ukLEDneonsignsMadeintheUK_8_2048x.jpg?v=1665760509',
-            name: "Chilling"
-        },
-        {
-            playlistPic: 'https://hoanghamobile.com/tin-tuc/wp-content/uploads/2024/04/anh-chill-buon.jpg',
-            name: "focus time"
-        },
-        {
-            playlistPic: 'https://xwatch.vn/upload_images/images/2023/03/29/anh-chill-nhac-lofi.jpg',
-            name: "The sunset in my memory"
-        },
-        {
-            playlistPic: 'https://i.pinimg.com/736x/3d/63/27/3d6327fde132c19c6481130a9d54b5b1.jpg',
-            name: "Đôi ba câu chuyện tình yêu"
-        },
-        {
-            playlistPic: 'https://www.thoughtco.com/thmb/beiCvc1QcvpjjJPXI6g0wG18MxI=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/drops-of-rain-on-glass-838815210-5a823cc0a18d9e0036e325e2.jpg',
-            name: "Một chút tâm trạng"
-        },
-        {
-            playlistPic: 'https://cdn2.fptshop.com.vn/unsafe/1920x0/filters:quality(100)/2023_12_27_638392900179046358_slay-la-gi.jpg',
-            name: "Hey! Slay Queen"
-        },
-    ]
-
+const LibrarySpace = ({ onPlaylistClick, onAddPlaylist, onDeletePlaylist, onRefreshPlaylists }) => {
     const [isAddPlaylistOpen, setIsAddPlaylistOpen] = useState(false);
+    const [playlistsData, setPlaylistsData] = useState([]);
 
     const handleOpenAddPlaylistBox = () => {
         setIsAddPlaylistOpen(true);
@@ -47,6 +17,33 @@ const LibrarySpace = ({ onPlaylistClick }) => {
     const handleCloseAddPlaylistBox = () => {
         setIsAddPlaylistOpen(false);
     }
+
+    const fetchPlaylists = async () => {
+        try {
+            const response = await fetch('http://localhost:4000/api/playlist');
+            if (!response.ok) throw new Error("Failed to fetch playlists");
+            const data = await response.json();
+            setPlaylistsData(data.playlist);
+            onRefreshPlaylists(data);
+        } catch (err) {
+            console.log('Error fetching playlists: ', err);
+        }
+    }
+
+    useEffect(() => {
+        fetchPlaylists(); // Gọi khi component mount
+    }, []);
+
+    const handleAddPlaylist = async () => {
+        try {
+            // Fetch lại danh sách playlist từ server
+            await fetchPlaylists(); // Gọi lại hàm fetch để đồng bộ dữ liệu
+            setIsAddPlaylistOpen(false); // Đóng AddPlaylistBox
+        } catch (err) {
+            console.error('Error updating playlists: ', err);
+        }
+    };
+
 
     return (
         <div id={styles.leftBar}
@@ -77,23 +74,39 @@ const LibrarySpace = ({ onPlaylistClick }) => {
                 </div>
 
                 <div className={styles.listOfPlaylist}>
-                    {playlists.map((playlist, index) => (
+                    <div>
                         <Playlist
+                            playlistPic={favoritePlaylist}
+                            namePlaylist="Danh sách yêu thích"
+                            description=""
                             onPlaylistClick={() =>
                                 onPlaylistClick({
-                                    playlistPic: playlist.playlistPic,
-                                    namePlaylist: playlist.name
+                                    playlistPic: favoritePlaylist,
+                                    namePlaylist: "Danh sách yêu thích",
+                                    description: "",
                                 })}
-                            key={index}
-                            playlistPic={playlist.playlistPic}
-                            namePlaylist={playlist.name}></Playlist>
+                        ></Playlist>
+                    </div>
+                    {playlistsData.map((playlist) => (
+                        <Playlist
+                            key={playlist.id}
+                            onPlaylistClick={() =>
+                                onPlaylistClick({
+                                    playlistPic: playlist.avtUrl,
+                                    namePlaylist: playlist.name,
+                                    description: playlist.description,
+                                })}
+                            playlistPic={playlist.avtUrl}
+                            namePlaylist={playlist.name}
+                            description={playlist.description}></Playlist>
                     ))}
                 </div>
 
             </div>
             <AddPlaylistBox
                 isOpen={isAddPlaylistOpen}
-                onClose={handleCloseAddPlaylistBox}></AddPlaylistBox>
+                onClose={handleCloseAddPlaylistBox}
+                onAddPlaylist={handleAddPlaylist}></AddPlaylistBox>
         </div>
     );
 };
