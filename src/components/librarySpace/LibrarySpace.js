@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import styles from './LibrarySpace.module.css';
 import Playlist from './components/Playlist/Playlist';
 import { InlineIcon } from '@iconify/react';
@@ -6,9 +6,9 @@ import clsx from 'clsx';
 import AddPlaylistBox from './components/AddPlaylistBox/AddPlaylistBox';
 import favoritePlaylist from './assets/favoritePlaylist.svg';
 
-const LibrarySpace = ({ onPlaylistClick, onAddPlaylist, onDeletePlaylist, onRefreshPlaylists }) => {
+const LibrarySpace = ({ onSelectedPlaylist, playlistsData, onRefreshPlaylists }) => {
     const [isAddPlaylistOpen, setIsAddPlaylistOpen] = useState(false);
-    const [playlistsData, setPlaylistsData] = useState([]);
+    const [playlists, setPlaylists] = useState([]);
 
     const handleOpenAddPlaylistBox = () => {
         setIsAddPlaylistOpen(true);
@@ -18,21 +18,26 @@ const LibrarySpace = ({ onPlaylistClick, onAddPlaylist, onDeletePlaylist, onRefr
         setIsAddPlaylistOpen(false);
     }
 
-    const fetchPlaylists = async () => {
+    const fetchPlaylists = useCallback(async () => {
         try {
             const response = await fetch('http://localhost:4000/api/playlist');
             if (!response.ok) throw new Error("Failed to fetch playlists");
             const data = await response.json();
-            setPlaylistsData(data.playlist);
-            onRefreshPlaylists(data);
+            setPlaylists(data.playlist);
+
+            onRefreshPlaylists(data.playlist);
         } catch (err) {
             console.log('Error fetching playlists: ', err);
         }
-    }
+    }, [onRefreshPlaylists]);  // Memoizing fetchPlaylists, including onRefreshPlaylists as a dependency
 
     useEffect(() => {
-        fetchPlaylists(); // Gọi khi component mount
-    }, []);
+        fetchPlaylists();
+    }, [fetchPlaylists]);
+
+    const handlePlaylistSelect = (playlistId) => {
+        onSelectedPlaylist(playlistId);
+    };
 
     const handleAddPlaylist = async () => {
         try {
@@ -43,7 +48,6 @@ const LibrarySpace = ({ onPlaylistClick, onAddPlaylist, onDeletePlaylist, onRefr
             console.error('Error updating playlists: ', err);
         }
     };
-
 
     return (
         <div id={styles.leftBar}
@@ -76,26 +80,33 @@ const LibrarySpace = ({ onPlaylistClick, onAddPlaylist, onDeletePlaylist, onRefr
                 <div className={styles.listOfPlaylist}>
                     <div>
                         <Playlist
+                            playlistId='favorite'
                             playlistPic={favoritePlaylist}
                             namePlaylist="Danh sách yêu thích"
                             description=""
-                            onPlaylistClick={() =>
-                                onPlaylistClick({
+                            onSelectedPlaylist={() =>
+                                onSelectedPlaylist({
+                                    playlistId: 'favorite',
                                     playlistPic: favoritePlaylist,
                                     namePlaylist: "Danh sách yêu thích",
                                     description: "",
                                 })}
                         ></Playlist>
                     </div>
-                    {playlistsData.map((playlist) => (
+                    {playlists.map((playlist) => (
                         <Playlist
                             key={playlist.id}
-                            onPlaylistClick={() =>
-                                onPlaylistClick({
+                            onSelectedPlaylist={() => {
+                                onSelectedPlaylist({
+                                    playlistId: playlist.id,
                                     playlistPic: playlist.avtUrl,
                                     namePlaylist: playlist.name,
                                     description: playlist.description,
-                                })}
+                                })
+                                handlePlaylistSelect(playlist.id)
+                                console.log(playlist.id)
+                            }}
+                            playlistId={playlist.id}
                             playlistPic={playlist.avtUrl}
                             namePlaylist={playlist.name}
                             description={playlist.description}></Playlist>
@@ -107,7 +118,7 @@ const LibrarySpace = ({ onPlaylistClick, onAddPlaylist, onDeletePlaylist, onRefr
                 isOpen={isAddPlaylistOpen}
                 onClose={handleCloseAddPlaylistBox}
                 onAddPlaylist={handleAddPlaylist}></AddPlaylistBox>
-        </div>
+        </div >
     );
 };
 

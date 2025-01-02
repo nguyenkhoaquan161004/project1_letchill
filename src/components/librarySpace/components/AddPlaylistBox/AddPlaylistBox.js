@@ -35,14 +35,24 @@ const AddPlaylistBox = ({ isOpen, onClose, onAddPlaylist }) => {
 
     const handleCreatePlaylist = () => {
         setIsSubmitting(true);
-        if (playlistName.trim()) {
-            const uid = localStorage.getItem('uid'); // Lấy uid từ localStorage
+
+        const uid = localStorage.getItem('uid') || 'OXRsv6wJffNCNu0YXvhGRyAPNun1';
+        const name = playlistName.trim();
+        const description = playlistDescription.trim();
+
+        // Log để kiểm tra giá trị
+        console.log('Playlist Name:', name);
+        console.log('User ID:', uid);
+
+        if (name && uid) {
             const newPlaylist = {
-                uid, // Thêm uid
+                uid,  // Đảm bảo 'uid' được gửi đi
                 avtUrl: selectedImage || '',
-                name: playlistName,
-                description: playlistDescription,
+                name,  // Đảm bảo 'name' được gửi đi
+                description,  // Kiểm tra xem 'description' có bắt buộc hay không
             };
+
+            console.log('New Playlist:', newPlaylist);  // Log lại payload gửi đi
 
             fetch('http://localhost:4000/api/playlist', {
                 method: 'POST',
@@ -60,14 +70,21 @@ const AddPlaylistBox = ({ isOpen, onClose, onAddPlaylist }) => {
                 .then(data => {
                     console.log('Playlist created:', data);
                     onAddPlaylist(newPlaylist);
+                    alert('Tạo danh sách phát thành công.');
+                    setPlaylistName('');
+                    setPlaylistDescription('');
+                    setSelectedImage(null);
                     onClose();
                 })
                 .catch(err => {
                     console.error('Error creating playlist:', err);
                 });
+        } else {
+            console.error('Missing required fields: uid or name');
         }
         setIsSubmitting(false);
     };
+
 
 
     return (

@@ -22,54 +22,100 @@ const UpdatePlaylist = ({ playlistId, isOpen, onClose, onUpdatePlaylist, playlis
             onClose();
     }
 
-    const handleImageChange = (e) => {
+    const compressImage = (file, maxWidth = 1000, maxHeight = 1000) => {
+        return new Promise((resolve, reject) => {
+            const img = new Image();
+            const reader = new FileReader();
+
+            reader.onload = () => {
+                img.src = reader.result;
+            };
+
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+
+                let { width, height } = img;
+                if (width > maxWidth || height > maxHeight) {
+                    const scaleFactor = Math.min(maxWidth / width, maxHeight / height);
+                    width = width * scaleFactor;
+                    height = height * scaleFactor;
+                }
+
+                canvas.width = width;
+                canvas.height = height;
+                ctx.drawImage(img, 0, 0, width, height);
+
+                const compressedImage = canvas.toDataURL('image/jpeg', 0.8); // Chuyển thành Base64
+                resolve(compressedImage);
+            };
+
+            img.onerror = reject;
+            reader.onerror = reject;
+
+            reader.readAsDataURL(file);
+        });
+    };
+
+    const handleImageChange = async (e) => {
         const file = e.target.files[0];
         if (file) {
-            const imageUrl = URL.createObjectURL(file);
-            setSelectedImage(imageUrl);
+            try {
+                const compressedImage = await compressImage(file);
+                setSelectedImage(compressedImage); // Lưu Base64 đã giảm kích thước vào state
+            } catch (error) {
+                console.error('Lỗi khi nén ảnh:', error);
+            }
         }
-    }
-
+    };
     const handleUpdatePlaylist = async () => {
         if (!playlistId) {
-            console.error("Không tìm thấy playlistId.");
+            console.error('Playlist ID không tồn tại.');
             return;
         }
 
-        const updatedPlaylist = {
-            name: playlistName.trim(),
-            description: playlistDescription.trim(),
-            avtUrl: selectedImage || playlistPic, // Cập nhật ảnh nếu có
-        };
+        console.log(playlistId);
 
         setIsLoading(true);
 
         try {
+            // Chuẩn bị dữ liệu
+            const updatedData = {
+
+                name: playlistName.trim(),
+                ...(selectedImage && { avtUrl: selectedImage }), // Chỉ gửi ảnh nếu có thay đổi
+                description: playlistDescription.trim(),
+            };
+
+            console.log('Dữ liệu gửi đi:', updatedData); // Kiểm tra dữ liệu
+
+            // Gửi request PATCH đến API
             const response = await fetch(`http://localhost:4000/api/playlist/${playlistId}`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(updatedPlaylist),
+                body: JSON.stringify(updatedData),
             });
 
             if (!response.ok) {
-                const errorMessage = await response.text();
-                throw new Error(`Không thể cập nhật danh sách phát: ${errorMessage}`);
+                throw new Error('Cập nhật danh sách phát thất bại.');
             }
 
-            const data = await response.json();
-            onUpdatePlaylist(data); // Gửi dữ liệu cập nhật thành công về PlaylistScreen
-            alert('Cập nhật danh sách phát thành công.');
-            onClose(); // Đóng modal sau khi hoàn thành
-        } catch (err) {
-            console.error('Lỗi khi cập nhật playlist:', err);
-            alert(`Cập nhật danh sách phát thất bại: ${err.message}`);
-        } finally {
-            setIsLoading(false); // Dừng trạng thái loading
-        }
-    };
+            const result = await response.json();
 
+            // Gọi callback để cập nhật giao diện hoặc thông báo
+            onUpdatePlaylist(result);
+            // Đóng modal
+            onClose();
+
+            alert('Cập nhật danh sách phát thành công!');
+        } catch (error) {
+            console.error('Lỗi khi cập nhật danh sách phát:', error);
+        } finally {
+            setIsLoading(false);
+        }
+    }
 
     return (
         <div className={styles.backgroundSpace} onClick={handleClose}>
