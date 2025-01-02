@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import styles from './AddPlaylistBox.module.css';
 import { InlineIcon } from '@iconify/react/dist/iconify.js';
 import clsx from 'clsx';
+import axios from 'axios';
 
 const AddPlaylistBox = ({ isOpen, onClose, onAddPlaylist }) => {
     const [selectedImage, setSelectedImage] = useState(null);
@@ -24,11 +25,30 @@ const AddPlaylistBox = ({ isOpen, onClose, onAddPlaylist }) => {
         if (e.target === e.currentTarget) onClose();
     };
 
-    const handleImageChange = (e) => {
+    const handleImageChange = async (e) => {
         const file = e.target.files[0];
-        if (file) {
-            const imageUrl = URL.createObjectURL(file);
-            setSelectedImage(imageUrl);
+        if (!file) return;
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('upload_preset', 'playlistAvtUrl');  // Đảm bảo bạn đã tạo preset trong Cloudinary
+
+        try {
+        // Gửi hình ảnh lên Cloudinary
+        const response = await axios.post(
+            'https://api.cloudinary.com/v1_1/di4kdlfr3/image/upload',
+            formData
+        );
+
+        // Lấy URL của hình ảnh từ Cloudinary
+        const imageUrl = response.data.secure_url;
+        console.log('Image URL:', imageUrl);
+
+        // Lưu hình ảnh vào state
+        setSelectedImage(imageUrl);
+
+        console.log('Image uploaded and link sent to backend:', imageUrl);
+        } catch (error) {
+        console.error('Error uploading image:', error);
         }
     };
 
@@ -43,6 +63,7 @@ const AddPlaylistBox = ({ isOpen, onClose, onAddPlaylist }) => {
         // Log để kiểm tra giá trị
         console.log('Playlist Name:', name);
         console.log('User ID:', uid);
+        console.log('AvtUrl:', selectedImage);
 
         if (name && uid) {
             const newPlaylist = {

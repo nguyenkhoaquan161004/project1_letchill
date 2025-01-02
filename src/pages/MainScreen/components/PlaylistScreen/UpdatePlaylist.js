@@ -3,6 +3,7 @@ import styles from './PlaylistScreen.module.css';
 import { InlineIcon } from '@iconify/react/dist/iconify.js';
 import clsx from 'clsx';
 import { use } from 'react';
+import axios from 'axios';
 
 const UpdatePlaylist = ({ playlistId, isOpen, onClose, onUpdatePlaylist, playlistPic, namePlaylist, description }) => {
     const [selectedImage, setSelectedImage] = useState(null);
@@ -59,14 +60,29 @@ const UpdatePlaylist = ({ playlistId, isOpen, onClose, onUpdatePlaylist, playlis
 
     const handleImageChange = async (e) => {
         const file = e.target.files[0];
-        if (file) {
+        if (!file) return;
+            const compressedImage = await compressImage(file);
+            const formData = new FormData();
+            formData.append('file', compressedImage);
+            formData.append('upload_preset', 'playlistAvtUrl');  // Đảm bảo bạn đã tạo preset trong Cloudinary
+
             try {
-                const compressedImage = await compressImage(file);
-                setSelectedImage(compressedImage); // Lưu Base64 đã giảm kích thước vào state
+                // Gửi hình ảnh lên Cloudinary
+                const response = await axios.post(
+                    'https://api.cloudinary.com/v1_1/di4kdlfr3/image/upload',
+                    formData
+                );
+
+                // Lấy URL của hình ảnh từ Cloudinary
+                const imageUrl = response.data.secure_url;
+                console.log('Image URL:', imageUrl);
+
+                // Lưu hình ảnh vào state
+                setSelectedImage(imageUrl);
             } catch (error) {
                 console.error('Lỗi khi nén ảnh:', error);
             }
-        }
+        
     };
     const handleUpdatePlaylist = async () => {
         if (!playlistId) {

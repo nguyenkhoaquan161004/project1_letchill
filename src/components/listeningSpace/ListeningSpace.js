@@ -133,7 +133,7 @@ const ListeningSpace = ({ onInfoButtonClick, onLyricsButtonClick, isRightBarOpen
         try {
             console.log("Fetching a random song ID...");
             // Gọi API để lấy một ID bài hát ngẫu nhiên
-            const response = await axios.get('http://localhost:4000/api/songInformation/random-id');
+            const response = await axios.get('http://localhost:4000/api/songInformation/');
             const randomSongId = response.data.id; // ID ngẫu nhiên từ API
 
             if (!randomSongId) {
@@ -174,7 +174,7 @@ const ListeningSpace = ({ onInfoButtonClick, onLyricsButtonClick, isRightBarOpen
             }
 
             setCurrentTime(formatTime(audio.currentTime));
-            setDuration(formatTime(currentSongData.duration));
+            setDuration(formatTime(audio.duration));
         };
 
         const audio = audioPlayer.current;
