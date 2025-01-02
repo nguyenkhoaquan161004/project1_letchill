@@ -1,4 +1,4 @@
-import React, { memo, useState } from 'react';
+import React, { memo, useEffect, useState } from 'react';
 import Header from '../../components/header/Header.js';
 import ListeningSpace from '../../components/listeningSpace/ListeningSpace.js';
 import LeftBar from '../../components/librarySpace/LibrarySpace.js'
@@ -11,6 +11,7 @@ import PlaylistScreen from './components/PlaylistScreen/PlaylistScreen.js';
 import playlistdData from '../../components/librarySpace/assets/playlistData.js';
 import clsx from 'clsx';
 import styles from '../MainScreen/MainScreen.module.css'
+import { useNavigate } from 'react-router-dom';
 
 const MainScreen = memo(() => {
     const [isRightBarOpen, setIsRightBarOpen] = useState(false);
@@ -22,8 +23,10 @@ const MainScreen = memo(() => {
 
     const [previousScreen, setPreviousScreen] = useState("home");
 
-    const [playlists, setPlaylists] = useState(playlistdData);
+    const [playlists, setPlaylists] = useState([]);
     const [selectedPlaylist, setSelectedPlaylist] = useState(null);
+
+    const nav = useNavigate();
 
     const toggleRightBar = () => {
         setIsRightBarOpen((prev) => !prev);
@@ -74,6 +77,7 @@ const MainScreen = memo(() => {
         setIsSearchingScreenOpen(false);
         setIsAccountScreenOpen(false);
         setIsPlaylistScreenOpen(false);
+        setSelectedPlaylist(null);
         setPreviousScreen("home");
     }
 
@@ -86,9 +90,9 @@ const MainScreen = memo(() => {
         setPreviousScreen("account");
     }
 
-    const togglePlaylistScreen = (playlist) => {
+    const togglePlaylistScreen = (playlistId) => {
         setIsPlaylistScreenOpen(true);
-        setSelectedPlaylist(playlist);
+        setSelectedPlaylist(playlistId);
         setIsHomeScreenOpen(false);
         setIsLyricsScreenOpen(false);
         setIsSearchingScreenOpen(false);
@@ -96,37 +100,71 @@ const MainScreen = memo(() => {
         setPreviousScreen("playlist");
     }
 
+    const fetchPlaylists = async () => {
+        try {
+            const response = await fetch('http://localhost:4000/api/playlist');
+            if (!response.ok) {
+                const errorMessage = await response.text();
+                throw new Error(`Không thể tải lại playlists: ${errorMessage}`);
+            }
+
+            const data = await response.json();
+            setPlaylists(data.playlist);  // Update the state with fetched playlists
+        } catch (err) {
+            console.error('Error fetching playlists:', err);
+            alert('Lỗi khi tải lại danh sách phát.');
+        }
+    };
+
+    useEffect(() => {
+        fetchPlaylists();
+    }, []);
+
     const handleAddPlaylist = (newPlaylist) => {
         setPlaylists((prevPlaylists) => [...prevPlaylists, newPlaylist]);
     }
 
     const handleUpdatePlaylist = (updatedPlaylist) => {
-        setPlaylists((prevPlaylists) =>
-            prevPlaylists.map((playlist) =>
-                playlist.namePlaylist === selectedPlaylist.namePlaylist
-                    ? { ...playlist, ...updatedPlaylist }
-                    : playlist
-            )
-        );
-        setSelectedPlaylist((prev) => ({ ...prev, ...updatedPlaylist }));
+
     };
 
     const handleRefreshPlaylists = (updatedPlaylists) => {
         setPlaylists(updatedPlaylists);
     };
 
-    const handleDeletePlaylist = (deletedPlaylistName) => {
+    const handleDeletePlaylist = async (deletedPlaylistName) => {
+        if (!Array.isArray(playlists)) {
+            return;
+        }
+
+        // Lọc ra playlist mới sau khi xóa playlist có tên deletedPlaylistName
         const updatedPlaylists = playlists.filter(
             (playlist) => playlist.namePlaylist !== deletedPlaylistName
         );
-        setPlaylists(updatedPlaylists);
-        toggleHomeScreen();
-        setSelectedPlaylist(null);
+        setPlaylists(updatedPlaylists);  // Cập nhật lại state playlists sau khi xóa
 
-        // Thông báo LeftBar cập nhật
-        handleRefreshPlaylists(updatedPlaylists);
+        // Gửi yêu cầu xóa playlist từ backend
+        try {
+            const response = await fetch(`http://localhost:4000/api/playlist/${deletedPlaylistName}`, {
+                method: 'DELETE',
+            });
+
+            if (!response.ok) {
+                const errorMessage = await response.text();
+                throw new Error(`Không thể xóa playlist: ${errorMessage}`);
+            }
+
+            // Fetch lại dữ liệu playlists từ server sau khi xóa thành công
+            fetchPlaylists();
+
+            handleRefreshPlaylists(updatedPlaylists);
+            setSelectedPlaylist(null);
+            toggleHomeScreen();
+        } catch (err) {
+            console.error('Error deleting playlist:', err);
+            alert('Xóa danh sách phát thất bại.');
+        }
     };
-
 
     return (
         <div id={styles.main}>
@@ -137,10 +175,10 @@ const MainScreen = memo(() => {
                 onAccountButtonClick={toggleAccountScreen}></Header>
             <div className={clsx(styles.mainContainer)}>
                 <LeftBar
-                    onPlaylistClick={togglePlaylistScreen}
+                    onSelectedPlaylist={togglePlaylistScreen}
                     onAddPlaylist={handleAddPlaylist}
                     playlistsData={playlists}
-                    onRefreshPlaylists={handleRefreshPlaylists}
+                    onRefreshPlaylists={fetchPlaylists}
                 ></LeftBar>
                 <div className={styles.mainSpace}>
                     <div className={styles.mainContainer}>
@@ -151,10 +189,10 @@ const MainScreen = memo(() => {
                         {selectedPlaylist && (
                             <PlaylistScreen
                                 isOpen={isPlaylistScreenOpen}
-                                playlistPic={selectedPlaylist.playlistPic}
-                                namePlaylist={selectedPlaylist.namePlaylist}
-                                description={selectedPlaylist.description}
+                                playlistId={selectedPlaylist}
+                                comebackHome={toggleHomeScreen}
                                 onUpdatePlaylist={handleUpdatePlaylist}
+                                onRefreshPlaylists={handleRefreshPlaylists}
                                 onDeletePlaylist={handleDeletePlaylist}></PlaylistScreen>
                         )}
 

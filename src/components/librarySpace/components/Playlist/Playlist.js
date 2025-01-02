@@ -2,9 +2,9 @@ import React from 'react';
 import styles from './Playlist.module.css';
 import clsx from 'clsx';
 
-const Playlist = ({ playlistPic, namePlaylist, onPlaylistClick }) => {
+const Playlist = ({ playlistPic, namePlaylist, onSelectedPlaylist }) => {
     return (
-        <div className={styles.itemContainer} onClick={onPlaylistClick}>
+        <div className={styles.itemContainer} onClick={onSelectedPlaylist}>
             <img src={playlistPic} alt='picSong'></img>
             <div className={styles.infoSong}>
                 <p className='uiSemibold'>

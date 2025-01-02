@@ -1,22 +1,36 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import styles from './PlaylistScreen.module.css';
 import { Icon } from '@iconify/react';
 import clsx from 'clsx';
 import PlaylistItem from './PlaylistItem';
 import UpdatePlaylist from './UpdatePlaylist';
 import { useNavigate } from 'react-router-dom';
+import favoritePlaylist from '../../../../components/librarySpace/assets/favoritePlaylist.svg';
 
-const PlaylistScreen = ({ isOpen, playlistPic, namePlaylist, description, onUpdatePlaylist, onDeletePlaylist }) => {
+const PlaylistScreen = ({ isOpen, playlistId, comebackHome, onDeletePlaylist, onRefreshPlaylists }) => {
     const [isPlaying, setIsPlaying] = useState(false);
     const [isOptionsOpen, setIsOptionsOpen] = useState(false);
     const [isUpdatePlaylistOpen, setIsUpdatePlaylistOpen] = useState(false);
 
-    const [updateName, setUpdateName] = useState(namePlaylist);
-    const [updateDescription, setUpdateDescription] = useState(description);
-    const [updatePlaylistPic, setUpdatePlaylistPic] = useState(playlistPic);
+    const [updateName, setUpdateName] = useState('');
+    const [updateDescription, setUpdateDescription] = useState('');
+    const [updatePlaylistPic, setUpdatePlaylistPic] = useState('');
 
-    const [playlistId, setPlaylistId] = useState(null);
+    const [, setPlaylistId] = useState(playlistId);
     const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const [playlistData, setPlaylistData] = useState(playlistId);
+    const [playlists, setPlaylists] = useState([]);
+
+    const combinedPlaylists = [
+        {
+            id: 'favorite',  // ID riêng biệt cho "Danh sách yêu thích"
+            avtUrl: favoritePlaylist,  // Hình ảnh
+            name: 'Danh sách yêu thích',  // Tên playlist
+            description: '',  // Mô tả playlist
+        },
+        ...playlists,  // Các playlist từ backend
+    ];
 
     const nav = useNavigate();
 
@@ -91,10 +105,6 @@ const PlaylistScreen = ({ isOpen, playlistPic, namePlaylist, description, onUpda
 
     const countPlaylist = songsData.length;
 
-    if (!isOpen) {
-        return null;
-    }
-
     const fetchData = async () => {
         try {
             const response = await fetch('http://localhost:4000/api/playlist');
@@ -104,11 +114,35 @@ const PlaylistScreen = ({ isOpen, playlistPic, namePlaylist, description, onUpda
                 throw new Error('Failed to fetch playlists');
             }
             const data = await response.json();
-            onUpdatePlaylist(data.playlist);
+            setPlaylistData(data.playlist);
         } catch (err) {
             console.error('Error fetching playlists: ', err);
         }
     };
+
+    const fetchPlaylistData = async () => {
+        try {
+            console.log('Fetching playlist with ID:', playlistId);
+            const response = await fetch('http://localhost:4000/api/playlist');
+            if (!response.ok) {
+                throw new Error('Error fetching playlists');
+            }
+
+            const data = await response.json();
+            const foundPlaylist = data.playlist.find(playlist => playlist.id === playlistId);
+            setPlaylistData(foundPlaylist || { name: 'Danh sách yêu thích', avtUrl: favoritePlaylist });  // Đảm bảo xử lý cho 'favorite'
+        } catch (err) {
+            console.error('Error fetching playlist data:', err);
+            alert('An error occurred while fetching the playlist data.');
+        }
+    };
+
+    useEffect(() => {
+        fetchData();
+        if (playlistId) {
+            fetchPlaylistData();
+        }
+    }, [playlistId]);
 
 
     const togglePlay = () => {
@@ -140,13 +174,16 @@ const PlaylistScreen = ({ isOpen, playlistPic, namePlaylist, description, onUpda
     const handleSaveChanges = (updatedPlaylist) => {
         console.log('Dữ liệu đã được cập nhật:', updatedPlaylist);
         fetchData(); // Fetch lại danh sách phát mới từ server
+        fetchPlaylistData();
     };
 
-    const handleDeletePlaylist = async (playlistId) => {
+
+    const handleDeletePlaylist = async () => {
         const confirmDelete = window.confirm("Bạn có chắc chắn muốn xóa danh sách phát này?");
         if (!confirmDelete) return;
 
         try {
+            console.log('Fetching playlist with ID:', playlistId);
             const response = await fetch(`http://localhost:4000/api/playlist/${playlistId}`, {
                 method: 'DELETE',
             });
@@ -157,12 +194,14 @@ const PlaylistScreen = ({ isOpen, playlistPic, namePlaylist, description, onUpda
             }
 
             await fetchData();
-            alert('Danh sách phát đã được xóa thành công.');
 
             // Gọi callback để thông báo cho MainScreen
             if (onDeletePlaylist) {
                 onDeletePlaylist(playlistId);
             }
+
+            alert('Danh sách phát đã được xóa thành công.');
+            comebackHome();
         } catch (err) {
             console.error('Error deleting playlist:', err);
             alert('Xóa danh sách phát thất bại.');
@@ -171,12 +210,16 @@ const PlaylistScreen = ({ isOpen, playlistPic, namePlaylist, description, onUpda
         setIsOptionsOpen(false);
     };
 
+    if (!isOpen) {
+        return null;
+    }
+
     return (
         <div id={styles.playlistScreen}>
             <div className={styles.infoPlaylistWrapper}>
                 <div className={styles.playlistContainer}>
                     <img
-                        src={playlistPic}
+                        src={playlistData.avtUrl}
                         alt=''
                         className={clsx(styles.playlistAvatarPic)} />
                 </div>
@@ -184,8 +227,8 @@ const PlaylistScreen = ({ isOpen, playlistPic, namePlaylist, description, onUpda
                 <div className={styles.textSpace}>
                     <p className='p1'>Danh sách phát</p>
                     <div className={styles.infoPlaylist}>
-                        <h3 className={styles.nameOfUsesr}>{namePlaylist}</h3>
-                        <p className="p3 o75">{description}</p>
+                        <h3 className={styles.nameOfUsesr}>{playlistData.name}</h3>
+                        <p className="p3 o75">{playlistData.description}</p>
                         <p className='uiSemibold o50'>
                             <span className='uiSemibold o50'>{countPlaylist}</span> bài hát</p>
                     </div>
@@ -255,9 +298,9 @@ const PlaylistScreen = ({ isOpen, playlistPic, namePlaylist, description, onUpda
                 isOpen={isUpdatePlaylistOpen}
                 playlistId={playlistId}
                 onClose={handleCloseUpdatePlaylist}
-                playlistPic={updatePlaylistPic}
-                namePlaylist={updateName}
-                description={updateDescription}
+                playlistPic={playlistData.avtUrl}
+                namePlaylist={playlistData.name}
+                description={playlistData.description}
                 onUpdatePlaylist={handleSaveChanges}
             />
         </div>
