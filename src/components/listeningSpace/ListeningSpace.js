@@ -112,7 +112,7 @@ const ListeningSpace = ({ onInfoButtonClick, onLyricsButtonClick, isRightBarOpen
     useEffect(() => {
         const loadInitialSong = async () => {
             try {
-                const response = await axios.get('http://localhost:4000/api/songInformation/random-id'); // Gọi API không có id
+                const response = await axios.get('http://localhost:4000/api/songInformation/'); // Gọi API không có id
                 const randomSongId = response.data.id;
 
                 if (!randomSongId) {
@@ -174,7 +174,7 @@ const ListeningSpace = ({ onInfoButtonClick, onLyricsButtonClick, isRightBarOpen
             }
 
             setCurrentTime(formatTime(audio.currentTime));
-            setDuration(formatTime(audio.duration));
+            setDuration(formatTime(currentSongData.duration));
         };
 
         const audio = audioPlayer.current;
