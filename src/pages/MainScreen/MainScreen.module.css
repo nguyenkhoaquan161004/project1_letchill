@@ -6,14 +6,14 @@
 }
 
 .graBG {
-    position: absolute;
+    /* position: absolute;
     width: 1030px;
     height: 651px;
     left: 318px;
     top: 80px;
     background: conic-gradient(from 24.89deg at 50% 50%, #3A2145 -6.85deg, #296265 31.06deg, #000000 109.37deg, #000000 139.56deg, #233949 214.7deg, #000000 244.08deg, #3A2145 353.15deg, #296265 391.06deg);
     filter: blur(40px);
-    z-index: 0;
+    z-index: 0; */
 }
 
 .mainSpace {
