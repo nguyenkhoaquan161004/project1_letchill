@@ -6,7 +6,7 @@ import styles from './ListeningSpace.module.css';
 import songsData from '../../assets/songsData';
 import Playlist from './Playlist';
 
-const ListeningSpace = ({ onInfoButtonClick, onLyricsButtonClick, isRightBarOpen, isLyricsOpen, onChangeSong, onRefreshPlaylists }) => {
+const ListeningSpace = ({ onInfoButtonClick, onLyricsButtonClick, isRightBarOpen, isLyricsOpen, onChangeSong, onRefreshPlaylists, currentSongId }) => {
     const audioPlayer = useRef(null);
     const progressRef = useRef(null);
     const [isPlaying, setIsPlaying] = useState(false);
@@ -36,7 +36,7 @@ const ListeningSpace = ({ onInfoButtonClick, onLyricsButtonClick, isRightBarOpen
     const [infoActive, setInfoActive] = useState(false);
     const [outputActive, setOutputActive] = useState(true); // Mặc định âm thanh bật
 
-    const fetchSongs = async (songId) => {
+    const fetchSongs = useCallback(async (songId) => {
         try {
             console.log("Fetching song information...");
             // Chuyển từ POST sang GET và truyền songId vào URL
@@ -69,38 +69,45 @@ const ListeningSpace = ({ onInfoButtonClick, onLyricsButtonClick, isRightBarOpen
                 { id: 1, name: 'Default Song', artist: 'Unknown Artist', audio: '/path/to/default.mp3' },
             ]);
         }
-    };
+    }, [onChangeSong]);
 
-    const fetchSongInformation = async (songId) => {
-        if (!songId) {
-            console.error('songId is missing or invalid:', songId);
-            return; // Tránh gọi API với giá trị không hợp lệ
+    useEffect(() => {
+        if (currentSongId) {
+            console.log("Current Song ID has changed:", currentSongId);
+            fetchSongs(currentSongId);
         }
+    }, [currentSongId, fetchSongs]);
 
-        try {
-            // Gọi API để lấy thông tin chi tiết về bài hát
-            const response = await axios.get(`http://localhost:4000/api/songInformation/${songId}`);
-            const songData = response.data;
-            console.log('Song information:', songData);
+    // const fetchSongInformation = async (songId) => {
+    //     if (!songId) {
+    //         console.error('songId is missing or invalid:', songId);
+    //         return; // Tránh gọi API với giá trị không hợp lệ
+    //     }
 
-            if (!songData) {
-                throw new Error('No song data returned from API');
-            }
+    //     try {
+    //         // Gọi API để lấy thông tin chi tiết về bài hát
+    //         const response = await axios.get(`http://localhost:4000/api/songInformation/${songId}`);
+    //         const songData = response.data;
+    //         console.log('Song information:', songData);
 
-            setCurrentSongData(songData); // Cập nhật thông tin bài hát
-            setSongs([songData]); // Cập nhật danh sách bài hát (nếu cần)
-            onChangeSong(songId);
-        } catch (error) {
-            console.error('Failed to fetch song information:', error.response ? error.response.data : error.message);
+    //         if (!songData) {
+    //             throw new Error('No song data returned from API');
+    //         }
 
-            setCurrentSongData({
-                image: '/path/to/default-image.jpg',
-                name: 'Unknown Song',
-                artist: 'Unknown Artist',
-                audio: null,
-            });
-        }
-    };
+    //         setCurrentSongData(songData); // Cập nhật thông tin bài hát
+    //         setSongs([songData]); // Cập nhật danh sách bài hát (nếu cần)
+    //         onChangeSong(songId);
+    //     } catch (error) {
+    //         console.error('Failed to fetch song information:', error.response ? error.response.data : error.message);
+
+    //         setCurrentSongData({
+    //             image: '/path/to/default-image.jpg',
+    //             name: 'Unknown Song',
+    //             artist: 'Unknown Artist',
+    //             audio: null,
+    //         });
+    //     }
+    // };
 
     // const fetchRandomSongId = async () => {
     //     try {
