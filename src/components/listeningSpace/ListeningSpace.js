@@ -1,17 +1,26 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect, useCallback } from 'react';
 import clsx from 'clsx';
 import axios from 'axios';
 import { Icon } from '@iconify/react';
 import styles from './ListeningSpace.module.css';
 import songsData from '../../assets/songsData';
+import Playlist from './Playlist';
 
-const ListeningSpace = ({ onInfoButtonClick, onLyricsButtonClick, isRightBarOpen, isLyricsOpen }) => {
+const ListeningSpace = ({ onInfoButtonClick, onLyricsButtonClick, isRightBarOpen, isLyricsOpen, onChangeSong, onRefreshPlaylists }) => {
     const audioPlayer = useRef(null);
     const progressRef = useRef(null);
     const [isPlaying, setIsPlaying] = useState(false);
     const [currentTime, setCurrentTime] = useState('0:00');
     const [duration, setDuration] = useState('0:00');
     const [volume, setVolume] = useState(1);
+    const [isLooping, setIsLooping] = useState(false);
+
+    const [playlists, setPlaylists] = useState([]);
+
+    // Quản lí danh sách phát được chọn để thêm nhạc 
+    const [selectedPlaylists, setSelectedPlaylists] = useState({});
+    // Mở Box thêm bài hát vào danh sách phát
+    const [isAddSongBoxOpen, setIsAddSongBoxOpen] = useState(false);
 
     const [songs, setSongs] = useState([]);
     const [currentSongData, setCurrentSongData] = useState(null);
@@ -42,6 +51,7 @@ const ListeningSpace = ({ onInfoButtonClick, onLyricsButtonClick, isRightBarOpen
             } else {
                 throw new Error('Invalid song data from API');
             }
+            onChangeSong(songId);
         } catch (error) {
             console.error('Error fetching song:', error.response?.data || error.message);
 
@@ -77,6 +87,7 @@ const ListeningSpace = ({ onInfoButtonClick, onLyricsButtonClick, isRightBarOpen
 
             setCurrentSongData(songData); // Cập nhật thông tin bài hát
             setSongs([songData]); // Cập nhật danh sách bài hát (nếu cần)
+            onChangeSong(songId);
         } catch (error) {
             console.error('Failed to fetch song information:', error.response ? error.response.data : error.message);
 
@@ -89,16 +100,16 @@ const ListeningSpace = ({ onInfoButtonClick, onLyricsButtonClick, isRightBarOpen
         }
     };
 
-    const fetchRandomSongId = async () => {
-        try {
-            const response = await axios.get('http://localhost:4000/api/songInformation/random-id');
-            const randomSongId = response.data.id; // ID bài hát ngẫu nhiên từ backend
-            console.log('Random song ID:', randomSongId);
-            await fetchSongInformation(randomSongId); // Lấy thông tin bài hát ngẫu nhiên
-        } catch (error) {
-            console.error('Error fetching random song:', error.response?.data || error.message);
-        }
-    };
+    // const fetchRandomSongId = async () => {
+    //     try {
+    //         const response = await axios.get('http://localhost:4000/api/songInformation/random-id');
+    //         const randomSongId = response.data.id; // ID bài hát ngẫu nhiên từ backend
+    //         console.log('Random song ID:', randomSongId);
+    //         await fetchSongInformation(randomSongId); // Lấy thông tin bài hát ngẫu nhiên
+    //     } catch (error) {
+    //         console.error('Error fetching random song:', error.response?.data || error.message);
+    //     }
+    // };
 
     useEffect(() => {
         if (audioPlayer.current) {
@@ -132,9 +143,8 @@ const ListeningSpace = ({ onInfoButtonClick, onLyricsButtonClick, isRightBarOpen
     const handleNext = async () => {
         try {
             console.log("Fetching a random song ID...");
-            // Gọi API để lấy một ID bài hát ngẫu nhiên
             const response = await axios.get('http://localhost:4000/api/songInformation/');
-            const randomSongId = response.data.id; // ID ngẫu nhiên từ API
+            const randomSongId = response.data.id;
 
             if (!randomSongId) {
                 throw new Error("No song ID returned from API");
@@ -142,8 +152,22 @@ const ListeningSpace = ({ onInfoButtonClick, onLyricsButtonClick, isRightBarOpen
 
             console.log("Random Song ID:", randomSongId);
 
-            // Gọi fetchSongs để lấy thông tin bài hát ngẫu nhiên từ ID
-            await fetchSongs(randomSongId); // Gọi hàm fetchSongs với ID bài hát ngẫu nhiên
+
+            // Pause and reset before loading a new song
+            if (audioPlayer.current) {
+                togglePlay();
+                audioPlayer.current.currentTime = 0;
+            }
+
+            await fetchSongs(randomSongId);
+            onChangeSong(randomSongId);
+
+            if (currentSongData?.audio) {
+                // Start playing the new song after loading
+                togglePlay()
+            } else {
+                console.error('No valid audio source for this song');
+            }
 
         } catch (error) {
             console.error('Error fetching random song:', error.response?.data || error.message);
@@ -151,13 +175,26 @@ const ListeningSpace = ({ onInfoButtonClick, onLyricsButtonClick, isRightBarOpen
     };
 
     const handleBack = async () => {
-        if (songs.length === 0) return; // Nếu không có bài hát, không làm gì
+        if (songs.length === 0) return;
 
-        const prevIndex = currentSongIndex === 0 ? songs.length - 1 : currentSongIndex - 1; // Tính chỉ số bài hát trước
-        setCurrentSongIndex(prevIndex); // Cập nhật chỉ số bài hát hiện tại
+        const prevIndex = currentSongIndex === 0 ? songs.length - 1 : currentSongIndex - 1;
+        setCurrentSongIndex(prevIndex);
 
-        const prevSongId = songs[prevIndex].id; // Lấy ID bài hát trước
-        await fetchSongInformation(prevSongId); // Gọi API để lấy thông tin bài hát
+        const prevSongId = songs[prevIndex].id;
+
+        // Pause and reset before loading a new song
+        if (audioPlayer.current) {
+            togglePlay();
+            audioPlayer.current.currentTime = 0;
+        }
+
+        await fetchSongInformation(prevSongId);
+        onChangeSong(prevSongId);
+
+        // Start playing the new song after loading
+        if (audioPlayer.current) {
+            togglePlay();
+        }
     };
 
 
@@ -224,6 +261,77 @@ const ListeningSpace = ({ onInfoButtonClick, onLyricsButtonClick, isRightBarOpen
         setOutputActive(volumeValue > 0);
     };
 
+    const handleReturn = () => {
+        const audio = audioPlayer.current;
+
+        // Toggle trạng thái lặp
+        const newLoopState = !isLooping;
+        setIsLooping(newLoopState);
+
+        // Cập nhật thuộc tính loop của audio element
+        if (audio) {
+            audio.loop = newLoopState;
+        }
+
+        setReturnActive(!returnActive)
+        if (!newLoopState) {
+            handleNext();
+        }
+
+        console.log(`Looping is now ${newLoopState ? 'enabled' : 'disabled'}`);
+    };
+
+    useEffect(() => {
+        const audio = audioPlayer.current;
+
+        if (audio) {
+            // Khi bài hát kết thúc
+            const handleSongEnd = () => {
+                if (!isLooping) {
+                    handleNext(); // Gọi hàm để chuyển sang bài hát tiếp theo
+                    togglePlay();
+                }
+            };
+
+            audio.addEventListener('ended', handleSongEnd);
+
+            return () => {
+                audio.removeEventListener('ended', handleSongEnd);
+            };
+        }
+    }, [isLooping]);
+
+    const fetchPlaylists = useCallback(async () => {
+        try {
+            const response = await fetch('http://localhost:4000/api/playlist');
+            if (!response.ok) throw new Error("Failed to fetch playlists");
+            const data = await response.json();
+            setPlaylists(data.playlist);
+
+            onRefreshPlaylists(data.playlist);
+        } catch (err) {
+            console.log('Error fetching playlists: ', err);
+        }
+    }, [onRefreshPlaylists]);  // Memoizing fetchPlaylists, including onRefreshPlaylists as a dependency
+
+    useEffect(() => {
+        fetchPlaylists();
+    }, [fetchPlaylists]);
+
+    const handleCheckboxChange = (playlistId) => {
+        setSelectedPlaylists((prev) => ({
+            ...prev,
+            [playlistId]: !prev[playlistId], // Đảo ngược trạng thái
+        }));
+    };
+
+    // Bật tắt Box thêm bài hát vào playlist
+    const handleAddSongButtonClick = () => {
+        setIsAddSongBoxOpen((prev) => !prev);
+    };
+
+    const isAnySelected = Object.values(selectedPlaylists).some((isSelected) => isSelected);
+
     return (
         <div className={styles.listeningSpace}>
             <div className={styles.info}>
@@ -244,8 +352,42 @@ const ListeningSpace = ({ onInfoButtonClick, onLyricsButtonClick, isRightBarOpen
                 </div>
 
 
-                <div className={styles.addToPlaylist}>
+                <div className={styles.addToPlaylist} onClick={handleAddSongButtonClick}>
                     <Icon className={styles.iconAdd} icon="ic:round-plus" />
+                </div>
+
+                <div className={styles.addSongToPlaylistContainer}
+                    style={{
+                        display: isAddSongBoxOpen ? 'flex' : 'none'
+                    }}>
+                    <p className="uiSemibold o75">Thêm bài hát vào danh sách phát</p>
+                    <hr style={{ width: '70%', position: 'relative', left: 0, right: 0, border: "1px solid rgba(255, 255, 255, 0.5)" }} />
+                    <div className={styles.listOfPlaylists}>
+                        {playlists.map((playlist) => (
+                            <div className={styles.itemPlaylistContainer}>
+                                <Playlist
+                                    key={playlist.id}
+                                    playlistId={playlist.id}
+                                    playlistPic={playlist.avtUrl}
+                                    namePlaylist={playlist.name}
+                                    description={playlist.description}></Playlist>
+                                <input
+                                    type='checkbox'
+                                    checked={!!selectedPlaylists[playlist.id]}
+                                    onChange={() => handleCheckboxChange(playlist.id)}></input>
+                            </div>
+
+                        ))}
+                    </div>
+                    <div className={styles.listOfBtns}>
+                        <button
+                            onClick={handleAddSongButtonClick}
+                            className={styles.cancelBtn}>Hủy</button>
+                        {isAnySelected && (
+                            <button className={styles.addBtn}>Thêm</button>
+                        )}
+                    </div>
+
                 </div>
             </div>
 
@@ -276,7 +418,7 @@ const ListeningSpace = ({ onInfoButtonClick, onLyricsButtonClick, isRightBarOpen
                         <Icon className={styles.icon} icon="solar:skip-next-bold" />
                     </button>
 
-                    <button onClick={() => setReturnActive(!returnActive)}>
+                    <button onClick={handleReturn}>
                         <Icon
                             className={clsx(styles.icon, { [styles.iconActive]: returnActive })}
                             icon="icon-park-outline:return"

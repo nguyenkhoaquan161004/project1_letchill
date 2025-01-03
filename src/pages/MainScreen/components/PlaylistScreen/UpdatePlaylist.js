@@ -23,67 +23,39 @@ const UpdatePlaylist = ({ playlistId, isOpen, onClose, onUpdatePlaylist, playlis
             onClose();
     }
 
-    const compressImage = (file, maxWidth = 1000, maxHeight = 1000) => {
-        return new Promise((resolve, reject) => {
-            const img = new Image();
-            const reader = new FileReader();
-
-            reader.onload = () => {
-                img.src = reader.result;
-            };
-
-            img.onload = () => {
-                const canvas = document.createElement('canvas');
-                const ctx = canvas.getContext('2d');
-
-                let { width, height } = img;
-                if (width > maxWidth || height > maxHeight) {
-                    const scaleFactor = Math.min(maxWidth / width, maxHeight / height);
-                    width = width * scaleFactor;
-                    height = height * scaleFactor;
-                }
-
-                canvas.width = width;
-                canvas.height = height;
-                ctx.drawImage(img, 0, 0, width, height);
-
-                const compressedImage = canvas.toDataURL('image/jpeg', 0.8); // Chuyển thành Base64
-                resolve(compressedImage);
-            };
-
-            img.onerror = reject;
-            reader.onerror = reject;
-
-            reader.readAsDataURL(file);
-        });
-    };
-
     const handleImageChange = async (e) => {
         const file = e.target.files[0];
         if (!file) return;
-            const compressedImage = await compressImage(file);
-            const formData = new FormData();
-            formData.append('file', compressedImage);
-            formData.append('upload_preset', 'playlistAvtUrl');  // Đảm bảo bạn đã tạo preset trong Cloudinary
+        const compressedImage = await compressedImage(file);
+        const formData = new FormData();
+        formData.append('file', compressedImage);
+        formData.append('upload_preset', 'playlistAvtUrl');  // Đảm bảo bạn đã tạo preset trong Cloudinary
 
-            try {
-                // Gửi hình ảnh lên Cloudinary
-                const response = await axios.post(
-                    'https://api.cloudinary.com/v1_1/di4kdlfr3/image/upload',
-                    formData
-                );
+        try {
+            // Gửi hình ảnh lên Cloudinary
+            const response = await axios.post(
+                'https://api.cloudinary.com/v1_1/di4kdlfr3/image/upload',
+                formData
+            );
 
-                // Lấy URL của hình ảnh từ Cloudinary
-                const imageUrl = response.data.secure_url;
-                console.log('Image URL:', imageUrl);
+            // Lấy URL của hình ảnh từ Cloudinary
+            const imageUrl = response.data.secure_url;
+            console.log('Image URL:', imageUrl);
 
-                // Lưu hình ảnh vào state
-                setSelectedImage(imageUrl);
-            } catch (error) {
-                console.error('Lỗi khi nén ảnh:', error);
-            }
-        
+            // Lưu hình ảnh vào state
+            setSelectedImage(imageUrl);
+        } catch (error) {
+            console.error('Lỗi khi nén ảnh:', error);
+        }
+
+
+        if (file) {
+            const imageUrl = URL.createObjectURL(file);
+            setSelectedImage(imageUrl);
+        }
     };
+
+
     const handleUpdatePlaylist = async () => {
         if (!playlistId) {
             console.error('Playlist ID không tồn tại.');

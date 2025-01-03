@@ -20,6 +20,7 @@ const MainScreen = memo(() => {
     const [isSearchingScreenOpen, setIsSearchingScreenOpen] = useState(false);
     const [isAccountScreenOpen, setIsAccountScreenOpen] = useState(false);
     const [isPlaylistScreenOpen, setIsPlaylistScreenOpen] = useState(false);
+    const [currentSongId, setCurrentSongId] = useState(null);
 
     const [previousScreen, setPreviousScreen] = useState("home");
 
@@ -166,6 +167,11 @@ const MainScreen = memo(() => {
         }
     };
 
+    const handleSongChange = (songId) => {
+        setCurrentSongId(songId);
+        console.log(currentSongId);
+    }
+
     return (
         <div id={styles.main}>
             <Header
@@ -199,12 +205,17 @@ const MainScreen = memo(() => {
                     </div>
 
                 </div>
-                <RightBar isOpen={isRightBarOpen} onClose={handleCloseRightBar}></RightBar>
+                <RightBar
+                    isOpen={isRightBarOpen}
+                    onClose={handleCloseRightBar}
+                    songId={currentSongId}></RightBar>
             </div>
             <ListeningSpace
                 onInfoButtonClick={toggleRightBar}
                 isRightBarOpen={isRightBarOpen}
                 isLyricsOpen={isLyricsScreenOpen}
+                onChangeSong={handleSongChange}
+                onRefreshPlaylists={fetchPlaylists}
                 onLyricsButtonClick={toggleLyricsScreen}></ListeningSpace>
             <div className={styles.graBG}></div>
         </div>

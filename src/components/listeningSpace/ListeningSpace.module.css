@@ -186,3 +186,88 @@
     border-radius: 5px;
     cursor: pointer;
 }
+
+/* ITEM PLAYLIST */
+.infoSong {
+    display: flex;
+    flex-direction: column;
+}
+
+.itemContainer img {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    object-fit: cover;
+}
+
+.itemContainer p {
+    text-wrap: nowrap;
+}
+
+.itemContainer {
+    display: flex;
+    gap: 6px;
+    border-top-left-radius: 12px;
+    border-bottom-left-radius: 12px;
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+    align-items: center;
+}
+
+.itemContainer:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.addSongToPlaylistContainer {
+    display: flex;
+    flex-direction: column;
+    width: 300px;
+    height: fit-content;
+    position: absolute;
+    align-items: center;
+    gap: 2px;
+    padding: 4px 4px;
+    background-color: #000;
+    border-radius: 6px;
+    top: -44px;
+    margin-left: 67px;
+    z-index: 1;
+}
+
+.itemPlaylistContainer {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+}
+
+.listOfBtns {
+    display: flex;
+    gap: 6px;
+    width: 100%;
+    justify-content: end;
+}
+
+.listOfBtns button {
+    padding: 4px 10px;
+    border-radius: 2px;
+}
+
+.listeningSpace .cancelBtn {
+    background-color: #000;
+    color: rgba(255, 255, 255, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.listeningSpace .cancelBtn:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.listeningSpace .addBtn {
+    background-color: rgba(255, 255, 255, 0.7);
+    color: #000;
+    border: none;
+}
+
+.listeningSpace .addBtn:hover {
+    background-color: #ffffff;
+}

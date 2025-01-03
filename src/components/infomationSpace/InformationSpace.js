@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from '../infomationSpace/InformationSpace.module.css'
 import clsx from 'clsx';
 import { Icon } from '@iconify/react';
 import Comment from './components/Comment/Comment';
 import CommentBox from './components/CommentBox/CommentBox.js';
 
-const InformationSpace = ({ isOpen, onClose }) => {
+const InformationSpace = ({ isOpen, onClose, songId }) => {
+    const [songData, setSongData] = useState([]);
 
     const ratings = [
         { name: 'Nguyen Khoa Quan', stars: 3, comment: 'good' },
@@ -20,6 +21,32 @@ const InformationSpace = ({ isOpen, onClose }) => {
     const handleCloseCommentBox = () => {
         setIsCommentBoxOpen(false);
     }
+
+    useEffect(() => {
+        const fetchData = async () => {
+            if (!songId) return; // Bỏ qua nếu songId không tồn tại
+
+            try {
+                console.log('Fetching song with ID:', songId);
+
+                const response = await fetch(`http://localhost:4000/api/songInformation/${songId}`);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json(); // Chuyển đổi phản hồi thành JSON
+                setSongData(data); // Lưu dữ liệu vào state
+
+                console.log('Fetched song data:', data);
+            } catch (err) {
+                console.error('Error fetching song information:', err.message);
+            }
+        };
+
+        fetchData();
+    }, [songId]);
+
 
     return (
         <div
@@ -42,23 +69,23 @@ const InformationSpace = ({ isOpen, onClose }) => {
                 <main>
                     <div className={styles.infoSong}>
                         <img
-                            src="https://upload.wikimedia.org/wikipedia/en/0/0d/Taylor_Swift_-_I_Can_Do_It_With_a_Broken_Heart.png"
+                            src={songData.image}
                             alt="songPic"
                             className={styles.songPic}></img>
 
                         <div className={styles.nameAndSinger}>
-                            <h4>I can do it with the broken heart</h4>
-                            <p className={clsx('p3', 'o75')}>Taylor Swift</p>
+                            <h4>{songData.name}</h4>
+                            <p className={clsx('p3', 'o75')}>{songData.artist}</p>
                         </div>
 
                         <div className={styles.authorName}>
                             <p className='uiRegular'>Thể loại</p>
-                            <h5>Pop</h5>
+                            <h5>{songData.genre}</h5>
                         </div>
 
                         <div className={styles.authorName}>
                             <p className='uiRegular'>Nhạc sĩ</p>
-                            <h5>Taylor Swift</h5>
+                            <h5>{songData.composer}</h5>
                         </div>
 
                         <div className={styles.rating} onClick={handleOnClickShowAllCommentButton}>
@@ -86,7 +113,7 @@ const InformationSpace = ({ isOpen, onClose }) => {
                             </div>
 
                             <div className={styles.authorName}>
-                                <h4 className={styles.active}>Taylor Swift</h4>
+                                <h4 className={styles.active}>{songData.artist}</h4>
                                 <button className='uiRegular'>Theo dõi</button>
                             </div>
                         </div>
