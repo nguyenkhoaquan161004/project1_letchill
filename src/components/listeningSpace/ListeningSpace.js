@@ -42,8 +42,6 @@ const ListeningSpace = ({ onInfoButtonClick, onLyricsButtonClick, isRightBarOpen
             // Chuyển từ POST sang GET và truyền songId vào URL
             const response = await axios.get(`http://localhost:4000/api/songInformation/${songId}`);
 
-            console.log('Fetched song:', response.data);
-
             if (response.data && response.data.name) {
                 console.log('Fetched song:', response.data);
                 setCurrentSongData(response.data);

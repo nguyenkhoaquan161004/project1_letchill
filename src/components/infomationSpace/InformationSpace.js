@@ -27,7 +27,6 @@ const InformationSpace = ({ isOpen, onClose, songId }) => {
             if (!songId) return; // Bỏ qua nếu songId không tồn tại
 
             try {
-                console.log('Fetching song with ID:', songId);
 
                 const response = await fetch(`http://localhost:4000/api/songInformation/${songId}`);
 
@@ -38,7 +37,6 @@ const InformationSpace = ({ isOpen, onClose, songId }) => {
                 const data = await response.json(); // Chuyển đổi phản hồi thành JSON
                 setSongData(data); // Lưu dữ liệu vào state
 
-                console.log('Fetched song data:', data);
             } catch (err) {
                 console.error('Error fetching song information:', err.message);
             }

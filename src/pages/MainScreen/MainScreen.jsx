@@ -172,7 +172,6 @@ const MainScreen = memo(() => {
 
     const handleSongChange = (songId) => {
         setCurrentSongId(songId);
-        console.log(currentSongId);
     }
 
     // Xử lý search 
