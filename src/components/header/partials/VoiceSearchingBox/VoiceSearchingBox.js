@@ -3,7 +3,7 @@ import styles from './VoiceSearchingBox.module.css';
 import { InlineIcon } from '@iconify/react/dist/iconify.js';
 import clsx from 'clsx';
 
-const VoiceSearchingBox = ({ isOpen, onClose }) => {
+const VoiceSearchingBox = ({ isOpen, onClose, onSearchInput }) => {
     const [isActive, setIsActive] = useState(false);
     const [transcript, setTranscript] = useState('');
     const [isListening, setIsListening] = useState(false);
@@ -51,7 +51,11 @@ const VoiceSearchingBox = ({ isOpen, onClose }) => {
         recognition.onend = () => {
             setIsListening(false);
             setIsActive(false);
-            console.log('Kết thuốc nhận giọng nói')
+            console.log('Kết thúc nhận giọng nói')
+            if (transcript.trim()) {
+                onSearchInput(transcript); // Truyền giá trị `transcript` về MainScreen
+            }
+            onClose();
         };
 
         recognition.onerror = (e) => {

@@ -339,7 +339,7 @@ const ListeningSpace = ({ onInfoButtonClick, onLyricsButtonClick, isRightBarOpen
 
         try {
             const response = await axios.post(`http://localhost:4000/api/playlistDetail/${selectedPlaylistIds}`, {
-                playlistIds: selectedPlaylistIds,
+                playlistId: selectedPlaylistIds,
                 songId: currentSongData.id,
             });
             console.log("Song added to playlists:", response.data);

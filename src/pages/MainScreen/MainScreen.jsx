@@ -22,6 +22,9 @@ const MainScreen = memo(() => {
     const [isPlaylistScreenOpen, setIsPlaylistScreenOpen] = useState(false);
     const [currentSongId, setCurrentSongId] = useState(null);
 
+    // Nhận dữ liệu khi nhập tìm kiếm
+    const [isSearchQuery, setIsSearchQuery] = useState("");
+
     const [previousScreen, setPreviousScreen] = useState("home");
 
     const [playlists, setPlaylists] = useState([]);
@@ -172,12 +175,36 @@ const MainScreen = memo(() => {
         console.log(currentSongId);
     }
 
+    // Xử lý search 
+    const handleSearchQueryChange = (query) => {
+        setIsSearchQuery(query);
+        console.log(isSearchQuery);
+    }
+
+    const handleSearchSongs = async (query) => {
+        try {
+            const response = await fetch('http://localhost:4000/api/search', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ query }),
+            });
+
+            return response;
+        } catch (error) {
+            console.error('Error calling search API:', error);
+            return null;
+        }
+    }
+
     return (
         <div id={styles.main}>
             <Header
                 isOpen={isHomeScreenOpen}
                 onLogoAndHomeButtonClick={toggleHomeScreen}
                 onSearchingSpaceClick={toggleSearchingScreen}
+                onSearchInput={handleSearchQueryChange}
                 onAccountButtonClick={toggleAccountScreen}></Header>
             <div className={clsx(styles.mainContainer)}>
                 <LeftBar
@@ -190,7 +217,10 @@ const MainScreen = memo(() => {
                     <div className={styles.mainContainer}>
                         <HomeScreen isOpen={isHomeScreenOpen}></HomeScreen>
                         <LyricsScreen isOpen={isLyricsScreenOpen}></LyricsScreen>
-                        <SearchingScreen isOpen={isSearchingScreenOpen}></SearchingScreen>
+                        <SearchingScreen
+                            isOpen={isSearchingScreenOpen}
+                            searchQuery={isSearchQuery}
+                            onSearch={handleSearchSongs}></SearchingScreen>
                         <AccountScreen isOpen={isAccountScreenOpen}></AccountScreen>
                         {selectedPlaylist && (
                             <PlaylistScreen
