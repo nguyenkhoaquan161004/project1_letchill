@@ -7,10 +7,11 @@ import UpdatePlaylist from './UpdatePlaylist';
 import { useNavigate } from 'react-router-dom';
 import favoritePlaylist from '../../../../components/librarySpace/assets/favoritePlaylist.svg';
 
-const PlaylistScreen = ({ isOpen, playlistId, comebackHome, onDeletePlaylist, onRefreshPlaylists }) => {
+const PlaylistScreen = ({ isOpen, playlistId, comebackHome, onDeletePlaylist, onCurrentSongId }) => {
     const [isPlaying, setIsPlaying] = useState(false);
     const [isOptionsOpen, setIsOptionsOpen] = useState(false);
     const [isUpdatePlaylistOpen, setIsUpdatePlaylistOpen] = useState(false);
+    const [songsData, setSongsData] = useState([]);
 
     const [updateName, setUpdateName] = useState('');
     const [updateDescription, setUpdateDescription] = useState('');
@@ -34,74 +35,74 @@ const PlaylistScreen = ({ isOpen, playlistId, comebackHome, onDeletePlaylist, on
 
     const nav = useNavigate();
 
-    const songsData = [
-        {
-            cover: 'https://images.genius.com/9420386437e633e438609a4ab103fc37.1000x1000x1.jpg', // Đường dẫn ảnh cho bài hát
-            title: 'What a wonderful world',
-            artist: 'The Macarons Project',
-            dateAdded: '10/12/2024'
-        },
-        {
-            cover: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTrQBBWXUdsLOf207iiGhMTJU_7Zu-n8fFhfQ&s',
-            title: 'Oh, Santa',
-            artist: 'Mariah Carey ft. Ariana Grande, Jennifer Hudson',
-            dateAdded: '10/12/2024'
-        },
-        {
-            cover: 'https://www.boilerroomrecords.co.uk/cdn/shop/files/783f7ad7e57d5a07829ae62679f2037f.png?v=1727176454',
-            title: 'All I want for Christmas is you',
-            artist: 'Mariah Carey',
-            dateAdded: '10/12/2024'
-        },
-        {
-            cover: 'https://upload.wikimedia.org/wikipedia/vi/c/c0/Ariana_Grande_-_Santa_Tell_Me.png',
-            title: 'Santa tell me',
-            artist: 'Ariana Grande',
-            dateAdded: '10/12/2024'
-        },
-        {
-            cover: 'https://images.genius.com/f9680e3c876e1466fa1d240e8b7609c9.1000x1000x1.png',
-            title: 'Last Christmas',
-            artist: 'Wham!',
-            dateAdded: '10/12/2024'
-        },
-        {
-            cover: 'https://www.rap-up.com/article/2013/11/18/media_1f9c55f3c63264b4dbc6b054f854c9c82c6c28a3d.jpeg?width=1200&format=pjpg&optimize=medium',
-            title: 'Last Christmas',
-            artist: 'Ariana Grande',
-            dateAdded: '10/12/2024'
-        },
-        {
-            cover: 'https://upload.wikimedia.org/wikipedia/en/b/b5/Kelly_Clarkson_and_Ariana_Grande_-_Santa_Can%27t_You_Hear_Me_single_cover.jpeg',
-            title: 'Santa, can you hear me?',
-            artist: 'Kelly Clarkson & Ariana Grande',
-            dateAdded: '10/12/2024'
-        },
-        {
-            cover: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS85z2xwMS5z2akyjYwO-BWjhlidHZNpbAf_A&s',
-            title: 'Snowman',
-            artist: 'Sia',
-            dateAdded: '10/12/2024'
-        },
-        {
-            cover: 'https://i.discogs.com/vYJJiQAJPGaXuk09Zrny8eg6TG76R60Yu8Vh2LhnEew/rs:fit/g:sm/q:90/h:600/w:600/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTI1NTUz/NTQ1LTE2NzE4NjA4/MjctOTYxMy5qcGVn.jpeg',
-            title: 'Save your tears',
-            artist: 'The Weeknd ft. Ariana Grande',
-            dateAdded: '10/12/2024'
-        },
-        {
-            cover: 'https://avatar-ex-swe.nixcdn.com/song/2024/03/28/7/1/b/e/1711632303247_640.jpg',
-            title: 'Too Sweet',
-            artist: 'Hozier',
-            dateAdded: '10/12/2024'
-        },
-        {
-            cover: 'https://i.scdn.co/image/ab67616d00001e02db6ed492fdc27def8f979263',
-            title: 'Honeymoon Avenue (Live from London)',
-            artist: 'Ariana Grande',
-            dateAdded: '10/12/2024'
-        }
-    ];
+    // const songsData = [
+    //     {
+    //         cover: 'https://images.genius.com/9420386437e633e438609a4ab103fc37.1000x1000x1.jpg', // Đường dẫn ảnh cho bài hát
+    //         title: 'What a wonderful world',
+    //         artist: 'The Macarons Project',
+    //         dateAdded: '10/12/2024'
+    //     },
+    //     {
+    //         cover: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTrQBBWXUdsLOf207iiGhMTJU_7Zu-n8fFhfQ&s',
+    //         title: 'Oh, Santa',
+    //         artist: 'Mariah Carey ft. Ariana Grande, Jennifer Hudson',
+    //         dateAdded: '10/12/2024'
+    //     },
+    //     {
+    //         cover: 'https://www.boilerroomrecords.co.uk/cdn/shop/files/783f7ad7e57d5a07829ae62679f2037f.png?v=1727176454',
+    //         title: 'All I want for Christmas is you',
+    //         artist: 'Mariah Carey',
+    //         dateAdded: '10/12/2024'
+    //     },
+    //     {
+    //         cover: 'https://upload.wikimedia.org/wikipedia/vi/c/c0/Ariana_Grande_-_Santa_Tell_Me.png',
+    //         title: 'Santa tell me',
+    //         artist: 'Ariana Grande',
+    //         dateAdded: '10/12/2024'
+    //     },
+    //     {
+    //         cover: 'https://images.genius.com/f9680e3c876e1466fa1d240e8b7609c9.1000x1000x1.png',
+    //         title: 'Last Christmas',
+    //         artist: 'Wham!',
+    //         dateAdded: '10/12/2024'
+    //     },
+    //     {
+    //         cover: 'https://www.rap-up.com/article/2013/11/18/media_1f9c55f3c63264b4dbc6b054f854c9c82c6c28a3d.jpeg?width=1200&format=pjpg&optimize=medium',
+    //         title: 'Last Christmas',
+    //         artist: 'Ariana Grande',
+    //         dateAdded: '10/12/2024'
+    //     },
+    //     {
+    //         cover: 'https://upload.wikimedia.org/wikipedia/en/b/b5/Kelly_Clarkson_and_Ariana_Grande_-_Santa_Can%27t_You_Hear_Me_single_cover.jpeg',
+    //         title: 'Santa, can you hear me?',
+    //         artist: 'Kelly Clarkson & Ariana Grande',
+    //         dateAdded: '10/12/2024'
+    //     },
+    //     {
+    //         cover: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS85z2xwMS5z2akyjYwO-BWjhlidHZNpbAf_A&s',
+    //         title: 'Snowman',
+    //         artist: 'Sia',
+    //         dateAdded: '10/12/2024'
+    //     },
+    //     {
+    //         cover: 'https://i.discogs.com/vYJJiQAJPGaXuk09Zrny8eg6TG76R60Yu8Vh2LhnEew/rs:fit/g:sm/q:90/h:600/w:600/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTI1NTUz/NTQ1LTE2NzE4NjA4/MjctOTYxMy5qcGVn.jpeg',
+    //         title: 'Save your tears',
+    //         artist: 'The Weeknd ft. Ariana Grande',
+    //         dateAdded: '10/12/2024'
+    //     },
+    //     {
+    //         cover: 'https://avatar-ex-swe.nixcdn.com/song/2024/03/28/7/1/b/e/1711632303247_640.jpg',
+    //         title: 'Too Sweet',
+    //         artist: 'Hozier',
+    //         dateAdded: '10/12/2024'
+    //     },
+    //     {
+    //         cover: 'https://i.scdn.co/image/ab67616d00001e02db6ed492fdc27def8f979263',
+    //         title: 'Honeymoon Avenue (Live from London)',
+    //         artist: 'Ariana Grande',
+    //         dateAdded: '10/12/2024'
+    //     }
+    // ];
 
     const countPlaylist = songsData.length;
 
@@ -131,6 +132,8 @@ const PlaylistScreen = ({ isOpen, playlistId, comebackHome, onDeletePlaylist, on
             const data = await response.json();
             const foundPlaylist = data.playlist.find(playlist => playlist.id === playlistId);
             setPlaylistData(foundPlaylist || { name: 'Danh sách yêu thích', avtUrl: favoritePlaylist });  // Đảm bảo xử lý cho 'favorite'
+            setSongsData(foundPlaylist.songs || []); // Giả định API trả về danh sách bài hát trong `songs`
+            console.log(songsData)
         } catch (err) {
             console.error('Error fetching playlist data:', err);
             alert('An error occurred while fetching the playlist data.');
@@ -163,12 +166,6 @@ const PlaylistScreen = ({ isOpen, playlistId, comebackHome, onDeletePlaylist, on
         setIsOptionsOpen(false);
         setIsModalOpen(false);
         setPlaylistId(null);
-    }
-
-    const handleEditClick = (id) => {
-        setPlaylistId(id);
-        console.log(id);
-        setIsModalOpen(true);
     }
 
     const handleSaveChanges = (updatedPlaylist) => {
@@ -276,22 +273,26 @@ const PlaylistScreen = ({ isOpen, playlistId, comebackHome, onDeletePlaylist, on
             </header>
 
             <main>
-                {songsData.map((playlist, index) => {
-                    return (
-                        <div key={index}
+                {songsData.length > 0 ? (
+                    songsData.map((song, index) => (
+                        <div
+                            key={song.id}
                             className={styles.itemPlaylistContainer}
-                            style={{ padding: "8px 12px", borderRadius: 8 }}
-                            onClick={() => handleEditClick(playlist.id)}
+                            style={{ padding: '8px 12px', borderRadius: 8 }}
+                            onClick={() => onCurrentSongId(song.id)}
                         >
                             <PlaylistItem
                                 index={index + 1}
-                                cover={playlist.cover}
-                                title={playlist.title}
-                                artist={playlist.artist}
-                                dateAdded={playlist.dateAdded}></PlaylistItem>
+                                cover={song.cover}
+                                title={song.title}
+                                artist={song.artist}
+                                dateAdded={song.dateAdded}
+                            />
                         </div>
-                    )
-                })}
+                    ))
+                ) : (
+                    <p className={styles.noSongsMessage}>Danh sách phát hiện không có bài hát.</p>
+                )}
             </main>
 
             <UpdatePlaylist

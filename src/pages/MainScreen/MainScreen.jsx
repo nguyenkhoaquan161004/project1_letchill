@@ -227,6 +227,7 @@ const MainScreen = memo(() => {
                                 isOpen={isPlaylistScreenOpen}
                                 playlistId={selectedPlaylist}
                                 comebackHome={toggleHomeScreen}
+                                onCurrentSongId={handleSongChange}
                                 onUpdatePlaylist={handleUpdatePlaylist}
                                 onRefreshPlaylists={handleRefreshPlaylists}
                                 onDeletePlaylist={handleDeletePlaylist}></PlaylistScreen>
@@ -244,6 +245,7 @@ const MainScreen = memo(() => {
                 onInfoButtonClick={toggleRightBar}
                 isRightBarOpen={isRightBarOpen}
                 isLyricsOpen={isLyricsScreenOpen}
+                currentSongId={currentSongId}
                 onChangeSong={handleSongChange}
                 onRefreshPlaylists={fetchPlaylists}
                 onLyricsButtonClick={toggleLyricsScreen}></ListeningSpace>
