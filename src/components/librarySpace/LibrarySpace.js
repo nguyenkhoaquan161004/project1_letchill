@@ -20,7 +20,9 @@ const LibrarySpace = ({ onSelectedPlaylist, playlistsData, onRefreshPlaylists })
 
     const fetchPlaylists = useCallback(async () => {
         try {
-            const response = await fetch('http://localhost:4000/api/playlist');
+            const response = await fetch('http://localhost:4000/api/playlist',{
+                method: 'GET',
+            });
             if (!response.ok) throw new Error("Failed to fetch playlists");
             const data = await response.json();
             setPlaylists(data.playlist);
