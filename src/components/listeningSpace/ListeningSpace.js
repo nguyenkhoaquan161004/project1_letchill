@@ -330,6 +330,28 @@ const ListeningSpace = ({ onInfoButtonClick, onLyricsButtonClick, isRightBarOpen
         setIsAddSongBoxOpen((prev) => !prev);
     };
 
+    const addSongToPlaylist = async () => {
+        const selectedPlaylistIds = Object.keys(selectedPlaylists).filter((id) => selectedPlaylists[id]);
+        if (selectedPlaylistIds.length === 0 || currentSongData?.id) {
+            console.error('No playlist selected or no song is playing');
+            return;
+        }
+
+        try {
+            const response = await axios.post(`http://localhost:4000/api/playlistDetail/${selectedPlaylistIds}`, {
+                playlistIds: selectedPlaylistIds,
+                songId: currentSongData.id,
+            });
+            console.log("Song added to playlists:", response.data);
+            alert("Bài hát đã được thêm vào các danh sách phát thành công!");
+            setSelectedPlaylists({}); // Reset trạng thái chọn
+            setIsAddSongBoxOpen(false); // Đóng box
+        } catch (error) {
+            console.error("Failed to add song to playlists:", error.response?.data || error.message);
+            alert("Không thể thêm bài hát vào danh sách phát.");
+        }
+    }
+
     const isAnySelected = Object.values(selectedPlaylists).some((isSelected) => isSelected);
 
     return (
@@ -383,9 +405,9 @@ const ListeningSpace = ({ onInfoButtonClick, onLyricsButtonClick, isRightBarOpen
                         <button
                             onClick={handleAddSongButtonClick}
                             className={styles.cancelBtn}>Hủy</button>
-                        {isAnySelected && (
-                            <button className={styles.addBtn}>Thêm</button>
-                        )}
+                        {/* {isAnySelected && ( */}
+                        <button className={styles.addBtn} onClick={addSongToPlaylist}>Thêm</button>
+                        {/* )} */}
                     </div>
 
                 </div>
