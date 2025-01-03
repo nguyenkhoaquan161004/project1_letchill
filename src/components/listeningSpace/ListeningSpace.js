@@ -312,7 +312,9 @@ const ListeningSpace = ({ onInfoButtonClick, onLyricsButtonClick, isRightBarOpen
 
     const fetchPlaylists = useCallback(async () => {
         try {
-            const response = await fetch('http://localhost:4000/api/playlist');
+            const response = await fetch('http://localhost:4000/api/playlist',{
+                method: 'GET',
+            });
             if (!response.ok) throw new Error("Failed to fetch playlists");
             const data = await response.json();
             setPlaylists(data.playlist);
@@ -341,14 +343,14 @@ const ListeningSpace = ({ onInfoButtonClick, onLyricsButtonClick, isRightBarOpen
 
     const addSongToPlaylist = async () => {
         const selectedPlaylistIds = Object.keys(selectedPlaylists).filter((id) => selectedPlaylists[id]);
-        if (selectedPlaylistIds.length === 0 || currentSongData?.id) {
+        if (selectedPlaylistIds.length === 0 || !currentSongData.id) {
             console.error('No playlist selected or no song is playing');
             return;
         }
 
         try {
-            const response = await axios.post(`http://localhost:4000/api/playlistDetail/${selectedPlaylistIds}`, {
-                playlistId: selectedPlaylistIds,
+            const response = await axios.patch(`http://localhost:4000/api/playlistDetail/${selectedPlaylistIds}`, {
+                playlistIds: selectedPlaylistIds,
                 songId: currentSongData.id,
             });
             console.log("Song added to playlists:", response.data);
@@ -423,7 +425,7 @@ const ListeningSpace = ({ onInfoButtonClick, onLyricsButtonClick, isRightBarOpen
             </div>
 
             <div className={styles.musicPlayer}>
-                <audio ref={audioPlayer} src={currentSongData?.audio || ''} />
+                <audio ref={audioPlayer} src={currentSongData?.audio} />
 
 
                 <div className={styles.controlbar}>
