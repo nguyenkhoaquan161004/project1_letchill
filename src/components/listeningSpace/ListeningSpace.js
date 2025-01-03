@@ -25,6 +25,7 @@ const ListeningSpace = ({ onInfoButtonClick, onLyricsButtonClick, isRightBarOpen
     const [songs, setSongs] = useState([]);
     const [currentSongData, setCurrentSongData] = useState(null);
     const [currentSongIndex, setCurrentSongIndex] = useState(0);
+    const [songHistory, setSongHistory] = useState([]);
     const currentSong = songsData[currentSongIndex];
 
 
@@ -46,6 +47,7 @@ const ListeningSpace = ({ onInfoButtonClick, onLyricsButtonClick, isRightBarOpen
             if (response.data && response.data.name) {
                 console.log('Fetched song:', response.data);
                 setCurrentSongData(response.data);
+                setSongHistory((prev) => [...prev, songId]);
                 // Nếu cần thêm bài hát vào danh sách
                 setSongs([response.data]);
             } else {
@@ -175,25 +177,27 @@ const ListeningSpace = ({ onInfoButtonClick, onLyricsButtonClick, isRightBarOpen
     };
 
     const handleBack = async () => {
-        if (songs.length === 0) return;
-
-        const prevIndex = currentSongIndex === 0 ? songs.length - 1 : currentSongIndex - 1;
-        setCurrentSongIndex(prevIndex);
-
-        const prevSongId = songs[prevIndex].id;
-
-        // Pause and reset before loading a new song
-        if (audioPlayer.current) {
-            togglePlay();
-            audioPlayer.current.currentTime = 0;
+        if (songHistory.length <= 1) {
+            console.log("No previous song in history.");
+            return;
         }
 
-        await fetchSongInformation(prevSongId);
-        onChangeSong(prevSongId);
+        // Lấy bài hát trước đó từ lịch sử và cập nhật lại lịch sử
+        const prevHistory = [...songHistory];
+        prevHistory.pop(); // Xóa bài hát hiện tại
+        const prevSongId = prevHistory[prevHistory.length - 1];
+        setSongHistory(prevHistory);
 
-        // Start playing the new song after loading
-        if (audioPlayer.current) {
+        try {
+            // Phát bài hát trước đó
+            await fetchSongs(prevSongId);
+            if (audioPlayer.current) {
+                audioPlayer.current.currentTime = 0;
+            }
+
             togglePlay();
+        } catch (error) {
+            console.error('Error playing previous song:', error.response?.data || error.message);
         }
     };
 

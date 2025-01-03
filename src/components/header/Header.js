@@ -6,7 +6,8 @@ import clsx from 'clsx';
 import logo from '../../assets/logo_doan1.svg';
 import VoiceSearchingBox from './partials/VoiceSearchingBox/VoiceSearchingBox';
 
-const Header = memo(({ onLogoAndHomeButtonClick, onSearchingSpaceClick, onAccountButtonClick }) => {
+const Header = memo(({ onLogoAndHomeButtonClick, onSearchingSpaceClick, onAccountButtonClick, onSearchInput }) => {
+
     const navigate = useNavigate();
     const [isVoiceSearchingBoxOpen, setIsVoiceSearchingBoxOpen] = useState(false);
 
@@ -34,6 +35,9 @@ const Header = memo(({ onLogoAndHomeButtonClick, onSearchingSpaceClick, onAccoun
                         <input
                             type="text"
                             placeholder='Tìm kiếm nội dung của bạn'
+                            onChange={(e) => {
+                                onSearchInput(e.target.value)
+                            }}
                             onClick={onSearchingSpaceClick}></input>
                     </div>
                     <button>
@@ -55,6 +59,7 @@ const Header = memo(({ onLogoAndHomeButtonClick, onSearchingSpaceClick, onAccoun
                 </div>
             </div>
             <VoiceSearchingBox
+                onSearchInput={onSearchInput}
                 isOpen={isVoiceSearchingBoxOpen}
                 onClose={handleCloseVoiceSearching} />
         </div>
