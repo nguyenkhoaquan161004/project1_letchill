@@ -8,7 +8,7 @@ const Playlist = ({ playlistPic, namePlaylist, onSelectedPlaylist }) => {
             <img src={playlistPic} alt='picSong'></img>
             <div className={styles.infoSong}>
                 <p className='uiSemibold' style={{ fontSize: 12 }}>
-                    {namePlaylist.length > 20 ? `${namePlaylist.substring(0, 20)}...` : namePlaylist}</p>
+                    </p>
                 <p className={clsx('uiRegular', 'o50')} style={{ fontSize: 10 }}>Playlist</p>
             </div>
         </div>

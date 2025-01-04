@@ -46,15 +46,14 @@ const VoiceSearchingBox = ({ isOpen, onClose, onSearchInput }) => {
             const speechToText = e.results[0][0].transcript;
             setTranscript(speechToText);
             console.log('Văn bản: ', speechToText);
+            onSearchInput(speechToText);
         };
 
         recognition.onend = () => {
             setIsListening(false);
             setIsActive(false);
             console.log('Kết thúc nhận giọng nói')
-            if (transcript.trim()) {
-                onSearchInput(transcript); // Truyền giá trị `transcript` về MainScreen
-            }
+
             setTimeout(() => {
                 onClose();
             }, 3000); // Gọi onClose sau 3 giây

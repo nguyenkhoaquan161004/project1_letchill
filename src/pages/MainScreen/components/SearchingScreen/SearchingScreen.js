@@ -6,7 +6,6 @@ import clsx from 'clsx';
 const SearchingScreen = ({ isOpen, namePlaylist, searchQuery, onSearch }) => {
     const [searchResults, setSearchResults] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
-    const [haveSearchResults, setHaveSearchResults] = useState(false);
 
     useEffect(() => {
         if (searchQuery.trim() === '') {
@@ -29,7 +28,12 @@ const SearchingScreen = ({ isOpen, namePlaylist, searchQuery, onSearch }) => {
                 if (response.ok) {
                     const data = await response.json(); // Parse kết quả JSON
                     console.log('Search results:', data); // In kết quả tìm kiếm ra console
-                    setSearchResults(data);
+                    if (Array.isArray(data)) {
+                        setSearchResults(data); // Chỉ đặt nếu là mảng
+                    } else {
+                        console.error('API did not return an array:', data);
+                        setSearchResults([]); // Xử lý fallback
+                    }
                 } else if (response.status === 404) {
                     console.warn('No songs found for the query.');
                     setSearchResults([]); // Trả về mảng rỗng nếu không tìm thấy bài hát
@@ -69,23 +73,23 @@ const SearchingScreen = ({ isOpen, namePlaylist, searchQuery, onSearch }) => {
                 <ItemOfHistory /> : (
                     <div className={styles.resultSearchContainer}>
                         {isLoading && <p>Đang tìm kiếm...</p>}
-                        {!isLoading && searchResults.length === 0 && <p>Không tìm thấy kết quả cho tự khóa "{searchQuery}"</p>}
-                        {!isLoading && searchResults.map((song, index) => (
-                            <div key={song.id} className={styles.itemResult}>
-                                <div className={styles.itemContainer}>
-                                    <img src={song.image || ''} alt="picSong" />
-                                    <div className={styles.infoSong}>
-                                        <p className="uiSemibold" style={{ fontSize: 18, letterSpacing: 2 }}>
-                                            {song.name.length > 20 ? `${song.name.substring(0, 20)}...` : song.name}
-                                        </p>
-                                        <p className={clsx('uiRegular', 'o50')} style={{ fontSize: 12 }}>
-                                            {song.artist}
-                                        </p>
+                        {!isLoading && Array.isArray(searchResults) && searchResults.length === 0 ? <p>Không tìm thấy kết quả cho tự khóa "{searchQuery}"</p>
+                            : searchResults.map((song, index) => (
+                                <div key={song.id} className={styles.itemResult}>
+                                    <div className={styles.itemContainer}>
+                                        <img src={song.image || ''} alt="picSong" />
+                                        <div className={styles.infoSong}>
+                                            <p className="uiSemibold" style={{ fontSize: 18, letterSpacing: 2 }}>
+                                                {song.name.length > 20 ? `${song.name.substring(0, 20)}...` : song.name}
+                                            </p>
+                                            <p className={clsx('uiRegular', 'o50')} style={{ fontSize: 12 }}>
+                                                {song.artist}
+                                            </p>
+                                        </div>
                                     </div>
+                                    <p className={clsx('uiRegular', 'o50')} style={{ fontSize: 14 }}>{song.releaseDate}</p>
                                 </div>
-                                <p className={clsx('uiRegular', 'o50')} style={{ fontSize: 14 }}>{song.releaseDate}</p>
-                            </div>
-                        ))}
+                            ))}
                     </div>
                 )}
 

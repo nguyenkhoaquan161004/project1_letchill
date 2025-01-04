@@ -44,15 +44,16 @@ const ListeningSpace = ({ onInfoButtonClick, onLyricsButtonClick, isRightBarOpen
 
         try {
             console.log("Fetching song information for ID:", songId);
-            const response = await axios.get(`http://localhost:4000/api/songInformation/${songId}`);
+            const response = await fetch (`http://localhost:4000/api/songInformation/${songId}`);
 
-            if (response.data && response.data.name) {
-                console.log("Fetched song data:", response.data);
+            const data = await response.json();
+            if (data && data.name) {
+                console.log("Fetched song data:", data);
 
                 // Chỉ cập nhật nếu cần thiết
                 setCurrentSongData((prevData) => {
-                    if (prevData?.id === response.data.id) return prevData; // Không thay đổi nếu giống nhau
-                    return response.data;
+                    if (prevData?.id === data.id) return prevData; // Không thay đổi nếu giống nhau
+                    return data;
                 });
 
                 setSongHistory((prev) => {
@@ -61,8 +62,8 @@ const ListeningSpace = ({ onInfoButtonClick, onLyricsButtonClick, isRightBarOpen
                 });
 
                 setSongs((prevSongs) => {
-                    if (prevSongs.some((song) => song.id === response.data.id)) return prevSongs;
-                    return [...prevSongs, response.data];
+                    if (prevSongs.some((song) => song.id === data.id)) return prevSongs;
+                    return [...prevSongs, data];
                 });
             } else {
                 throw new Error("Invalid song data from API");
@@ -355,7 +356,7 @@ const ListeningSpace = ({ onInfoButtonClick, onLyricsButtonClick, isRightBarOpen
             const data = await response.json();
             setPlaylists(data.playlist);
 
-            onRefreshPlaylists(data.playlist);
+            //onRefreshPlaylists(data.playlist);
         } catch (err) {
             console.log('Error fetching playlists: ', err);
         }
