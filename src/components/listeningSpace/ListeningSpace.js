@@ -332,9 +332,9 @@ const ListeningSpace = ({ onInfoButtonClick, onLyricsButtonClick, isRightBarOpen
 
         if (audio) {
             // Khi bài hát kết thúc
-            const handleSongEnd = () => {
+            const handleSongEnd = async () => {
                 if (!isLooping) {
-                    handleNext(); // Gọi hàm để chuyển sang bài hát tiếp theo
+                    await handleNext(); // Gọi hàm để chuyển sang bài hát tiếp theo
                     togglePlay();
                 }
             };
@@ -347,7 +347,7 @@ const ListeningSpace = ({ onInfoButtonClick, onLyricsButtonClick, isRightBarOpen
         }
     }, [isLooping]);
 
-    const fetchPlaylists = useCallback(async () => {
+    const fetchPlaylists = async () => {
         try {
             const response = await fetch('http://localhost:4000/api/playlist', {
                 method: 'GET',
@@ -360,11 +360,11 @@ const ListeningSpace = ({ onInfoButtonClick, onLyricsButtonClick, isRightBarOpen
         } catch (err) {
             console.log('Error fetching playlists: ', err);
         }
-    }, [onRefreshPlaylists]);  // Memoizing fetchPlaylists, including onRefreshPlaylists as a dependency
+    }// Memoizing fetchPlaylists, including onRefreshPlaylists as a dependency
 
     useEffect(() => {
         fetchPlaylists();
-    }, [fetchPlaylists]);
+    }, []);
 
     const handleCheckboxChange = (playlistId) => {
         setSelectedPlaylists((prev) => ({

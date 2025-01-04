@@ -13,10 +13,6 @@ const PlaylistScreen = ({ isOpen, playlistId, comebackHome, onDeletePlaylist, on
     const [isUpdatePlaylistOpen, setIsUpdatePlaylistOpen] = useState(false);
     const [songsData, setSongsData] = useState([]);
 
-    const [updateName, setUpdateName] = useState('');
-    const [updateDescription, setUpdateDescription] = useState('');
-    const [updatePlaylistPic, setUpdatePlaylistPic] = useState('');
-
     const [, setPlaylistId] = useState(playlistId);
     const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -35,98 +31,35 @@ const PlaylistScreen = ({ isOpen, playlistId, comebackHome, onDeletePlaylist, on
 
     const nav = useNavigate();
 
-    // const songsData = [
-    //     {
-    //         cover: 'https://images.genius.com/9420386437e633e438609a4ab103fc37.1000x1000x1.jpg', // Đường dẫn ảnh cho bài hát
-    //         title: 'What a wonderful world',
-    //         artist: 'The Macarons Project',
-    //         dateAdded: '10/12/2024'
-    //     },
-    //     {
-    //         cover: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTrQBBWXUdsLOf207iiGhMTJU_7Zu-n8fFhfQ&s',
-    //         title: 'Oh, Santa',
-    //         artist: 'Mariah Carey ft. Ariana Grande, Jennifer Hudson',
-    //         dateAdded: '10/12/2024'
-    //     },
-    //     {
-    //         cover: 'https://www.boilerroomrecords.co.uk/cdn/shop/files/783f7ad7e57d5a07829ae62679f2037f.png?v=1727176454',
-    //         title: 'All I want for Christmas is you',
-    //         artist: 'Mariah Carey',
-    //         dateAdded: '10/12/2024'
-    //     },
-    //     {
-    //         cover: 'https://upload.wikimedia.org/wikipedia/vi/c/c0/Ariana_Grande_-_Santa_Tell_Me.png',
-    //         title: 'Santa tell me',
-    //         artist: 'Ariana Grande',
-    //         dateAdded: '10/12/2024'
-    //     },
-    //     {
-    //         cover: 'https://images.genius.com/f9680e3c876e1466fa1d240e8b7609c9.1000x1000x1.png',
-    //         title: 'Last Christmas',
-    //         artist: 'Wham!',
-    //         dateAdded: '10/12/2024'
-    //     },
-    //     {
-    //         cover: 'https://www.rap-up.com/article/2013/11/18/media_1f9c55f3c63264b4dbc6b054f854c9c82c6c28a3d.jpeg?width=1200&format=pjpg&optimize=medium',
-    //         title: 'Last Christmas',
-    //         artist: 'Ariana Grande',
-    //         dateAdded: '10/12/2024'
-    //     },
-    //     {
-    //         cover: 'https://upload.wikimedia.org/wikipedia/en/b/b5/Kelly_Clarkson_and_Ariana_Grande_-_Santa_Can%27t_You_Hear_Me_single_cover.jpeg',
-    //         title: 'Santa, can you hear me?',
-    //         artist: 'Kelly Clarkson & Ariana Grande',
-    //         dateAdded: '10/12/2024'
-    //     },
-    //     {
-    //         cover: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS85z2xwMS5z2akyjYwO-BWjhlidHZNpbAf_A&s',
-    //         title: 'Snowman',
-    //         artist: 'Sia',
-    //         dateAdded: '10/12/2024'
-    //     },
-    //     {
-    //         cover: 'https://i.discogs.com/vYJJiQAJPGaXuk09Zrny8eg6TG76R60Yu8Vh2LhnEew/rs:fit/g:sm/q:90/h:600/w:600/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTI1NTUz/NTQ1LTE2NzE4NjA4/MjctOTYxMy5qcGVn.jpeg',
-    //         title: 'Save your tears',
-    //         artist: 'The Weeknd ft. Ariana Grande',
-    //         dateAdded: '10/12/2024'
-    //     },
-    //     {
-    //         cover: 'https://avatar-ex-swe.nixcdn.com/song/2024/03/28/7/1/b/e/1711632303247_640.jpg',
-    //         title: 'Too Sweet',
-    //         artist: 'Hozier',
-    //         dateAdded: '10/12/2024'
-    //     },
-    //     {
-    //         cover: 'https://i.scdn.co/image/ab67616d00001e02db6ed492fdc27def8f979263',
-    //         title: 'Honeymoon Avenue (Live from London)',
-    //         artist: 'Ariana Grande',
-    //         dateAdded: '10/12/2024'
-    //     }
-    // ];
-
     const countPlaylist = songsData.length;
 
     const fetchData = async () => {
         try {
             const response = await fetch('http://localhost:4000/api/playlist');
+            console.log('Response Status:', response.status);
+
             if (!response.ok) {
                 const errorMessage = await response.text();
                 console.error('Failed to fetch playlists:', errorMessage);
-                throw new Error('Failed to fetch playlists');
+                throw new Error(errorMessage || 'Failed to fetch playlists');
             }
+
             const data = await response.json();
             setPlaylists(data);
         } catch (err) {
-            console.error('Error fetching playlists: ', err);
+            console.error('Error fetching playlists:', err.message);
+            alert(`Error: ${err.message}`);
         }
     };
+
 
     const fetchPlaylistData = async () => {
         try {
             console.log('Fetching playlist with ID:', playlistId);
+
             const response = await fetch(`http://localhost:4000/api/playlistDetail/${playlistId}`);
             if (!response.ok) {
-                throw new Error('Error fetching playlists');
+                throw new Error('Error fetching playlist data');
             }
 
             const data = await response.json();
@@ -134,9 +67,25 @@ const PlaylistScreen = ({ isOpen, playlistId, comebackHome, onDeletePlaylist, on
             setSongsData(data.songs || []); // Giả định API trả về danh sách bài hát trong `songs`
             console.log(playlistData.avtUrl); // Log dữ liệu để kiểm tra
             console.log(data.songs)
+
         } catch (err) {
             console.error('Error fetching playlist data:', err);
             alert('An error occurred while fetching the playlist data.');
+        }
+    };
+
+    const fetchSongsByIds = async (songIds) => {
+        try {
+            const response = await fetch('http://localhost:4000/api/songInformation'); // Or use specific API to fetch songs by IDs
+            if (!response.ok) {
+                throw new Error('Error fetching songs');
+            }
+
+            const data = await response.json();
+            const songDetails = data.songs.filter(song => songIds.includes(song.id));
+            setSongsData(songDetails); // Set the song data for rendering
+        } catch (err) {
+            console.error('Error fetching song details:', err);
         }
     };
 

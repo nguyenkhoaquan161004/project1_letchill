@@ -33,22 +33,22 @@ const AddPlaylistBox = ({ isOpen, onClose, onAddPlaylist }) => {
         formData.append('upload_preset', 'playlistAvtUrl');  // Đảm bảo bạn đã tạo preset trong Cloudinary
 
         try {
-        // Gửi hình ảnh lên Cloudinary
-        const response = await axios.post(
-            'https://api.cloudinary.com/v1_1/di4kdlfr3/image/upload',
-            formData
-        );
+            // Gửi hình ảnh lên Cloudinary
+            const response = await axios.post(
+                'https://api.cloudinary.com/v1_1/di4kdlfr3/image/upload',
+                formData
+            );
 
-        // Lấy URL của hình ảnh từ Cloudinary
-        const imageUrl = response.data.secure_url;
-        console.log('Image URL:', imageUrl);
+            // Lấy URL của hình ảnh từ Cloudinary
+            const imageUrl = response.data.secure_url;
+            console.log('Image URL:', imageUrl);
 
-        // Lưu hình ảnh vào state
-        setSelectedImage(imageUrl);
+            // Lưu hình ảnh vào state
+            setSelectedImage(imageUrl);
 
-        console.log('Image uploaded and link sent to backend:', imageUrl);
+            console.log('Image uploaded and link sent to backend:', imageUrl);
         } catch (error) {
-        console.error('Error uploading image:', error);
+            console.error('Error uploading image:', error);
         }
     };
 
@@ -56,7 +56,7 @@ const AddPlaylistBox = ({ isOpen, onClose, onAddPlaylist }) => {
     const handleCreatePlaylist = () => {
         setIsSubmitting(true);
 
-        const uid = localStorage.getItem('uid') || 'OXRsv6wJffNCNu0YXvhGRyAPNun1';
+        const uid = localStorage.getItem('uid') || 'Awx8TDFrgwReln0QQefF';
         const name = playlistName.trim();
         const description = playlistDescription.trim();
 
@@ -67,10 +67,10 @@ const AddPlaylistBox = ({ isOpen, onClose, onAddPlaylist }) => {
 
         if (name && uid) {
             const newPlaylist = {
-                uid,  // Đảm bảo 'uid' được gửi đi
+                uid: uid,  // Đảm bảo 'uid' được gửi đi
+                name: name,  // Đảm bảo 'name' được gửi đi
                 avtUrl: selectedImage || '',
-                name,  // Đảm bảo 'name' được gửi đi
-                description,  // Kiểm tra xem 'description' có bắt buộc hay không
+                description: description,  // Kiểm tra xem 'description' có bắt buộc hay không
             };
 
             console.log('New Playlist:', newPlaylist);  // Log lại payload gửi đi
@@ -82,14 +82,18 @@ const AddPlaylistBox = ({ isOpen, onClose, onAddPlaylist }) => {
                 },
                 body: JSON.stringify(newPlaylist),
             })
-                .then(response => {
+                .then(async response => {
+                    const responseData = await response.json();
+                    console.log('Response Status:', response.status);
+                    console.log('Response Data:', responseData);
+
                     if (!response.ok) {
-                        return response.json().then(err => { throw new Error(err.message) });
+                        throw new Error(responseData.message || 'Failed to create playlist');
                     }
-                    return response.json();
+                    return responseData;
                 })
                 .then(data => {
-                    console.log('Playlist created:', data);
+                    console.log('Playlist created successfully:', data);
                     onAddPlaylist(newPlaylist);
                     alert('Tạo danh sách phát thành công.');
                     setPlaylistName('');
@@ -99,6 +103,10 @@ const AddPlaylistBox = ({ isOpen, onClose, onAddPlaylist }) => {
                 })
                 .catch(err => {
                     console.error('Error creating playlist:', err);
+                    alert(`Lỗi: ${err.message}`);
+                })
+                .finally(() => {
+                    setIsSubmitting(false);
                 });
         } else {
             console.error('Missing required fields: uid or name');
