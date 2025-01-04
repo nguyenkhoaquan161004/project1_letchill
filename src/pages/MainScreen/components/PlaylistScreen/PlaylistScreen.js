@@ -23,15 +23,15 @@ const PlaylistScreen = ({ isOpen, playlistId, comebackHome, onDeletePlaylist, on
     const [playlistData, setPlaylistData] = useState(playlistId);
     const [playlists, setPlaylists] = useState([]);
 
-    const combinedPlaylists = [
-        {
-            id: 'favorite',  // ID riêng biệt cho "Danh sách yêu thích"
-            avtUrl: favoritePlaylist,  // Hình ảnh
-            name: 'Danh sách yêu thích',  // Tên playlist
-            description: '',  // Mô tả playlist
-        },
-        ...playlists,  // Các playlist từ backend
-    ];
+    // const combinedPlaylists = [
+    //     {
+    //         id: 'favorite',  // ID riêng biệt cho "Danh sách yêu thích"
+    //         avtUrl: favoritePlaylist,  // Hình ảnh
+    //         name: 'Danh sách yêu thích',  // Tên playlist
+    //         description: '',  // Mô tả playlist
+    //     },
+    //     ...playlists,  // Các playlist từ backend
+    // ];
 
     const nav = useNavigate();
 
@@ -115,7 +115,7 @@ const PlaylistScreen = ({ isOpen, playlistId, comebackHome, onDeletePlaylist, on
                 throw new Error('Failed to fetch playlists');
             }
             const data = await response.json();
-            setPlaylistData(data.playlist);
+            setPlaylists(data);
         } catch (err) {
             console.error('Error fetching playlists: ', err);
         }
@@ -130,10 +130,9 @@ const PlaylistScreen = ({ isOpen, playlistId, comebackHome, onDeletePlaylist, on
             }
 
             const data = await response.json();
-            console.log(data); // Log dữ liệu để kiểm tra
-            const foundPlaylist = data.playlist;
-            setPlaylistData(foundPlaylist || { name: 'Danh sách yêu thích', avtUrl: favoritePlaylist });  // Đảm bảo xử lý cho 'favorite'
+            setPlaylistData(data || { name: 'Danh sách yêu thích', avtUrl: favoritePlaylist });  // Đảm bảo xử lý cho 'favorite'
             setSongsData(data.songs || []); // Giả định API trả về danh sách bài hát trong `songs`
+            console.log(playlistData.avtUrl); // Log dữ liệu để kiểm tra
             console.log(data.songs)
         } catch (err) {
             console.error('Error fetching playlist data:', err);
@@ -207,7 +206,6 @@ const PlaylistScreen = ({ isOpen, playlistId, comebackHome, onDeletePlaylist, on
 
         setIsOptionsOpen(false);
     };
-
     if (!isOpen) {
         return null;
     }
@@ -284,10 +282,13 @@ const PlaylistScreen = ({ isOpen, playlistId, comebackHome, onDeletePlaylist, on
                         >
                             <PlaylistItem
                                 index={index + 1}
-                                cover={song.cover}
-                                title={song.title}
+                                playlistId={playlistId}
+                                songId={song.id}
+                                cover={song.image}
+                                title={song.name}
                                 artist={song.artist}
-                                dateAdded={song.dateAdded}
+                                dateAdded={song.releaseDate}
+                                fetchPlaylistData={fetchPlaylistData}
                             />
                         </div>
                     ))
