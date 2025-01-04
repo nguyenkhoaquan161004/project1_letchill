@@ -180,28 +180,32 @@ const MainScreen = memo(() => {
         console.log(isSearchQuery);
     }
 
-    const handleSearchSongs = async (query) => {
-        try {
-            const response = await fetch('http://localhost:4000/api/search', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ query }),
-            });
+    // const handleSearchSongs = async (query) => {
+    //     try {
+    //         // Gửi yêu cầu GET đến API với query được truyền trong URL
+    //         const response = await fetch(`http://localhost:4000/api/search/${query}`, {
+    //             method: 'GET',
+    //             headers: {
+    //                 'Content-Type': 'application/json',
+    //             },
+    //         });
 
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-
-            const data = await response.json(); // Chuyển đổi dữ liệu phản hồi thành JSON
-            return data; // Trả về kết quả đã xử lý
-
-        } catch (error) {
-            console.error('Error calling search API:', error);
-            return null;
-        }
-    }
+    //         // Kiểm tra phản hồi từ API
+    //         if (response.ok) {
+    //             const data = await response.json(); // Parse kết quả JSON
+    //             console.log('Search results:', data); // In kết quả tìm kiếm ra console
+    //             return data;
+    //         } else if (response.status === 404) {
+    //             console.warn('No songs found for the query.');
+    //             return []; // Trả về mảng rỗng nếu không tìm thấy bài hát
+    //         } else {
+    //             throw new Error(`HTTP error! status: ${response.status}`);
+    //         }
+    //     } catch (error) {
+    //         console.error('Error calling search API:', error); // Log lỗi ra console
+    //         return null; // Trả về null nếu có lỗi xảy ra
+    //     }
+    // };
 
     return (
         <div id={styles.main}>
@@ -225,7 +229,7 @@ const MainScreen = memo(() => {
                         <SearchingScreen
                             isOpen={isSearchingScreenOpen}
                             searchQuery={isSearchQuery}
-                            onSearch={handleSearchSongs}></SearchingScreen>
+                        ></SearchingScreen>
                         <AccountScreen isOpen={isAccountScreenOpen}></AccountScreen>
                         {selectedPlaylist && (
                             <PlaylistScreen

@@ -55,7 +55,9 @@ const VoiceSearchingBox = ({ isOpen, onClose, onSearchInput }) => {
             if (transcript.trim()) {
                 onSearchInput(transcript); // Truyền giá trị `transcript` về MainScreen
             }
-            onClose();
+            setTimeout(() => {
+                onClose();
+            }, 3000); // Gọi onClose sau 3 giây
         };
 
         recognition.onerror = (e) => {

@@ -109,34 +109,61 @@ const PlaylistScreen = ({ isOpen, playlistId, comebackHome, onDeletePlaylist, on
     const fetchData = async () => {
         try {
             const response = await fetch('http://localhost:4000/api/playlist');
+            console.log('Response Status:', response.status);
+
             if (!response.ok) {
                 const errorMessage = await response.text();
                 console.error('Failed to fetch playlists:', errorMessage);
-                throw new Error('Failed to fetch playlists');
+                throw new Error(errorMessage || 'Failed to fetch playlists');
             }
+
             const data = await response.json();
+            console.log('Fetched data:', data);
             setPlaylistData(data.playlist);
         } catch (err) {
-            console.error('Error fetching playlists: ', err);
+            console.error('Error fetching playlists:', err.message);
+            alert(`Error: ${err.message}`);
         }
     };
+
 
     const fetchPlaylistData = async () => {
         try {
             console.log('Fetching playlist with ID:', playlistId);
-            const response = await fetch('http://localhost:4000/api/playlist');
+            const response = await fetch(`http://localhost:4000/api/playlist/${playlistId}`);
             if (!response.ok) {
-                throw new Error('Error fetching playlists');
+                throw new Error('Error fetching playlist data');
             }
 
             const data = await response.json();
             const foundPlaylist = data.playlist.find(playlist => playlist.id === playlistId);
-            setPlaylistData(foundPlaylist || { name: 'Danh sách yêu thích', avtUrl: favoritePlaylist });  // Đảm bảo xử lý cho 'favorite'
-            setSongsData(foundPlaylist.songs || []); // Giả định API trả về danh sách bài hát trong `songs`
-            console.log(songsData)
+
+            // Set playlist data and songIds
+            setPlaylistData(foundPlaylist || { name: 'Danh sách yêu thích', avtUrl: favoritePlaylist });
+
+            // Fetch song data based on songIds
+            const songIds = foundPlaylist?.songIds || [];
+            if (songIds.length > 0) {
+                fetchSongsByIds(songIds);
+            }
         } catch (err) {
             console.error('Error fetching playlist data:', err);
             alert('An error occurred while fetching the playlist data.');
+        }
+    };
+
+    const fetchSongsByIds = async (songIds) => {
+        try {
+            const response = await fetch('http://localhost:4000/api/songInformation'); // Or use specific API to fetch songs by IDs
+            if (!response.ok) {
+                throw new Error('Error fetching songs');
+            }
+
+            const data = await response.json();
+            const songDetails = data.songs.filter(song => songIds.includes(song.id));
+            setSongsData(songDetails); // Set the song data for rendering
+        } catch (err) {
+            console.error('Error fetching song details:', err);
         }
     };
 

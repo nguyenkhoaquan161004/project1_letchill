@@ -63,7 +63,8 @@
 .resultSearchContainer .itemContainer img {
     width: 56px;
     height: 56px;
-    border-radius: 8px;
+    border-top-left-radius: 4px;
+    border-bottom-left-radius: 4px;
     object-fit: cover;
 }
 
@@ -74,12 +75,12 @@
 .resultSearchContainer .itemContainer {
     display: flex;
     flex-direction: row;
-    gap: 6px;
+    gap: 24px;
     align-items: center;
 }
 
 .resultSearchContainer .itemResult:hover {
-    background-color: rgba(255, 255, 255, 0..1);
+    background-color: rgba(255, 255, 255, 0.1);
 }
 
 .resultSearchContainer .itemResult {
@@ -90,8 +91,11 @@
     justify-content: space-between;
 }
 
-.resultSearchContainer .resultSearchContainer {
+.resultSearchContainer {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 7px;
+    height: 100%;
+    margin-bottom: 40px;
+    overflow: scroll;
 }
