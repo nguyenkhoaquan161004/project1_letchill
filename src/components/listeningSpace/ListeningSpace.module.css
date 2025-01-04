@@ -221,7 +221,7 @@
 .addSongToPlaylistContainer {
     display: flex;
     flex-direction: column;
-    width: 300px;
+    width: 232px;
     height: fit-content;
     position: absolute;
     align-items: center;
@@ -229,7 +229,7 @@
     padding: 4px 4px;
     background-color: #000;
     border-radius: 6px;
-    top: -44px;
+    bottom: 87px;
     margin-left: 67px;
     z-index: 1;
 }
@@ -270,4 +270,12 @@
 
 .listeningSpace .addBtn:hover {
     background-color: #ffffff;
+}
+
+.listOfPlaylists {
+    width: 100%;
+    padding: 4px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
 }

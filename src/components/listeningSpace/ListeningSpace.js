@@ -37,23 +37,40 @@ const ListeningSpace = ({ onInfoButtonClick, onLyricsButtonClick, isRightBarOpen
     const [outputActive, setOutputActive] = useState(true); // Mặc định âm thanh bật
 
     const fetchSongs = useCallback(async (songId) => {
+        if (!songId) {
+            console.log("Không gọi fetchSongs vì songId không hợp lệ.");
+            return; // Không thực hiện nếu songId không hợp lệ
+        }
+
         try {
-            console.log("Fetching song information...");
-            // Chuyển từ POST sang GET và truyền songId vào URL
+            console.log("Fetching song information for ID:", songId);
             const response = await axios.get(`http://localhost:4000/api/songInformation/${songId}`);
 
             if (response.data && response.data.name) {
-                console.log('Fetched song:', response.data);
-                setCurrentSongData(response.data);
-                setSongHistory((prev) => [...prev, songId]);
-                // Nếu cần thêm bài hát vào danh sách
-                setSongs([response.data]);
+                console.log("Fetched song data:", response.data);
+
+                // Chỉ cập nhật nếu cần thiết
+                setCurrentSongData((prevData) => {
+                    if (prevData?.id === response.data.id) return prevData; // Không thay đổi nếu giống nhau
+                    return response.data;
+                });
+
+                setSongHistory((prev) => {
+                    if (prev.includes(songId)) return prev; // Tránh trùng lặp
+                    return [...prev, songId];
+                });
+
+                setSongs((prevSongs) => {
+                    if (prevSongs.some((song) => song.id === response.data.id)) return prevSongs;
+                    return [...prevSongs, response.data];
+                });
             } else {
-                throw new Error('Invalid song data from API');
+                throw new Error("Invalid song data from API");
             }
+
             onChangeSong(songId);
         } catch (error) {
-            console.error('Error fetching song:', error.response?.data || error.message);
+            console.error("Error fetching song:", error.message);
 
             setCurrentSongData({
                 image: '/path/to/default-image.jpg',
@@ -62,19 +79,35 @@ const ListeningSpace = ({ onInfoButtonClick, onLyricsButtonClick, isRightBarOpen
                 audio: null,
             });
 
-            // Thêm bài hát mặc định vào danh sách
-            setSongs([
-                { id: 1, name: 'Default Song', artist: 'Unknown Artist', audio: '/path/to/default.mp3' },
-            ]);
+            // Thêm bài hát mặc định nếu cần
+            setSongs((prevSongs) => {
+                if (prevSongs.length === 0) {
+                    return [
+                        { id: 1, name: 'Default Song', artist: 'Unknown Artist', audio: '/path/to/default.mp3' },
+                    ];
+                }
+                return prevSongs;
+            });
         }
     }, [onChangeSong]);
 
+
     useEffect(() => {
-        if (currentSongId) {
-            console.log("Current Song ID has changed:", currentSongId);
-            fetchSongs(currentSongId);
-        }
-    }, [currentSongId, fetchSongs]);
+        if (!currentSongId) return;
+
+        let isCancelled = false;
+
+        const fetchData = async () => {
+            await fetchSongs(currentSongId);
+        };
+
+        fetchData();
+
+        return () => {
+            isCancelled = true;
+        };
+    }, [currentSongId]);
+
 
     // const fetchSongInformation = async (songId) => {
     //     if (!songId) {
@@ -128,23 +161,26 @@ const ListeningSpace = ({ onInfoButtonClick, onLyricsButtonClick, isRightBarOpen
     }, [currentSongIndex, isPlaying]);
 
     useEffect(() => {
-        const loadInitialSong = async () => {
+        const controller = new AbortController();
+        const fetchInitialSong = async () => {
             try {
-                const response = await axios.get('http://localhost:4000/api/songInformation/'); // Gọi API không có id
+                const response = await axios.get('http://localhost:4000/api/songInformation/', {
+                    signal: controller.signal,
+                });
                 const randomSongId = response.data.id;
-
-                if (!randomSongId) {
-                    throw new Error("No random song ID returned from API");
-                }
-
-                console.log("Random Song ID:", randomSongId);
-                await fetchSongs(randomSongId); // Gọi fetchSongs với songId ngẫu nhiên
+                await fetchSongs(randomSongId);
             } catch (error) {
-                console.error('Error loading initial song:', error.response?.data || error.message);
+                if (axios.isCancel(error)) {
+                    console.log("Fetch cancelled");
+                } else {
+                    console.error("Error fetching initial song:", error.message);
+                }
             }
         };
 
-        loadInitialSong();
+        fetchInitialSong();
+
+        return () => controller.abort();
     }, []);
 
     const handleNext = async () => {
@@ -312,7 +348,7 @@ const ListeningSpace = ({ onInfoButtonClick, onLyricsButtonClick, isRightBarOpen
 
     const fetchPlaylists = useCallback(async () => {
         try {
-            const response = await fetch('http://localhost:4000/api/playlist',{
+            const response = await fetch('http://localhost:4000/api/playlist', {
                 method: 'GET',
             });
             if (!response.ok) throw new Error("Failed to fetch playlists");
@@ -393,7 +429,7 @@ const ListeningSpace = ({ onInfoButtonClick, onLyricsButtonClick, isRightBarOpen
                     style={{
                         display: isAddSongBoxOpen ? 'flex' : 'none'
                     }}>
-                    <p className="uiSemibold o75">Thêm bài hát vào danh sách phát</p>
+                    <p className="uiSemibold o75" style={{ fontSize: 12 }}>Thêm bài hát vào danh sách phát</p>
                     <hr style={{ width: '70%', position: 'relative', left: 0, right: 0, border: "1px solid rgba(255, 255, 255, 0.5)" }} />
                     <div className={styles.listOfPlaylists}>
                         {playlists.map((playlist) => (
@@ -416,9 +452,9 @@ const ListeningSpace = ({ onInfoButtonClick, onLyricsButtonClick, isRightBarOpen
                         <button
                             onClick={handleAddSongButtonClick}
                             className={styles.cancelBtn}>Hủy</button>
-                        {/* {isAnySelected && ( */}
-                        <button className={styles.addBtn} onClick={addSongToPlaylist}>Thêm</button>
-                        {/* )} */}
+                        {isAnySelected && (
+                            <button className={styles.addBtn} onClick={addSongToPlaylist}>Thêm</button>
+                        )}
                     </div>
 
                 </div>

@@ -190,7 +190,13 @@ const MainScreen = memo(() => {
                 body: JSON.stringify({ query }),
             });
 
-            return response;
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json(); // Chuyển đổi dữ liệu phản hồi thành JSON
+            return data; // Trả về kết quả đã xử lý
+
         } catch (error) {
             console.error('Error calling search API:', error);
             return null;
