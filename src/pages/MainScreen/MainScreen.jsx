@@ -195,6 +195,7 @@ const MainScreen = memo(() => {
             }
 
             const data = await response.json(); // Chuyển đổi dữ liệu phản hồi thành JSON
+            console.log(data);
             return data; // Trả về kết quả đã xử lý
 
         } catch (error) {

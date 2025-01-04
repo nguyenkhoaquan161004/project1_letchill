@@ -124,16 +124,17 @@ const PlaylistScreen = ({ isOpen, playlistId, comebackHome, onDeletePlaylist, on
     const fetchPlaylistData = async () => {
         try {
             console.log('Fetching playlist with ID:', playlistId);
-            const response = await fetch('http://localhost:4000/api/playlist');
+            const response = await fetch(`http://localhost:4000/api/playlistDetail/${playlistId}`);
             if (!response.ok) {
                 throw new Error('Error fetching playlists');
             }
 
             const data = await response.json();
-            const foundPlaylist = data.playlist.find(playlist => playlist.id === playlistId);
+            console.log(data); // Log dữ liệu để kiểm tra
+            const foundPlaylist = data.playlist;
             setPlaylistData(foundPlaylist || { name: 'Danh sách yêu thích', avtUrl: favoritePlaylist });  // Đảm bảo xử lý cho 'favorite'
-            setSongsData(foundPlaylist.songs || []); // Giả định API trả về danh sách bài hát trong `songs`
-            console.log(songsData)
+            setSongsData(data.songs || []); // Giả định API trả về danh sách bài hát trong `songs`
+            console.log(data.songs)
         } catch (err) {
             console.error('Error fetching playlist data:', err);
             alert('An error occurred while fetching the playlist data.');
