@@ -55,7 +55,6 @@ const UpdatePlaylist = ({ playlistId, isOpen, onClose, onUpdatePlaylist, playlis
         }
     };
 
-
     const handleUpdatePlaylist = async () => {
         if (!playlistId) {
             console.error('Playlist ID không tồn tại.');
