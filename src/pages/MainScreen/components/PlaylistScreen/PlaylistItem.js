@@ -2,13 +2,35 @@ import React, { useState, useRef, useEffect } from 'react';
 import styles from './PlaylistScreen.module.css';
 import { Icon } from '@iconify/react';
 
-const PlaylistItem = ({ index, cover, title, artist, dateAdded }) => {
+const PlaylistItem = ({ index, playlistId,songId, cover, title, artist, dateAdded, fetchPlaylistData }) => {
     const [isDeleteOpen, setIsDeleteOpen] = useState(false);
     const popupRef = useRef(null); // Tham chiếu đến popup
 
-    const handleClickDelete = (e) => {
+    const handleClickDelete = async (e) => {
         e.stopPropagation(); // Ngăn chặn sự kiện click lan ra ngoài
-        setIsDeleteOpen((prev) => !prev);
+        const confirmDelete = window.confirm("Bạn có chắc chắn muốn bài hát này khỏi danh sách phát?");
+        if (!confirmDelete) return;
+        try {
+            console.log('Fetching playlist with ID:', songId);
+            const response = await fetch(`http://localhost:4000/api/playlistDetail/${playlistId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({songId: songId}),
+            });
+
+            if (!response.ok) {
+                const errorMessage = await response.text();
+                throw new Error(`Không thể xóa bài hát khỏi danh sách phát: ${errorMessage}`);
+            }
+            fetchPlaylistData()
+            alert('Bài hát đã xóa khỏi danh sách phát thành công.');
+        } catch (err) {
+            console.error('Error deleting playlist:', err);
+            alert('Xóa bài hát khỏi danh sách phát thất bại.');
+        }
+        setIsDeleteOpen(false);
     };
 
     // Đóng popup khi click ra ngoài
