@@ -22,7 +22,7 @@ function SliderMain({ items }) {
                             className={clsx(styles.itemSongContainer)}>
                             <div className={styles.infoSongContainer}>
                                 <h3>{item.name}</h3>
-                                <p>{item.author}</p>
+                                <p>{item.artist}</p>
                             </div>
 
 

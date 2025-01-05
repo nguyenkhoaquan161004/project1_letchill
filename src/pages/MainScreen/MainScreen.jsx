@@ -11,7 +11,8 @@ import PlaylistScreen from './components/PlaylistScreen/PlaylistScreen.js';
 import playlistdData from '../../components/librarySpace/assets/playlistData.js';
 import clsx from 'clsx';
 import styles from '../MainScreen/MainScreen.module.css'
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation  } from 'react-router-dom';
+import { query } from 'firebase/firestore';
 
 const MainScreen = memo(() => {
     const [isRightBarOpen, setIsRightBarOpen] = useState(false);
@@ -31,7 +32,10 @@ const MainScreen = memo(() => {
     const [selectedPlaylist, setSelectedPlaylist] = useState(null);
 
     const nav = useNavigate();
-
+    const location = useLocation();
+    const queryParams = new URLSearchParams(location.search);
+    const uid = queryParams.get('uid'); // Lấy UID từ URL
+    console.log(uid);
     const toggleRightBar = () => {
         setIsRightBarOpen((prev) => !prev);
     }
@@ -230,7 +234,11 @@ const MainScreen = memo(() => {
                             isOpen={isSearchingScreenOpen}
                             searchQuery={isSearchQuery}
                         ></SearchingScreen>
-                        <AccountScreen isOpen={isAccountScreenOpen}></AccountScreen>
+                        <AccountScreen 
+                            isOpen={isAccountScreenOpen}
+                            uid={uid}
+                            onSelectedPlaylist={togglePlaylistScreen}
+                        ></AccountScreen>
                         {selectedPlaylist && (
                             <PlaylistScreen
                                 isOpen={isPlaylistScreenOpen}

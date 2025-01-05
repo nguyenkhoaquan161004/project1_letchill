@@ -82,6 +82,14 @@
     background-image: url("https://cloudfront-eu-central-1.images.arcpublishing.com/irishtimes/BDE7MCM5FJEUNEX3Y4NSB3UZZA.jpeg");
 }
 
+.authorInfo .authorImage  {
+    width: 100%;
+    height: 160px;
+    background-size: cover;
+    background-position: center;
+    border-radius: 10px;
+}
+
 .authorInfo p {
     padding: 16px 16px;
 }

@@ -8,7 +8,7 @@ import favoritePlaylist from './assets/favoritePlaylist.svg';
 
 const LibrarySpace = ({ onSelectedPlaylist, playlistsData, onRefreshPlaylists }) => {
     const [isAddPlaylistOpen, setIsAddPlaylistOpen] = useState(false);
-    const [playlists, setPlaylists] = useState([]);
+    //const [playlists, setPlaylists] = useState([]);
 
     const handleOpenAddPlaylistBox = () => {
         setIsAddPlaylistOpen(true);
@@ -18,24 +18,24 @@ const LibrarySpace = ({ onSelectedPlaylist, playlistsData, onRefreshPlaylists })
         setIsAddPlaylistOpen(false);
     }
 
-    const fetchPlaylists = useCallback(async () => {
-        try {
-            const response = await fetch('http://localhost:4000/api/playlist',{
-                method: 'GET',
-            });
-            if (!response.ok) throw new Error("Failed to fetch playlists");
-            const data = await response.json();
-            setPlaylists(data.playlist);
+    // const fetchPlaylists = useCallback(async () => {
+    //     try {
+    //         const response = await fetch('http://localhost:4000/api/playlist',{
+    //             method: 'GET',
+    //         });
+    //         if (!response.ok) throw new Error("Failed to fetch playlists");
+    //         const data = await response.json();
+    //         setPlaylists(data.playlist);
 
-            onRefreshPlaylists(data.playlist);
-        } catch (err) {
-            console.log('Error fetching playlists: ', err);
-        }
-    }, [onRefreshPlaylists]);  // Memoizing fetchPlaylists, including onRefreshPlaylists as a dependency
+    //         onRefreshPlaylists(data.playlist);
+    //     } catch (err) {
+    //         console.log('Error fetching playlists: ', err);
+    //     }
+    // }, [onRefreshPlaylists]);  // Memoizing fetchPlaylists, including onRefreshPlaylists as a dependency
 
-    useEffect(() => {
-        fetchPlaylists();
-    }, [fetchPlaylists]);
+    // useEffect(() => {
+    //     fetchPlaylists();
+    // }, [fetchPlaylists]);
 
     const handlePlaylistSelect = (playlistId) => {
         onSelectedPlaylist(playlistId);
@@ -44,7 +44,7 @@ const LibrarySpace = ({ onSelectedPlaylist, playlistsData, onRefreshPlaylists })
     const handleAddPlaylist = async () => {
         try {
             // Fetch lại danh sách playlist từ server
-            await fetchPlaylists(); // Gọi lại hàm fetch để đồng bộ dữ liệu
+            onRefreshPlaylists();
             setIsAddPlaylistOpen(false); // Đóng AddPlaylistBox
         } catch (err) {
             console.error('Error updating playlists: ', err);
@@ -95,23 +95,23 @@ const LibrarySpace = ({ onSelectedPlaylist, playlistsData, onRefreshPlaylists })
                                 })}
                         ></Playlist>
                     </div>
-                    {playlists.map((playlist) => (
+                    {playlistsData.map((playlistsData) => (
                         <Playlist
-                            key={playlist.id}
+                            key={playlistsData.id}
                             onSelectedPlaylist={() => {
                                 onSelectedPlaylist({
-                                    playlistId: playlist.id,
-                                    playlistPic: playlist.avtUrl,
-                                    namePlaylist: playlist.name,
-                                    description: playlist.description,
+                                    playlistId: playlistsData.id,
+                                    playlistPic: playlistsData.avtUrl,
+                                    namePlaylist: playlistsData.name,
+                                    description: playlistsData.description,
                                 })
-                                handlePlaylistSelect(playlist.id)
-                                console.log(playlist.id)
+                                handlePlaylistSelect(playlistsData.id)
+                                console.log(playlistsData.id)
                             }}
-                            playlistId={playlist.id}
-                            playlistPic={playlist.avtUrl}
-                            namePlaylist={playlist.name}
-                            description={playlist.description}></Playlist>
+                            playlistId={playlistsData.id}
+                            playlistPic={playlistsData.avtUrl}
+                            namePlaylist={playlistsData.name}
+                            description={playlistsData.description}></Playlist>
                     ))}
                 </div>
 
