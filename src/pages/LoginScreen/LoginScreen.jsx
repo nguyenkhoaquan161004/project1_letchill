@@ -3,16 +3,23 @@ import clsx from 'clsx';
 import styles from './LoginScreen.module.css';
 import { Icon } from '@iconify/react';
 import { useNavigate } from 'react-router-dom';
+import { auth } from '../../firebaseConfig'; // Firebase auth config
+import { signInWithEmailAndPassword } from 'firebase/auth'; // Firebase sign-in function
 
 const LoginScreen = memo(() => {
     const navigate = useNavigate();
 
+    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
 
-    const handleChange = (event) => {
+    const handlePasswordChange = (event) => {
         setPassword(event.target.value);
     };
+
+    const handleEmailChange = (event) => {
+        setEmail(event.target.value);
+    }
 
     const togglePasswordVisibility = () => {
         setShowPassword(!showPassword);
@@ -26,10 +33,27 @@ const LoginScreen = memo(() => {
         );
     };
 
-    const handleOnClick = () => {
+    const handleOnClickSignup = () => {
         navigate('/signup');
         scrollToTop();
     };
+
+    const handleLogin = async () => {
+        if (!email || !password) {
+            alert('Email và mật khẩu không được để trống.');
+            return;
+        }
+
+        try {
+            await signInWithEmailAndPassword(auth, email, password);
+            navigate('/main')
+
+        } catch (error) {
+            console.error('Login error:', error);
+            alert('Đăng nhập không thành công. Vui lòng kiểm tra lại thông tin.');
+        }
+    };
+
 
     return (
         <div>
@@ -41,14 +65,17 @@ const LoginScreen = memo(() => {
                     <div className={styles.inputSpace}>
                         <div className={styles.addInfoSpace}>
                             <h4>Email</h4>
-                            <input type='email' placeholder='abc@gmail.com'></input>
+                            <input
+                                type='email'
+                                placeholder='abc@gmail.com'
+                                onChange={handleEmailChange}></input>
                         </div>
 
                         <div className={styles.addInfoSpace}>
                             <h4>Mật khẩu</h4>
                             <div style={{ display: 'flex', gap: 20, border: '1px solid #fff', borderRadius: 10 }}>
                                 <input type={showPassword ? 'text' : 'password'} value={password} style={{ border: 'none' }}
-                                    onChange={handleChange} placeholder='...'></input>
+                                    onChange={handlePasswordChange} placeholder='...'></input>
                                 <button
                                     type="button"
                                     onClick={togglePasswordVisibility}
@@ -59,7 +86,9 @@ const LoginScreen = memo(() => {
                             </div>
                         </div>
 
-                        <button className={styles.btn} onClick={() => navigate("/main")}>
+                        <button
+                            className={styles.btn}
+                            onClick={handleLogin}>
                             <h4>Đăng nhập</h4></button>
                     </div>
                     <div className={styles.anotherWay} >
@@ -82,7 +111,7 @@ const LoginScreen = memo(() => {
                     </div>
                     <div className={styles.wayToLogin}>
                         <div className={styles.lineEnd}></div>
-                        <h5 className={styles.o50}>Chưa có tài khoản? <span onClick={handleOnClick}>Đăng ký ngay</span></h5>
+                        <h5 className={styles.o50}>Chưa có tài khoản? <span onClick={handleOnClickSignup}>Đăng ký ngay</span></h5>
                     </div>
                 </div>
             </div>

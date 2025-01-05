@@ -2,7 +2,7 @@ import React, { memo } from 'react';
 import { Icon } from '@iconify/react';
 import { useNavigate } from 'react-router-dom';
 
-const EmailScreen = ({ nextStep }) => {
+const EmailScreen = ({ nextStep, setEmail }) => {
     const navigate = useNavigate();
     const scrollToTop = () => {
         window.scrollTo({
@@ -15,12 +15,19 @@ const EmailScreen = ({ nextStep }) => {
         scrollToTop();
     }
 
+    const handleSetEmail = (e) => {
+        setEmail(e.target.value);
+    }
+
     return (
         <div className='step'>
             <div className='inputSpace'>
                 <div className='addInfoSpace'>
                     <h4>Email</h4>
-                    <input type='text' placeholder='abc@gmail.com'></input>
+                    <input
+                        type="email"
+                        placeholder='abc@gmail.com'
+                        onChange={handleSetEmail}></input>
                 </div>
                 <button onClick={nextStep} className="btn">
                     <h4>Tiếp theo</h4></button>

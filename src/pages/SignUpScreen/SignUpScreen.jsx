@@ -9,6 +9,9 @@ import InfomationScreen from './components/InfomationScreen.js';
 
 const SignUpScreen = memo(() => {
     const [step, setStep] = useState(1);
+
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
     const navigate = useNavigate();
 
     const scrollToTop = () => {
@@ -42,9 +45,15 @@ const SignUpScreen = memo(() => {
                 <h2>ĐĂNG KÝ ĐỂ BẮT ĐẦU <span className="highlight"> NGHE NHẠC</span></h2>
 
                 <div className="mainSpace">
-                    {step === 1 && <EmailScreen nextStep={nextStep} />}
-                    {step === 2 && <PasswordScreen nextStep={nextStep} />}
-                    {step === 3 && <InfomationScreen />}
+                    {step === 1 && <EmailScreen
+                        nextStep={nextStep}
+                        setEmail={setEmail} />}
+                    {step === 2 && <PasswordScreen
+                        nextStep={nextStep}
+                        setPassword={setPassword} />}
+                    {step === 3 && <InfomationScreen
+                        email={email}
+                        password={password} />}
                 </div>
 
             </div>

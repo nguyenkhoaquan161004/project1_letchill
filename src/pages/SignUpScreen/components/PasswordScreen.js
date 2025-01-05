@@ -1,17 +1,41 @@
 import React, { memo, useState } from 'react';
 import { Icon } from '@iconify/react';
 
-const PasswordScreen = ({ nextStep }) => {
-    const [password, setPassword] = useState('');
+const PasswordScreen = ({ nextStep, setPassword }) => {
+    const [password, updatePassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
+    const [error, setError] = useState('');
 
     const handleChange = (event) => {
-        setPassword(event.target.value);
+        updatePassword(event.target.value);
+        setError('');
     };
 
     const togglePasswordVisibility = () => {
         setShowPassword(!showPassword);
     };
+
+    const validatePassword = () => {
+        if (password.length < 10) {
+            setError('Mật khẩu phải có ít nhất 10 ký tự.');
+            return false;
+        }
+
+        const regex = /[\d#@%]/;
+        if (!regex.test(password)) {
+            setError('Mật khẩu phải có 1 số và 1 ký tự đặc biệt.')
+            return false;
+        }
+
+        return true;
+    }
+
+    const handleNextStep = () => {
+        if (validatePassword()) {
+            setPassword(password);
+            nextStep();
+        }
+    }
 
     return (
         <div className='step'>
@@ -30,15 +54,17 @@ const PasswordScreen = ({ nextStep }) => {
                         </button>
                     </div>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 15 }}>
+                        {error && <p style={{ color: 'red', marginTop: '10px' }}>{error}</p>}
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: 15 }}></div>
                         <h4>Mật khẩu phải có ít nhất:</h4>
                         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-                            <p className='uiRegular'>1 số hoặc ký tự đặc biệt (#@% ...)</p>
+                            <p className='uiRegular'>1 số và 1 ký tự đặc biệt (#@% ...)</p>
                             <p className='uiRegular'>Nhiều hơn 10 ký tự</p>
                         </div>
 
                     </div>
                 </div>
-                <button onClick={nextStep} className="btn">
+                <button onClick={handleNextStep} className="btn">
                     <h4>Tiếp theo</h4></button>
             </div>
         </div>
