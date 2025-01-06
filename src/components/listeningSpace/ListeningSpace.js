@@ -15,7 +15,7 @@ const ListeningSpace = ({ onInfoButtonClick, onLyricsButtonClick, isRightBarOpen
     const [volume, setVolume] = useState(1);
     const [isLooping, setIsLooping] = useState(false);
 
-    const [playlists, setPlaylists] = useState([]);
+    // const [playlists, setPlaylists] = useState([]);
 
     // Quản lí danh sách phát được chọn để thêm nhạc 
     const [selectedPlaylists, setSelectedPlaylists] = useState({});
@@ -350,11 +350,9 @@ const ListeningSpace = ({ onInfoButtonClick, onLyricsButtonClick, isRightBarOpen
 
     // const fetchPlaylists = async () => {
     //     try {
-    //         const response = await fetch('http://localhost:4000/api/playlist', {
-    //             method: 'GET',
-    //         });
-    //         if (!response.ok) throw new Error("Failed to fetch playlists");
-    //         const data = await response.json();
+    //         const favoriteItem = playlistsDatas.playlist.filter(
+    //             (item) => item.creator === uid
+    //           );
     //         setPlaylists(data.playlist);
 
     //         //onRefreshPlaylists(data.playlist);

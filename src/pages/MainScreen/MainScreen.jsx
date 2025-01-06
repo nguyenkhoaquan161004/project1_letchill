@@ -30,6 +30,7 @@ const MainScreen = memo(() => {
     const [previousScreen, setPreviousScreen] = useState("home");
 
     const [playlists, setPlaylists] = useState([]);
+    const [myPlaylists, setMyPlaylists] = useState([]);
     const [selectedPlaylist, setSelectedPlaylist] = useState(null);
 
     const nav = useNavigate();
@@ -118,6 +119,11 @@ const MainScreen = memo(() => {
             }
 
             const data = await response.json();
+            
+            const myPlaylistsData = data.playlist.filter(
+                (item) => item.creator === uid
+              );
+            setMyPlaylists(myPlaylistsData);
             // Phân loại phần tử
             const favoriteItem = data.playlist.filter(
                 (item) => item.name === "Danh sách yêu thích" && item.creator === uid
@@ -249,7 +255,7 @@ const MainScreen = memo(() => {
                 isRightBarOpen={isRightBarOpen}
                 isLyricsOpen={isLyricsScreenOpen}
                 currentSongId={currentSongId}
-                playlistsDatas={playlists}
+                playlistsDatas={myPlaylists}
                 onChangeSong={handleSongChange}
                 onRefreshPlaylists={fetchPlaylists}
                 onLyricsButtonClick={toggleLyricsScreen}></ListeningSpace>
