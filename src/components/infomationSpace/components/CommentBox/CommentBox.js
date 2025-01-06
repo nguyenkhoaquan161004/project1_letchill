@@ -7,81 +7,9 @@ import CommentCanChange from '../Comment/CommentCanChange';
 
 const CommentBox = ({ isOpen, onClose }) => {
     const ratingsData = [
-        {
-            name: "Nguyễn Văn A",
-            stars: 5,
-            comment: "Bài hát thật sự chạm đến trái tim tôi. Giai điệu tuyệt vời và ca từ đầy cảm xúc!"
-        },
-        {
-            name: "Trần Thị B",
-            stars: 4,
-            comment: "Giai điệu rất bắt tai, nhưng phần lời có thể sâu sắc hơn một chút."
-        },
-        {
-            name: "Lê Hoàng C",
-            stars: 3,
-            comment: "Nghe ổn nhưng không có gì đặc biệt. Phần điệp khúc hơi lặp lại."
-        },
-        {
-            name: "Phạm Thu D",
-            stars: 5,
-            comment: "Quá xuất sắc! Bài hát này khiến tôi muốn nghe đi nghe lại nhiều lần."
-        },
-        {
-            name: "Hoàng Minh E",
-            stars: 2,
-            comment: "Không ấn tượng lắm. Cảm giác như giai điệu đã nghe ở đâu đó rồi."
-        },
-        {
-            name: "Ngô Lan F",
-            stars: 4,
-            comment: "Bài hát rất hay, nhưng chất lượng thu âm cần được cải thiện."
-        },
-        {
-            name: "Đỗ Quốc G",
-            stars: 5,
-            comment: "Một bài hát hoàn hảo từ giai điệu đến ca từ. Tôi rất thích!"
-        },
-        {
-            name: "Vũ Khánh H",
-            stars: 1,
-            comment: "Không hợp gu của tôi, cảm giác như bài hát này không có điểm nhấn."
-        },
-        {
-            name: "Phan Bảo I",
-            stars: 3,
-            comment: "Giọng ca sĩ khá hay nhưng bản phối chưa thực sự nổi bật."
-        },
-        {
-            name: "Hà Yến J",
-            stars: 5,
-            comment: "Giọng ca nội lực, cảm xúc dâng trào! Tôi đã khóc khi nghe bài này."
-        },
-        {
-            name: "Lý Thành K",
-            stars: 4,
-            comment: "Rất thích phần nhạc nền, phù hợp để thư giãn. Cảm ơn ca sĩ và ekip!"
-        },
-        {
-            name: "Nguyễn Tú L",
-            stars: 2,
-            comment: "Phần lời khá khó hiểu, cảm giác bài hát hơi rời rạc."
-        },
-        {
-            name: "Bùi Minh M",
-            stars: 5,
-            comment: "Tuyệt phẩm! Tôi sẽ giới thiệu bài hát này cho bạn bè của mình."
-        },
-        {
-            name: "Trịnh Quỳnh N",
-            stars: 4,
-            comment: "Rất hay, nhưng mong có bản remix để nghe trong các buổi tiệc."
-        },
-        {
-            name: "Hoàng Đăng O",
-            stars: 3,
-            comment: "Nghe được, nhưng không để lại ấn tượng mạnh cho tôi."
-        },
+        { name: 'Nguyen Khoa Quan', stars: 3, comment: 'good' },
+        { name: 'Năng Tiến Thành', stars: 5, comment: 'excellent' },
+        { name: 'Kim Yến', stars: 4, comment: 'quite good' },
     ];
     const [newComment, setNewComment] = useState('');
     const [newStars, setNewStars] = useState(0);

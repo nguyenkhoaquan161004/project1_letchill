@@ -3,7 +3,7 @@ import styles from './VoiceSearchingBox.module.css';
 import { InlineIcon } from '@iconify/react/dist/iconify.js';
 import clsx from 'clsx';
 
-const VoiceSearchingBox = ({ isOpen, onClose, onSearchInput }) => {
+const VoiceSearchingBox = ({ isOpen, onClose, onSearchInput, onSearchingSpaceClick }) => {
     const [isActive, setIsActive] = useState(false);
     const [transcript, setTranscript] = useState('');
     const [isListening, setIsListening] = useState(false);
@@ -56,6 +56,7 @@ const VoiceSearchingBox = ({ isOpen, onClose, onSearchInput }) => {
 
             setTimeout(() => {
                 onClose();
+                onSearchingSpaceClick();
             }, 3000); // Gọi onClose sau 3 giây
         };
 

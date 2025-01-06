@@ -61,6 +61,9 @@ const MainScreen = memo(() => {
         } else {
             if (isHomeScreenOpen) setPreviousScreen("home");
             else if (isLyricsScreenOpen) setPreviousScreen("search");
+            else if (previousScreen === "playlist") {
+                togglePlaylistScreen();
+            }
 
             setIsLyricsScreenOpen((prev) => !prev);
             setIsHomeScreenOpen(false);
@@ -206,10 +209,13 @@ const MainScreen = memo(() => {
                 <div className={styles.mainSpace}>
                     <div className={styles.mainContainer}>
                         <HomeScreen isOpen={isHomeScreenOpen}></HomeScreen>
-                        <LyricsScreen isOpen={isLyricsScreenOpen}></LyricsScreen>
+                        <LyricsScreen
+                            isOpen={isLyricsScreenOpen}
+                            currentSongId={currentSongId}></LyricsScreen>
                         <SearchingScreen
                             isOpen={isSearchingScreenOpen}
                             searchQuery={isSearchQuery}
+                            onCurrentSongId={handleSongChange}
                         ></SearchingScreen>
                         <AccountScreen
                             isOpen={isAccountScreenOpen}
@@ -223,7 +229,7 @@ const MainScreen = memo(() => {
                                 comebackHome={toggleHomeScreen}
                                 onCurrentSongId={handleSongChange}
                                 onUpdatePlaylist={handleUpdatePlaylist}
-                                onRefreshPlaylists={handleRefreshPlaylists}
+                                onRefreshPlaylists={fetchPlaylists}
                                 onDeletePlaylist={handleDeletePlaylist}></PlaylistScreen>
                         )}
 
@@ -238,6 +244,7 @@ const MainScreen = memo(() => {
             <ListeningSpace
                 onInfoButtonClick={toggleRightBar}
                 isRightBarOpen={isRightBarOpen}
+                playlistsData={playlists}
                 isLyricsOpen={isLyricsScreenOpen}
                 currentSongId={currentSongId}
                 onChangeSong={handleSongChange}

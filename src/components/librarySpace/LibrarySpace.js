@@ -10,6 +10,7 @@ const LibrarySpace = ({ onSelectedPlaylist, playlistsData, onRefreshPlaylists })
     const [isAddPlaylistOpen, setIsAddPlaylistOpen] = useState(false);
     //const [playlists, setPlaylists] = useState([]);
 
+
     const handleOpenAddPlaylistBox = () => {
         setIsAddPlaylistOpen(true);
     }
@@ -17,6 +18,7 @@ const LibrarySpace = ({ onSelectedPlaylist, playlistsData, onRefreshPlaylists })
     const handleCloseAddPlaylistBox = () => {
         setIsAddPlaylistOpen(false);
     }
+
 
     // const fetchPlaylists = useCallback(async () => {
     //     try {

@@ -7,7 +7,7 @@ import UpdatePlaylist from './UpdatePlaylist';
 import { useNavigate } from 'react-router-dom';
 import favoritePlaylist from '../../../../components/librarySpace/assets/favoritePlaylist.svg';
 
-const PlaylistScreen = ({ isOpen, playlistId, comebackHome, onDeletePlaylist, onCurrentSongId }) => {
+const PlaylistScreen = ({ isOpen, playlistId, comebackHome, onDeletePlaylist, onCurrentSongId, onRefreshPlaylists }) => {
     const [isPlaying, setIsPlaying] = useState(false);
     const [isOptionsOpen, setIsOptionsOpen] = useState(false);
     const [isUpdatePlaylistOpen, setIsUpdatePlaylistOpen] = useState(false);
@@ -52,7 +52,6 @@ const PlaylistScreen = ({ isOpen, playlistId, comebackHome, onDeletePlaylist, on
         }
     };
 
-
     const fetchPlaylistData = async () => {
         try {
             console.log('Fetching playlist with ID:', playlistId);
@@ -71,21 +70,6 @@ const PlaylistScreen = ({ isOpen, playlistId, comebackHome, onDeletePlaylist, on
         } catch (err) {
             console.error('Error fetching playlist data:', err);
             alert('An error occurred while fetching the playlist data.');
-        }
-    };
-
-    const fetchSongsByIds = async (songIds) => {
-        try {
-            const response = await fetch('http://localhost:4000/api/songInformation'); // Or use specific API to fetch songs by IDs
-            if (!response.ok) {
-                throw new Error('Error fetching songs');
-            }
-
-            const data = await response.json();
-            const songDetails = data.songs.filter(song => songIds.includes(song.id));
-            setSongsData(songDetails); // Set the song data for rendering
-        } catch (err) {
-            console.error('Error fetching song details:', err);
         }
     };
 
@@ -254,6 +238,7 @@ const PlaylistScreen = ({ isOpen, playlistId, comebackHome, onDeletePlaylist, on
                 namePlaylist={playlistData.name}
                 description={playlistData.description}
                 onUpdatePlaylist={handleSaveChanges}
+                onRefreshPlaylists={onRefreshPlaylists}
             />
         </div>
     );

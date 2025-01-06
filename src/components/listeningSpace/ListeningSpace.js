@@ -6,7 +6,7 @@ import styles from './ListeningSpace.module.css';
 import songsData from '../../assets/songsData';
 import Playlist from './Playlist';
 
-const ListeningSpace = ({ onInfoButtonClick, onLyricsButtonClick, isRightBarOpen, isLyricsOpen, onChangeSong, onRefreshPlaylists, currentSongId }) => {
+const ListeningSpace = ({ onInfoButtonClick, onLyricsButtonClick, isRightBarOpen, isLyricsOpen, onChangeSong, playlistsData, currentSongId, onRefreshPlaylists }) => {
     const audioPlayer = useRef(null);
     const progressRef = useRef(null);
     const [isPlaying, setIsPlaying] = useState(false);
@@ -14,8 +14,10 @@ const ListeningSpace = ({ onInfoButtonClick, onLyricsButtonClick, isRightBarOpen
     const [duration, setDuration] = useState('0:00');
     const [volume, setVolume] = useState(1);
     const [isLooping, setIsLooping] = useState(false);
+    const [savedTime, setSavedTime] = useState(0); // Lưu trữ thời gian bài hát
 
-    const [playlists, setPlaylists] = useState([]);
+
+    // const [playlists, setPlaylists] = useState([]);
 
     // Quản lí danh sách phát được chọn để thêm nhạc 
     const [selectedPlaylists, setSelectedPlaylists] = useState({});
@@ -24,9 +26,9 @@ const ListeningSpace = ({ onInfoButtonClick, onLyricsButtonClick, isRightBarOpen
 
     const [songs, setSongs] = useState([]);
     const [currentSongData, setCurrentSongData] = useState(null);
-    const [currentSongIndex, setCurrentSongIndex] = useState(0);
+    // const [currentSongIndex, setCurrentSongIndex] = useState(0);
     const [songHistory, setSongHistory] = useState([]);
-    const currentSong = songsData[currentSongIndex];
+    // const currentSong = songsData[currentSongIndex];
 
 
 
@@ -35,6 +37,12 @@ const ListeningSpace = ({ onInfoButtonClick, onLyricsButtonClick, isRightBarOpen
     const [returnActive, setReturnActive] = useState(false);
     const [infoActive, setInfoActive] = useState(false);
     const [outputActive, setOutputActive] = useState(true); // Mặc định âm thanh bật
+
+    const shortenedName =
+        currentSongData?.name.length > 20
+            ? `${currentSongData?.name.substring(0, 17)}...`
+            : currentSongData?.name;
+
 
     const fetchSongs = useCallback(async (songId) => {
         if (!songId) {
@@ -103,6 +111,7 @@ const ListeningSpace = ({ onInfoButtonClick, onLyricsButtonClick, isRightBarOpen
         };
 
         fetchData();
+        setIsPlaying(true);
 
         return () => {
             isCancelled = true;
@@ -159,7 +168,7 @@ const ListeningSpace = ({ onInfoButtonClick, onLyricsButtonClick, isRightBarOpen
                 audioPlayer.current.play();
             }
         }
-    }, [currentSongIndex, isPlaying]);
+    }, [currentSongData, isPlaying]);
 
     useEffect(() => {
         const controller = new AbortController();
@@ -255,9 +264,9 @@ const ListeningSpace = ({ onInfoButtonClick, onLyricsButtonClick, isRightBarOpen
 
                 }
             }
-
             setCurrentTime(formatTime(audio.currentTime));
             setDuration(formatTime(audio.duration));
+            setSavedTime(audio.currentTime);
         };
 
         const audio = audioPlayer.current;
@@ -272,6 +281,7 @@ const ListeningSpace = ({ onInfoButtonClick, onLyricsButtonClick, isRightBarOpen
         };
     }, []);
 
+
     const formatTime = (time) => {
         const minutes = Math.floor(time / 60);
         const seconds = Math.floor(time % 60);
@@ -281,10 +291,12 @@ const ListeningSpace = ({ onInfoButtonClick, onLyricsButtonClick, isRightBarOpen
     const togglePlay = () => {
         const audio = audioPlayer.current;
         if (audio.paused) {
+            audio.currentTime = savedTime; // Tiếp tục từ thời gian đã lưu
             audio.play().catch((error) => {
                 console.log('Error: ', error);
             });
         } else {
+            setSavedTime(formatTime(audio.currentTime)); // Cập nhật thời gian khi tạm dừng
             audio.pause();
         }
         setIsPlaying(!audio.paused);
@@ -347,24 +359,24 @@ const ListeningSpace = ({ onInfoButtonClick, onLyricsButtonClick, isRightBarOpen
         }
     }, [isLooping]);
 
-    const fetchPlaylists = async () => {
-        try {
-            const response = await fetch('http://localhost:4000/api/playlist', {
-                method: 'GET',
-            });
-            if (!response.ok) throw new Error("Failed to fetch playlists");
-            const data = await response.json();
-            setPlaylists(data.playlist);
+    // const fetchPlaylists = async () => {
+    //     try {
+    //         const response = await fetch('http://localhost:4000/api/playlist', {
+    //             method: 'GET',
+    //         });
+    //         if (!response.ok) throw new Error("Failed to fetch playlists");
+    //         const data = await response.json();
+    //         setPlaylists(data.playlist);
 
-            //onRefreshPlaylists(data.playlist);
-        } catch (err) {
-            console.log('Error fetching playlists: ', err);
-        }
-    }// Memoizing fetchPlaylists, including onRefreshPlaylists as a dependency
+    //         //onRefreshPlaylists(data.playlist);
+    //     } catch (err) {
+    //         console.log('Error fetching playlists: ', err);
+    //     }
+    // }// Memoizing fetchPlaylists, including onRefreshPlaylists as a dependency
 
-    useEffect(() => {
-        fetchPlaylists();
-    }, []);
+    // useEffect(() => {
+    //     fetchPlaylists();
+    // }, []);
 
     const handleCheckboxChange = (playlistId) => {
         setSelectedPlaylists((prev) => ({
@@ -382,6 +394,7 @@ const ListeningSpace = ({ onInfoButtonClick, onLyricsButtonClick, isRightBarOpen
         const selectedPlaylistIds = Object.keys(selectedPlaylists).filter((id) => selectedPlaylists[id]);
         if (selectedPlaylistIds.length === 0 || !currentSongData.id) {
             console.error('No playlist selected or no song is playing');
+            alert("Vui lòng chọn ít nhất một danh sách phát và bài hát hợp lệ.");
             return;
         }
 
@@ -393,6 +406,7 @@ const ListeningSpace = ({ onInfoButtonClick, onLyricsButtonClick, isRightBarOpen
             console.log("Song added to playlists:", response.data);
             alert("Bài hát đã được thêm vào các danh sách phát thành công!");
             setSelectedPlaylists({}); // Reset trạng thái chọn
+            onRefreshPlaylists();
             setIsAddSongBoxOpen(false); // Đóng box
         } catch (error) {
             console.error("Failed to add song to playlists:", error.response?.data || error.message);
@@ -413,7 +427,7 @@ const ListeningSpace = ({ onInfoButtonClick, onLyricsButtonClick, isRightBarOpen
                     />
                     <div className={styles.infoText}>
                         <p className={clsx(styles.name, 'uiSemibold')}>
-                            {currentSongData?.name || 'Unknown Song'}
+                            {shortenedName || 'Unknown Song'}
                         </p>
                         <p className={clsx(styles.author, 'uiRegular', 'o75')}>
                             {currentSongData?.artist || 'Unknown Artist'}
@@ -433,7 +447,7 @@ const ListeningSpace = ({ onInfoButtonClick, onLyricsButtonClick, isRightBarOpen
                     <p className="uiSemibold o75" style={{ fontSize: 12 }}>Thêm bài hát vào danh sách phát</p>
                     <hr style={{ width: '70%', position: 'relative', left: 0, right: 0, border: "1px solid rgba(255, 255, 255, 0.5)" }} />
                     <div className={styles.listOfPlaylists}>
-                        {playlists.map((playlist) => (
+                        {playlistsData.map((playlist) => (
                             <div className={styles.itemPlaylistContainer}>
                                 <Playlist
                                     key={playlist.id}

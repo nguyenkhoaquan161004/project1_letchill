@@ -61,6 +61,7 @@ const Header = memo(({ onLogoAndHomeButtonClick, onSearchingSpaceClick, onAccoun
             <VoiceSearchingBox
                 onSearchInput={onSearchInput}
                 isOpen={isVoiceSearchingBoxOpen}
+                onSearchingSpaceClick={onSearchingSpaceClick}
                 onClose={handleCloseVoiceSearching} />
         </div>
     );

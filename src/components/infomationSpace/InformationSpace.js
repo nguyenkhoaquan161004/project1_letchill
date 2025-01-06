@@ -22,6 +22,12 @@ const InformationSpace = ({ isOpen, onClose, songId }) => {
         setIsCommentBoxOpen(false);
     }
 
+    const shortenedName =
+        songData?.artist?.length > 7
+            ? `${songData.artist.substring(0, 7)}...`
+            : songData?.artist || 'Unknown Artist'; // Giá trị mặc định nếu artist không tồn tại
+
+
     useEffect(() => {
         const fetchData = async () => {
             if (!songId) return; // Bỏ qua nếu songId không tồn tại
@@ -105,13 +111,17 @@ const InformationSpace = ({ isOpen, onClose, songId }) => {
                             </div>
                         </div>
 
-                        <div className={styles.authorInfo}>
-                            <div className={styles.authorPic}>
+                        <div className={styles.authorInfo} >
+                            <div
+                                className={styles.authorPic}
+                                style={{
+                                    backgroundImage: `url(${songData.image})`,
+                                }}>
                                 <p className={clsx('uiSemibold')}>Nghệ sĩ</p>
                             </div>
 
                             <div className={styles.authorName}>
-                                <h4 className={styles.active}>{songData.artist}</h4>
+                                <h4 className={styles.active}>{shortenedName}</h4>
                                 <button className='uiRegular'>Theo dõi</button>
                             </div>
                         </div>
@@ -119,11 +129,11 @@ const InformationSpace = ({ isOpen, onClose, songId }) => {
 
 
                 </main>
-            </div>
+            </div >
             <CommentBox
                 isOpen={isCommentBoxOpen}
                 onClose={handleCloseCommentBox} ></CommentBox>
-        </div>
+        </div >
     );
 };
 

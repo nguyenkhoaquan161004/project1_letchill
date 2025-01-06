@@ -3,7 +3,7 @@ import styles from './SearchingScreen.module.css';
 import ItemOfHistory from './ItemOfHistory';
 import clsx from 'clsx';
 
-const SearchingScreen = ({ isOpen, namePlaylist, searchQuery, onSearch }) => {
+const SearchingScreen = ({ isOpen, searchQuery, onCurrentSongId }) => {
     const [searchResults, setSearchResults] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
 
@@ -55,6 +55,10 @@ const SearchingScreen = ({ isOpen, namePlaylist, searchQuery, onSearch }) => {
         return () => clearTimeout(delayDebounceFn);
     }, [searchQuery])
 
+    const handleSongItemClick = (songId) => {
+        console.log(songId);
+        onCurrentSongId(songId); // Xóa ID của bài hát hiện tại
+    }
 
     if (!isOpen) return null;
 
@@ -75,7 +79,9 @@ const SearchingScreen = ({ isOpen, namePlaylist, searchQuery, onSearch }) => {
                         {isLoading && <p>Đang tìm kiếm...</p>}
                         {!isLoading && Array.isArray(searchResults) && searchResults.length === 0 ? <p>Không tìm thấy kết quả cho tự khóa "{searchQuery}"</p>
                             : searchResults.map((song, index) => (
-                                <div key={song.id} className={styles.itemResult}>
+                                <div key={song.id}
+                                    className={styles.itemResult}
+                                    onClick={() => handleSongItemClick(song.id)}>
                                     <div className={styles.itemContainer}>
                                         <img src={song.image || ''} alt="picSong" />
                                         <div className={styles.infoSong}>

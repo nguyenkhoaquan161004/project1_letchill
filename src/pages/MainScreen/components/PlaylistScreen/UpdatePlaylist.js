@@ -5,7 +5,7 @@ import clsx from 'clsx';
 import { use } from 'react';
 import axios from 'axios';
 
-const UpdatePlaylist = ({ playlistId, isOpen, onClose, onUpdatePlaylist, playlistPic, namePlaylist, description }) => {
+const UpdatePlaylist = ({ playlistId, isOpen, onClose, onUpdatePlaylist, playlistPic, namePlaylist, description, onRefreshPlaylists }) => {
     const [selectedImage, setSelectedImage] = useState(null);
     const [playlistName, setPlaylistName] = useState('');
     const [playlistDescription, setPlaylistDescription] = useState('');
@@ -26,7 +26,7 @@ const UpdatePlaylist = ({ playlistId, isOpen, onClose, onUpdatePlaylist, playlis
     const handleImageChange = async (e) => {
         const file = e.target.files[0];
         if (!file) return;
-        const compressedImage = await compressedImage(file);
+        const compressedImage = await (file);
         const formData = new FormData();
         formData.append('file', compressedImage);
         formData.append('upload_preset', 'playlistAvtUrl');  // Đảm bảo bạn đã tạo preset trong Cloudinary
@@ -93,6 +93,7 @@ const UpdatePlaylist = ({ playlistId, isOpen, onClose, onUpdatePlaylist, playlis
 
             // Gọi callback để cập nhật giao diện hoặc thông báo
             onUpdatePlaylist(result);
+            onRefreshPlaylists();
             // Đóng modal
             onClose();
 

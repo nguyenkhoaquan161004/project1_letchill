@@ -1,58 +1,44 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from './LyricsScreen.module.css';
 
-const LyricsScreen = ({ isOpen }) => {
-    if (!isOpen) return null; // Don't render if isOpen is false
+const LyricsScreen = ({ isOpen, currentSongId }) => {
+    const [lyrics, setLyrics] = useState([]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            if (!currentSongId) return; // Bỏ qua nếu currentSongId không tồn tại
+
+            try {
+                const response = await fetch(`http://localhost:4000/api/songInformation/${currentSongId}`);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json(); // Chuyển đổi phản hồi thành JSON
+                if (data.lyric) {
+                    setLyrics(data.lyric); // Lưu dữ liệu vào state
+                } else {
+                    setLyrics([]);
+                }
+            } catch (err) {
+                console.error('Error fetching song information:', err.message);
+            }
+        };
+
+        fetchData();
+    }, [currentSongId]);
+
+
+    if (!isOpen) return null;
 
     return (
         <div className={styles.lyricsContainer} >
-            <h4 className={styles.lyricsOfSong}>
-                I can read your minds
-                <br />"She's having the time of her life"
-                <br />There in her glittering prime
-                <br />The lights refract sequined stars off her silhouette every night
-                <br />I can show you lies (one, two, three, four)
-                <br />'Cause I'm a real tough kid, I can handle my shit
-                <br />They said, "Babe, you gotta fake it 'til you make it" and I did
-                <br />Lights, camera, bitch smile, even when you wanna die
-                <br />He said he'd love me all his life
-                <br />But that life was too short
-                <br />Breaking down, I hit the floor
-                <br />All the pieces of me shattered as the crowd was chanting, "More"
-                <br />I was grinning like I'm winning, I was hitting my marks
-                <br />'Cause I can do it with a broken heart (one, two, three, four)
-                <br />I'm so depressed, I act like it's my birthday every day
-                <br />I'm so obsessed with him but he avoids me like the plague
-                <br />I cry a lot but I am so productive, it's an art
-                <br />You know you're good when you can even do it
-                <br />With a broken heart
-                <br />I can hold my breath
-                <br />I've been doing it since he left
-                <br />I keep finding his things in drawers
-                <br />Crucial evidence, I didn't imagine the whole thing
-                <br />I'm sure I can pass this test (one, two, three, four)
-                <br />'Cause I'm a real tough kid, I can handle my shit
-                <br />They said, "Babe, you gotta fake it 'til you make it" and I did
-                <br />Lights, camera, bitch smile, in stilettos for miles
-                <br />He said he'd love me for all time
-                <br />But that time was quite short
-                <br />Breaking down, I hit the floor
-                <br />All the pieces of me shattered as the crowd was chanting, "More"
-                <br />I was grinning like I'm winning, I was hitting my marks
-                <br />'Cause I can do it with a broken heart (one, two, three)
-                <br />I'm so depressed, I act like it's my birthday every day
-                <br />I'm so obsessed with him but he avoids me like the plague (he avoids me)
-                <br />I cry a lot but I am so productive, it's an art
-                <br />You know you're good when you can even do it
-                <br />With a broken heart
-                <br />You know you're good when you can even do it
-                <br />With a broken heart
-                <br />You know you're good, I'm good
-                <br />'Cause I'm miserable
-                <br />And nobody even knows
-                <br />Try and come for my job</h4>
+            <div className={styles.lyricsOfSong}>
+                {lyrics.length === 0 ? <h2>Không có lời cho bài hát này!</h2> : (
+                    lyrics.map((line, index) => <h4 key={index}>{line}</h4>)
+                )}
+            </div>
         </div>
     );
 };
 
-        export default LyricsScreen;
+export default LyricsScreen;
