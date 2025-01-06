@@ -6,7 +6,7 @@ import styles from './ListeningSpace.module.css';
 import songsData from '../../assets/songsData';
 import Playlist from './Playlist';
 
-const ListeningSpace = ({ onInfoButtonClick, onLyricsButtonClick, isRightBarOpen, isLyricsOpen, onChangeSong, onRefreshPlaylists, currentSongId }) => {
+const ListeningSpace = ({ onInfoButtonClick, onLyricsButtonClick, isRightBarOpen, isLyricsOpen, onChangeSong, onRefreshPlaylists, currentSongId, playlistsDatas }) => {
     const audioPlayer = useRef(null);
     const progressRef = useRef(null);
     const [isPlaying, setIsPlaying] = useState(false);
@@ -49,13 +49,14 @@ const ListeningSpace = ({ onInfoButtonClick, onLyricsButtonClick, isRightBarOpen
             const data = await response.json();
             if (data && data.name) {
                 console.log("Fetched song data:", data);
-
+                setCurrentSongData(data)
+                setDuration(formatTime(data.duration));
                 // Chỉ cập nhật nếu cần thiết
                 setCurrentSongData((prevData) => {
                     if (prevData?.id === data.id) return prevData; // Không thay đổi nếu giống nhau
                     return data;
                 });
-
+                console.log(duration)
                 setSongHistory((prev) => {
                     if (prev.includes(songId)) return prev; // Tránh trùng lặp
                     return [...prev, songId];
@@ -78,13 +79,14 @@ const ListeningSpace = ({ onInfoButtonClick, onLyricsButtonClick, isRightBarOpen
                 name: 'Unknown Song',
                 artist: 'Unknown Artist',
                 audio: null,
+                duration:0
             });
 
             // Thêm bài hát mặc định nếu cần
             setSongs((prevSongs) => {
                 if (prevSongs.length === 0) {
                     return [
-                        { id: 1, name: 'Default Song', artist: 'Unknown Artist', audio: '/path/to/default.mp3' },
+                        { id: 1, name: 'Default Song', artist: 'Unknown Artist', audio: '/path/to/default.mp3', duration:0 },
                     ];
                 }
                 return prevSongs;
@@ -257,7 +259,6 @@ const ListeningSpace = ({ onInfoButtonClick, onLyricsButtonClick, isRightBarOpen
             }
 
             setCurrentTime(formatTime(audio.currentTime));
-            setDuration(formatTime(audio.duration));
         };
 
         const audio = audioPlayer.current;
@@ -347,24 +348,24 @@ const ListeningSpace = ({ onInfoButtonClick, onLyricsButtonClick, isRightBarOpen
         }
     }, [isLooping]);
 
-    const fetchPlaylists = async () => {
-        try {
-            const response = await fetch('http://localhost:4000/api/playlist', {
-                method: 'GET',
-            });
-            if (!response.ok) throw new Error("Failed to fetch playlists");
-            const data = await response.json();
-            setPlaylists(data.playlist);
+    // const fetchPlaylists = async () => {
+    //     try {
+    //         const response = await fetch('http://localhost:4000/api/playlist', {
+    //             method: 'GET',
+    //         });
+    //         if (!response.ok) throw new Error("Failed to fetch playlists");
+    //         const data = await response.json();
+    //         setPlaylists(data.playlist);
 
-            //onRefreshPlaylists(data.playlist);
-        } catch (err) {
-            console.log('Error fetching playlists: ', err);
-        }
-    }// Memoizing fetchPlaylists, including onRefreshPlaylists as a dependency
+    //         //onRefreshPlaylists(data.playlist);
+    //     } catch (err) {
+    //         console.log('Error fetching playlists: ', err);
+    //     }
+    // }// Memoizing fetchPlaylists, including onRefreshPlaylists as a dependency
 
-    useEffect(() => {
-        fetchPlaylists();
-    }, []);
+    // useEffect(() => {
+    //     fetchPlaylists();
+    // }, []);
 
     const handleCheckboxChange = (playlistId) => {
         setSelectedPlaylists((prev) => ({
@@ -433,7 +434,7 @@ const ListeningSpace = ({ onInfoButtonClick, onLyricsButtonClick, isRightBarOpen
                     <p className="uiSemibold o75" style={{ fontSize: 12 }}>Thêm bài hát vào danh sách phát</p>
                     <hr style={{ width: '70%', position: 'relative', left: 0, right: 0, border: "1px solid rgba(255, 255, 255, 0.5)" }} />
                     <div className={styles.listOfPlaylists}>
-                        {playlists.map((playlist) => (
+                        {playlistsDatas.map((playlist) => (
                             <div className={styles.itemPlaylistContainer}>
                                 <Playlist
                                     key={playlist.id}

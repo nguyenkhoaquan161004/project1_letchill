@@ -13,6 +13,7 @@ import clsx from 'clsx';
 import styles from '../MainScreen/MainScreen.module.css'
 import { useNavigate, useLocation  } from 'react-router-dom';
 import { query } from 'firebase/firestore';
+import axios from 'axios';
 
 const MainScreen = memo(() => {
     const [isRightBarOpen, setIsRightBarOpen] = useState(false);
@@ -117,7 +118,19 @@ const MainScreen = memo(() => {
             }
 
             const data = await response.json();
-            setPlaylists(data.playlist);  // Update the state with fetched playlists
+
+            // Phân loại phần tử
+            const favoriteItem = data.playlist.filter(
+                (item) => item.name === "Danh sách yêu thích" && item.creator === uid
+              );
+
+            const filteredData = data.playlist.filter((item) => item.name !== "Danh sách yêu thích");
+            if (favoriteItem!=[]) {
+                filteredData.unshift(favoriteItem[0]);
+            }
+            setPlaylists(filteredData);  // Update the state with fetched playlists
+            console.log(favoriteItem[0].songIds[0]);
+            setCurrentSongId(favoriteItem[0].songIds[0]||'39698')
         } catch (err) {
             console.error('Error fetching playlists:', err);
             alert('Lỗi khi tải lại danh sách phát.');
@@ -223,7 +236,7 @@ const MainScreen = memo(() => {
                 <LeftBar
                     onSelectedPlaylist={togglePlaylistScreen}
                     onAddPlaylist={handleAddPlaylist}
-                    playlistsData={playlists}
+                    playlistsDatas={playlists}
                     onRefreshPlaylists={fetchPlaylists}
                 ></LeftBar>
                 <div className={styles.mainSpace}>
@@ -263,6 +276,7 @@ const MainScreen = memo(() => {
                 isRightBarOpen={isRightBarOpen}
                 isLyricsOpen={isLyricsScreenOpen}
                 currentSongId={currentSongId}
+                playlistsDatas={playlists}
                 onChangeSong={handleSongChange}
                 onRefreshPlaylists={fetchPlaylists}
                 onLyricsButtonClick={toggleLyricsScreen}></ListeningSpace>
