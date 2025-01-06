@@ -11,7 +11,7 @@ import PlaylistScreen from './components/PlaylistScreen/PlaylistScreen.js';
 import playlistdData from '../../components/librarySpace/assets/playlistData.js';
 import clsx from 'clsx';
 import styles from '../MainScreen/MainScreen.module.css'
-import { useNavigate, useLocation  } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { query } from 'firebase/firestore';
 import axios from 'axios';
 
@@ -36,7 +36,7 @@ const MainScreen = memo(() => {
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
     const uid = queryParams.get('uid'); // Lấy UID từ URL
-    console.log(uid);
+
     const toggleRightBar = () => {
         setIsRightBarOpen((prev) => !prev);
     }
@@ -118,7 +118,6 @@ const MainScreen = memo(() => {
             }
 
             const data = await response.json();
-
             // Phân loại phần tử
             const favoriteItem = data.playlist.filter(
                 (item) => item.name === "Danh sách yêu thích" && item.creator === uid
@@ -131,6 +130,7 @@ const MainScreen = memo(() => {
             setPlaylists(filteredData);  // Update the state with fetched playlists
             console.log(favoriteItem[0].songIds[0]);
             setCurrentSongId(favoriteItem[0].songIds[0]||'39698')
+
         } catch (err) {
             console.error('Error fetching playlists:', err);
             alert('Lỗi khi tải lại danh sách phát.');
@@ -197,33 +197,6 @@ const MainScreen = memo(() => {
         console.log(isSearchQuery);
     }
 
-    // const handleSearchSongs = async (query) => {
-    //     try {
-    //         // Gửi yêu cầu GET đến API với query được truyền trong URL
-    //         const response = await fetch(`http://localhost:4000/api/search/${query}`, {
-    //             method: 'GET',
-    //             headers: {
-    //                 'Content-Type': 'application/json',
-    //             },
-    //         });
-
-    //         // Kiểm tra phản hồi từ API
-    //         if (response.ok) {
-    //             const data = await response.json(); // Parse kết quả JSON
-    //             console.log('Search results:', data); // In kết quả tìm kiếm ra console
-    //             return data;
-    //         } else if (response.status === 404) {
-    //             console.warn('No songs found for the query.');
-    //             return []; // Trả về mảng rỗng nếu không tìm thấy bài hát
-    //         } else {
-    //             throw new Error(`HTTP error! status: ${response.status}`);
-    //         }
-    //     } catch (error) {
-    //         console.error('Error calling search API:', error); // Log lỗi ra console
-    //         return null; // Trả về null nếu có lỗi xảy ra
-    //     }
-    // };
-
     return (
         <div id={styles.main}>
             <Header
@@ -247,7 +220,7 @@ const MainScreen = memo(() => {
                             isOpen={isSearchingScreenOpen}
                             searchQuery={isSearchQuery}
                         ></SearchingScreen>
-                        <AccountScreen 
+                        <AccountScreen
                             isOpen={isAccountScreenOpen}
                             uid={uid}
                             onSelectedPlaylist={togglePlaylistScreen}

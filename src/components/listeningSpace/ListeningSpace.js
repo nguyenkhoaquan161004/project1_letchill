@@ -44,7 +44,7 @@ const ListeningSpace = ({ onInfoButtonClick, onLyricsButtonClick, isRightBarOpen
 
         try {
             console.log("Fetching song information for ID:", songId);
-            const response = await fetch (`http://localhost:4000/api/songInformation/${songId}`);
+            const response = await fetch(`http://localhost:4000/api/songInformation/${songId}`);
 
             const data = await response.json();
             if (data && data.name) {
@@ -189,7 +189,7 @@ const ListeningSpace = ({ onInfoButtonClick, onLyricsButtonClick, isRightBarOpen
     const handleNext = async () => {
         try {
             console.log("Fetching a random song ID...");
-            const response = await axios.get('http://localhost:4000/api/songInformation/');
+            const response = await axios.get('http://localhost:4000/api/songInformation');
             const randomSongId = response.data.id;
 
             if (!randomSongId) {

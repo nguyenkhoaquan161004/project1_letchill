@@ -10,7 +10,6 @@ const Playlist = ({ playlistPic, namePlaylist, countPlaylist , onSelectedPlaylis
                 <p className='uiSemibold'>
                 {namePlaylist.length > 20 ? `${namePlaylist.substring(0, 20)}...` : namePlaylist}</p>
                 <p className={clsx('uiRegular', 'o50')}>{countPlaylist} bài hát</p>
-                {/* <span className='uiRegular o50'>{countPlaylist} bài hát</span> */}
             </div>
         </div>
     );

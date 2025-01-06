@@ -10,36 +10,6 @@ const AccountScreen = ({ isOpen, uid, onSelectedPlaylist }) => {
     const [playlists, setPlaylists] = useState(null);
     const [user, setUser] = useState(null);
     const [playlistCount, setPlaylistCount] = useState(null);
-    //  playlists = [
-    //     {
-    //         playlistPic: favoritePlaylist,
-    //         name: "Danh sách yêu thích"
-    //     },
-    //     {
-    //         playlistPic: 'https://www.neonvibes.co.uk/cdn/shop/products/NV-Chillneonvibes.co.ukLEDneonsignsMadeintheUK_8_2048x.jpg?v=1665760509',
-    //         name: "Chilling"
-    //     },
-    //     {
-    //         playlistPic: 'https://hoanghamobile.com/tin-tuc/wp-content/uploads/2024/04/anh-chill-buon.jpg',
-    //         name: "focus time"
-    //     },
-    //     {
-    //         playlistPic: 'https://xwatch.vn/upload_images/images/2023/03/29/anh-chill-nhac-lofi.jpg',
-    //         name: "The sunset in my memory"
-    //     },
-    //     {
-    //         playlistPic: 'https://i.pinimg.com/736x/3d/63/27/3d6327fde132c19c6481130a9d54b5b1.jpg',
-    //         name: "Đôi ba câu chuyện tình yêu"
-    //     },
-    //     {
-    //         playlistPic: 'https://www.thoughtco.com/thmb/beiCvc1QcvpjjJPXI6g0wG18MxI=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/drops-of-rain-on-glass-838815210-5a823cc0a18d9e0036e325e2.jpg',
-    //         name: "Một chút tâm trạng"
-    //     },
-    //     {
-    //         playlistPic: 'https://cdn2.fptshop.com.vn/unsafe/1920x0/filters:quality(100)/2023_12_27_638392900179046358_slay-la-gi.jpg',
-    //         name: "Hey! Slay Queen"
-    //     },
-    // ]
 
     const handleImageChange = async (e) => {
         const file = e.target.files[0];
@@ -61,10 +31,10 @@ const AccountScreen = ({ isOpen, uid, onSelectedPlaylist }) => {
 
             // Lưu hình ảnh vào state
             setSelectedImage(imageUrl);
-            const updateUser={
+            const updateUser = {
                 uid: uid,
                 newName: user.name,
-                imageUrl: imageUrl
+                imageUrl: imageUrl,
             }
             await fetch(`http://localhost:4000/api/profile/${uid}`, {
                 method: 'PATCH',
@@ -72,7 +42,7 @@ const AccountScreen = ({ isOpen, uid, onSelectedPlaylist }) => {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(updateUser),
-            }); 
+            });
             console.log('Image uploaded and link sent to backend:', imageUrl);
         } catch (error) {
             console.error('Error uploading image:', error);
@@ -107,6 +77,10 @@ const AccountScreen = ({ isOpen, uid, onSelectedPlaylist }) => {
         fetchUsertData();
     }, []);
 
+    const handlePlaylistSelect = (playlistId) => {
+        onSelectedPlaylist(playlistId);
+    };
+
     if (!isOpen) { return null; }
 
     return (
@@ -130,14 +104,15 @@ const AccountScreen = ({ isOpen, uid, onSelectedPlaylist }) => {
                             className={clsx(styles.avatarPic)}
                            style={{ background: selectedImage ? 'transparent' : '' }} 
                            />
+
                     </div>
 
                     <div className={styles.textSpace}>
                         <p className='p1'>Hồ sơ</p>
                         <div className={styles.infoUser}>
-                            <h3 className={styles.nameOfUsesr}>{user.name||'User'}</h3>
+                            <h3 className={styles.nameOfUsesr}>{user.name || 'User'}</h3>
                             <p className='uiSemibold o50'>
-                                <span className='uiSemibold o50'>{playlistCount||0}</span> danh sách phát</p>
+                                <span className='uiSemibold o50'>{playlistCount || 0}</span> danh sách phát</p>
                         </div>
                     </div>
                 </div>
@@ -151,7 +126,18 @@ const AccountScreen = ({ isOpen, uid, onSelectedPlaylist }) => {
                 <div className={styles.listOfPlaylist}>
                     {playlists.map((playlist, i) => {
                         return (
-                            <div key={i} className={styles.itemOfPlaylist}>
+                            <div
+                                key={i}
+                                className={styles.itemOfPlaylist}
+                                onClick={() => {
+                                    onSelectedPlaylist({
+                                        playlistId: playlist.id,
+                                        playlistPic: playlist.avtUrl,
+                                        namePlaylist: playlist.name,
+                                        description: playlist.description,
+                                    })
+                                    handlePlaylistSelect(playlist.id)
+                                }}>
                                 <img className={styles.playlistPic} src={playlist.avtUrl} alt='' />
                                 <p className={clsx(styles.nameOfPlaylist, 'uiSemibold')}>{playlist.name}</p>
                             </div>
@@ -160,7 +146,7 @@ const AccountScreen = ({ isOpen, uid, onSelectedPlaylist }) => {
                 </div>
 
             </div>
-        </div>
+        </div >
     );
 };
 

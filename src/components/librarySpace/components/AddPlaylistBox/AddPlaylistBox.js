@@ -3,12 +3,15 @@ import styles from './AddPlaylistBox.module.css';
 import { InlineIcon } from '@iconify/react/dist/iconify.js';
 import clsx from 'clsx';
 import axios from 'axios';
+import { useSearchParams } from 'react-router-dom';
 
 const AddPlaylistBox = ({ isOpen, onClose, onAddPlaylist }) => {
     const [selectedImage, setSelectedImage] = useState(null);
     const [playlistName, setPlaylistName] = useState('');
     const [playlistDescription, setPlaylistDescription] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
+
+    const [searchParams] = useSearchParams();
 
     useEffect(() => {
         // Cleanup the URL when the component unmounts or selectedImage changes
@@ -56,7 +59,7 @@ const AddPlaylistBox = ({ isOpen, onClose, onAddPlaylist }) => {
     const handleCreatePlaylist = () => {
         setIsSubmitting(true);
 
-        const uid = localStorage.getItem('uid') || 'Awx8TDFrgwReln0QQefF';
+        const uid = searchParams.get('uid') || 'Awx8TDFrgwReln0QQefF';
         const name = playlistName.trim();
         const description = playlistDescription.trim();
 
