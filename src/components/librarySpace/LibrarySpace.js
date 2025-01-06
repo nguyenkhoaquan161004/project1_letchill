@@ -119,7 +119,8 @@ const LibrarySpace = ({ onSelectedPlaylist, playlistsData, onRefreshPlaylists })
             <AddPlaylistBox
                 isOpen={isAddPlaylistOpen}
                 onClose={handleCloseAddPlaylistBox}
-                onAddPlaylist={handleAddPlaylist}></AddPlaylistBox>
+                onAddPlaylist={handleAddPlaylist}
+            ></AddPlaylistBox>
         </div >
     );
 };

@@ -47,7 +47,7 @@ const LoginScreen = memo(() => {
         try {
             const userCredential = await signInWithEmailAndPassword(auth, email, password);
             const uid = userCredential.user.uid;
-            navigate(`/main?uid=${uid}`)
+            navigate(`/main?uid=${uid}`);
 
         } catch (error) {
             console.error('Login error:', error);

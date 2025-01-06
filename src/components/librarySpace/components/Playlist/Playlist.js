@@ -8,7 +8,7 @@ const Playlist = ({ playlistPic, namePlaylist, onSelectedPlaylist }) => {
             <img src={playlistPic} alt='picSong'></img>
             <div className={styles.infoSong}>
                 <p className='uiSemibold'>
-                    </p>
+                    {namePlaylist} </p>
                 <p className={clsx('uiRegular', 'o50')}>Playlist</p>
             </div>
         </div>
