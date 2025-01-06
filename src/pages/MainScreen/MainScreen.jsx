@@ -13,6 +13,7 @@ import clsx from 'clsx';
 import styles from '../MainScreen/MainScreen.module.css'
 import { useNavigate, useLocation } from 'react-router-dom';
 import { query } from 'firebase/firestore';
+import axios from 'axios';
 
 const MainScreen = memo(() => {
     const [isRightBarOpen, setIsRightBarOpen] = useState(false);
@@ -29,6 +30,7 @@ const MainScreen = memo(() => {
     const [previousScreen, setPreviousScreen] = useState("home");
 
     const [playlists, setPlaylists] = useState([]);
+    const [favoritePlaylist, setFavoritePlaylist] = useState();
     const [selectedPlaylist, setSelectedPlaylist] = useState(null);
 
     const nav = useNavigate();
@@ -120,11 +122,30 @@ const MainScreen = memo(() => {
             }
 
             const data = await response.json();
-            const currentUid = uid;// Thay bằng logic lấy UID hiện tại
-            const filteredPlaylists = data.playlist.filter(playlist => playlist.creator === currentUid);
 
-            setPlaylists(filteredPlaylists);
-            // Update the state with fetched playlists
+            const myPlaylistsData = data.playlist.filter(
+                (item) => item.creator === uid
+            );
+            setPlaylists(myPlaylistsData);
+            // Phân loại phần tử
+            const favoriteItem = data.playlist.filter(
+                (item) => item.name === "Danh sách yêu thích" && item.creator === uid
+            );
+
+            const filteredData = data.playlist.filter((item) => item.name !== "Danh sách yêu thích");
+            if (favoriteItem) {
+                filteredData.unshift(favoriteItem[0]);
+            }  // Update the state with fetched playlists
+
+            if (favoriteItem.length > 0 && favoriteItem[0].songIds?.length > 0) {
+                setCurrentSongId(favoriteItem[0].songIds[0]);
+            } else {
+                setCurrentSongId('39698'); // Giá trị mặc định nếu không có bài hát
+            }
+
+            setFavoritePlaylist(filteredData);
+            console.log(favoritePlaylist);
+
         } catch (err) {
             console.error('Error fetching playlists:', err);
             alert('Lỗi khi tải lại danh sách phát.');
@@ -203,7 +224,7 @@ const MainScreen = memo(() => {
                 <LeftBar
                     onSelectedPlaylist={togglePlaylistScreen}
                     onAddPlaylist={handleAddPlaylist}
-                    playlistsData={playlists}
+                    playlistsDatas={playlists}
                     onRefreshPlaylists={fetchPlaylists}
                 ></LeftBar>
                 <div className={styles.mainSpace}>

@@ -6,6 +6,7 @@ import styles from './ListeningSpace.module.css';
 import songsData from '../../assets/songsData';
 import Playlist from './Playlist';
 
+
 const ListeningSpace = ({ onInfoButtonClick, onLyricsButtonClick, isRightBarOpen, isLyricsOpen, onChangeSong, playlistsData, currentSongId, onRefreshPlaylists }) => {
     const audioPlayer = useRef(null);
     const progressRef = useRef(null);
@@ -15,7 +16,6 @@ const ListeningSpace = ({ onInfoButtonClick, onLyricsButtonClick, isRightBarOpen
     const [volume, setVolume] = useState(1);
     const [isLooping, setIsLooping] = useState(false);
     const [savedTime, setSavedTime] = useState(0); // Lưu trữ thời gian bài hát
-
 
     // const [playlists, setPlaylists] = useState([]);
 
@@ -57,13 +57,14 @@ const ListeningSpace = ({ onInfoButtonClick, onLyricsButtonClick, isRightBarOpen
             const data = await response.json();
             if (data && data.name) {
                 console.log("Fetched song data:", data);
-
+                setCurrentSongData(data)
+                setDuration(formatTime(data.duration));
                 // Chỉ cập nhật nếu cần thiết
                 setCurrentSongData((prevData) => {
                     if (prevData?.id === data.id) return prevData; // Không thay đổi nếu giống nhau
                     return data;
                 });
-
+                console.log(duration)
                 setSongHistory((prev) => {
                     if (prev.includes(songId)) return prev; // Tránh trùng lặp
                     return [...prev, songId];
@@ -86,13 +87,14 @@ const ListeningSpace = ({ onInfoButtonClick, onLyricsButtonClick, isRightBarOpen
                 name: 'Unknown Song',
                 artist: 'Unknown Artist',
                 audio: null,
+                duration: 0
             });
 
             // Thêm bài hát mặc định nếu cần
             setSongs((prevSongs) => {
                 if (prevSongs.length === 0) {
                     return [
-                        { id: 1, name: 'Default Song', artist: 'Unknown Artist', audio: '/path/to/default.mp3' },
+                        { id: 1, name: 'Default Song', artist: 'Unknown Artist', audio: '/path/to/default.mp3', duration: 0 },
                     ];
                 }
                 return prevSongs;
@@ -267,6 +269,7 @@ const ListeningSpace = ({ onInfoButtonClick, onLyricsButtonClick, isRightBarOpen
             setCurrentTime(formatTime(audio.currentTime));
             setDuration(formatTime(audio.duration));
             setSavedTime(audio.currentTime);
+
         };
 
         const audio = audioPlayer.current;
@@ -366,8 +369,10 @@ const ListeningSpace = ({ onInfoButtonClick, onLyricsButtonClick, isRightBarOpen
     //         });
     //         if (!response.ok) throw new Error("Failed to fetch playlists");
     //         const data = await response.json();
+    //         const favoriteItem = playlistsDatas.playlist.filter(
+    //             (item) => item.creator === uid
+    //           );
     //         setPlaylists(data.playlist);
-
     //         //onRefreshPlaylists(data.playlist);
     //     } catch (err) {
     //         console.log('Error fetching playlists: ', err);
@@ -448,6 +453,7 @@ const ListeningSpace = ({ onInfoButtonClick, onLyricsButtonClick, isRightBarOpen
                     <hr style={{ width: '70%', position: 'relative', left: 0, right: 0, border: "1px solid rgba(255, 255, 255, 0.5)" }} />
                     <div className={styles.listOfPlaylists}>
                         {playlistsData.map((playlist) => (
+
                             <div className={styles.itemPlaylistContainer}>
                                 <Playlist
                                     key={playlist.id}

@@ -6,7 +6,7 @@ import clsx from 'clsx';
 import AddPlaylistBox from './components/AddPlaylistBox/AddPlaylistBox';
 import favoritePlaylist from './assets/favoritePlaylist.svg';
 
-const LibrarySpace = ({ onSelectedPlaylist, playlistsData, onRefreshPlaylists }) => {
+const LibrarySpace = ({ onSelectedPlaylist, playlistsDatas, onRefreshPlaylists }) => {
     const [isAddPlaylistOpen, setIsAddPlaylistOpen] = useState(false);
     //const [playlists, setPlaylists] = useState([]);
 
@@ -82,39 +82,30 @@ const LibrarySpace = ({ onSelectedPlaylist, playlistsData, onRefreshPlaylists })
                 </div>
 
                 <div className={styles.listOfPlaylist}>
-                    <div>
-                        <Playlist
-                            playlistId='favorite'
-                            playlistPic={favoritePlaylist}
-                            namePlaylist="Danh sách yêu thích"
-                            description=""
-                            onSelectedPlaylist={() =>
-                                onSelectedPlaylist({
-                                    playlistId: 'favorite',
-                                    playlistPic: favoritePlaylist,
-                                    namePlaylist: "Danh sách yêu thích",
-                                    description: "",
-                                })}
-                        ></Playlist>
-                    </div>
-                    {playlistsData.map((playlistsData) => (
-                        <Playlist
-                            key={playlistsData.id}
-                            onSelectedPlaylist={() => {
-                                onSelectedPlaylist({
-                                    playlistId: playlistsData.id,
-                                    playlistPic: playlistsData.avtUrl,
-                                    namePlaylist: playlistsData.name,
-                                    description: playlistsData.description,
-                                })
-                                handlePlaylistSelect(playlistsData.id)
-                                console.log(playlistsData.id)
-                            }}
-                            playlistId={playlistsData.id}
-                            playlistPic={playlistsData.avtUrl}
-                            namePlaylist={playlistsData.name}
-                            description={playlistsData.description}></Playlist>
-                    ))}
+                    {Array.isArray(playlistsDatas) && playlistsDatas.length > 0 ? (
+                        playlistsDatas.map((playlistsData) => (
+                            <Playlist
+                                key={playlistsData.id}
+                                onSelectedPlaylist={() => {
+                                    onSelectedPlaylist({
+                                        playlistId: playlistsData.id,
+                                        playlistPic: playlistsData.avtUrl,
+                                        namePlaylist: playlistsData.name,
+                                        description: playlistsData.description,
+                                    });
+                                    handlePlaylistSelect(playlistsData.id);
+                                    console.log(playlistsData.id);
+                                }}
+                                playlistId={playlistsData.id}
+                                playlistPic={playlistsData.avtUrl}
+                                namePlaylist={playlistsData.name}
+                                description={playlistsData.description}
+                                countPlaylist={playlistsData.countPlaylist}
+                            />
+                        ))
+                    ) : (
+                        <p>Không có playlist nào để hiển thị.</p>
+                    )}
                 </div>
 
             </div>

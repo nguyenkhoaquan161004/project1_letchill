@@ -62,9 +62,8 @@ const AccountScreen = ({ isOpen, uid, onSelectedPlaylist }) => {
             setPlaylists(data.playlist);  // Đảm bảo xử lý cho 'favorite'
             setUser({
                 name: data.name,
-                imageUrl: data.imageUrl
             });
-            setSelectedImage(user.imageUrl)
+            setSelectedImage(data.imageUrl);
             setPlaylistCount(data.playlistCount);
             console.log(user);
 
@@ -103,8 +102,9 @@ const AccountScreen = ({ isOpen, uid, onSelectedPlaylist }) => {
                             src={selectedImage}
                             alt=''
                             className={clsx(styles.avatarPic)}
-                        // style={{ background: selectedImage ? 'transparent' : '' }} 
-                        />
+                           style={{ background: selectedImage ? 'transparent' : '' }} 
+                           />
+
                     </div>
 
                     <div className={styles.textSpace}>
