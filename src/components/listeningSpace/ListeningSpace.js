@@ -100,7 +100,7 @@ const ListeningSpace = ({ onInfoButtonClick, onLyricsButtonClick, isRightBarOpen
                 return prevSongs;
             });
         }
-    }, [onChangeSong]);
+    });
 
 
     useEffect(() => {
@@ -110,10 +110,10 @@ const ListeningSpace = ({ onInfoButtonClick, onLyricsButtonClick, isRightBarOpen
 
         const fetchData = async () => {
             await fetchSongs(currentSongId);
+            setIsPlaying(true);
         };
 
         fetchData();
-        setIsPlaying(true);
 
         return () => {
             isCancelled = true;
@@ -165,10 +165,25 @@ const ListeningSpace = ({ onInfoButtonClick, onLyricsButtonClick, isRightBarOpen
 
     useEffect(() => {
         if (audioPlayer.current) {
-            audioPlayer.current.load();
-            if (isPlaying) {
-                audioPlayer.current.play();
-            }
+            const player = audioPlayer.current;
+
+            // Load file mới
+            player.load();
+
+            const handleLoadedData = () => {
+                if (isPlaying) {
+                    player.play().catch((err) => {
+                        console.error("Error playing audio:", err);
+                    });
+                }
+            };
+
+            // Lắng nghe sự kiện loadeddata
+            player.addEventListener('loadeddata', handleLoadedData);
+
+            return () => {
+                player.removeEventListener('loadeddata', handleLoadedData);
+            };
         }
     }, [currentSongData, isPlaying]);
 

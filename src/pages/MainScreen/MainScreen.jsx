@@ -118,39 +118,36 @@ const MainScreen = memo(() => {
             const response = await fetch('http://localhost:4000/api/playlist');
             if (!response.ok) {
                 const errorMessage = await response.text();
-                throw new Error(`Không thể tải lại playlists: ${errorMessage}`);
+                throw new Error(`Không thể tải playlists: ${errorMessage}`);
             }
 
             const data = await response.json();
 
-            const myPlaylistsData = data.playlist.filter(
-                (item) => item.creator === uid
-            );
+            // Lọc playlist của user
+            const myPlaylistsData = data.playlist.filter((item) => item.creator === uid);
             setPlaylists(myPlaylistsData);
-            // Phân loại phần tử
-            const favoriteItem = data.playlist.filter(
-                (item) => item.name === "Danh sách yêu thích" && item.creator === uid
-            );
 
-            const filteredData = data.playlist.filter((item) => item.name !== "Danh sách yêu thích");
+            // Xác định playlist yêu thích
+            const favoriteItem = myPlaylistsData.find((item) => item.name === "Danh sách yêu thích");
+            const filteredData = myPlaylistsData.filter((item) => item.name !== "Danh sách yêu thích");
+
             if (favoriteItem) {
-                filteredData.unshift(favoriteItem[0]);
-            }  // Update the state with fetched playlists
-
-            if (favoriteItem.length > 0 && favoriteItem[0].songIds?.length > 0) {
-                setCurrentSongId(favoriteItem[0].songIds[0]);
-            } else {
-                setCurrentSongId('39698'); // Giá trị mặc định nếu không có bài hát
+                filteredData.unshift(favoriteItem); // Đưa vào đầu danh sách
             }
 
-            setFavoritePlaylist(filteredData);
-            console.log(favoritePlaylist);
+            // Đặt currentSongId
+            const defaultSongId = '39698';
+            setCurrentSongId(favoriteItem?.songIds?.[0] || '');
 
+            // Cập nhật danh sách phát yêu thích
+            setFavoritePlaylist(filteredData);
+            console.log(filteredData);
         } catch (err) {
             console.error('Error fetching playlists:', err);
             alert('Lỗi khi tải lại danh sách phát.');
         }
     };
+
 
     useEffect(() => {
         fetchPlaylists();

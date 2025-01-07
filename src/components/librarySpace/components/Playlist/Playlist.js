@@ -3,7 +3,7 @@ import styles from './Playlist.module.css';
 import clsx from 'clsx';
 
 
-const Playlist = ({ playlistPic, namePlaylist, onSelectedPlaylist }) => {
+const Playlist = ({ playlistPic, namePlaylist, onSelectedPlaylist, countPlaylist }) => {
     const shortenedName =
         namePlaylist.length > 20
             ? `${namePlaylist.substring(0, 17)}...`
@@ -16,8 +16,8 @@ const Playlist = ({ playlistPic, namePlaylist, onSelectedPlaylist }) => {
             <div className={styles.infoSong}>
                 <p className='uiSemibold'>
                     {shortenedName} </p>
-                <p className={clsx('uiRegular', 'o50')}>Playlist</p>
-                {/* <p className={clsx('uiRegular', 'o50')}>{countPlaylist} bài hát</p> */}
+                {/* <p className={clsx('uiRegular', 'o50')}>Playlist</p> */}
+                <p className={clsx('uiRegular', 'o50')}>{countPlaylist} bài hát</p>
 
             </div>
         </div>

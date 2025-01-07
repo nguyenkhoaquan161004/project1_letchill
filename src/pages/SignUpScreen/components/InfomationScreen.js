@@ -56,17 +56,19 @@ const InfomationScreen = memo(({ email, password }) => {
                 birth: selectedDate ? selectedDate.toISOString() : '',
                 gender: gender,
             };
-            
-            await fetch('http://localhost:4000/api/user/signup', {
+
+            const response = await fetch('http://localhost:4000/api/user/signup', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(userData),
-            }); 
-            
-            alert('Đăng ký thành công!');
-            navigate('/login');
+            });
+
+            if (response.ok) {
+                alert('Đăng ký thành công!');
+                navigate('/login');
+            }
         } catch (error) {
             console.error('Error creating user:', error);
             switch (error.code) {
