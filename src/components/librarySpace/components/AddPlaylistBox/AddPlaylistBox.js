@@ -91,7 +91,7 @@ const AddPlaylistBox = ({ isOpen, onClose, onAddPlaylist }) => {
                     console.log('Response Data:', responseData);
 
                     if (!response.ok) {
-                        throw new Error(responseData.message || 'Failed to create playlist');
+                        // throw new Error(responseData.message || 'Failed to create playlist');
                     }
                     return responseData;
                 })

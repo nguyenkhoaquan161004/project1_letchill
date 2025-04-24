@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import styles from './PlaylistScreen.module.css';
 import { Icon } from '@iconify/react';
 
-const PlaylistItem = ({ index, playlistId,songId, cover, title, artist, dateAdded, fetchPlaylistData }) => {
+const PlaylistItem = ({ index, playlistId, songId, cover, title, artist, dateAdded, fetchPlaylistData }) => {
     const [isDeleteOpen, setIsDeleteOpen] = useState(false);
     const popupRef = useRef(null); // Tham chiếu đến popup
 
@@ -17,7 +17,7 @@ const PlaylistItem = ({ index, playlistId,songId, cover, title, artist, dateAdde
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({songId: songId}),
+                body: JSON.stringify({ songId: songId }),
             });
 
             if (!response.ok) {
@@ -54,7 +54,7 @@ const PlaylistItem = ({ index, playlistId,songId, cover, title, artist, dateAdde
                 <div className={styles.infoItemPlaylist}>
                     <img src={cover} alt='cover' />
                     <div className={styles.textInfoPlaylist}>
-                        <h4>{title}</h4>
+                        <h5>{title}</h5>
                         <p className='p3 o75'>{artist}</p>
                     </div>
                 </div>

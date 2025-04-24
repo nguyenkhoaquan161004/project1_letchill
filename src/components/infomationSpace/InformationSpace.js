@@ -37,7 +37,7 @@ const InformationSpace = ({ isOpen, onClose, songId }) => {
                 const response = await fetch(`http://localhost:4000/api/songInformation/${songId}`);
 
                 if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
+                    // throw new Error(`HTTP error! status: ${response.status}`);
                 }
 
                 const data = await response.json(); // Chuyển đổi phản hồi thành JSON

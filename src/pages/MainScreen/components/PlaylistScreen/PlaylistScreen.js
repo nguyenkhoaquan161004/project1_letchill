@@ -41,14 +41,14 @@ const PlaylistScreen = ({ isOpen, playlistId, comebackHome, onDeletePlaylist, on
             if (!response.ok) {
                 const errorMessage = await response.text();
                 console.error('Failed to fetch playlists:', errorMessage);
-                throw new Error(errorMessage || 'Failed to fetch playlists');
+                // throw new Error(errorMessage || 'Failed to fetch playlists');
             }
 
             const data = await response.json();
             setPlaylists(data);
         } catch (err) {
             console.error('Error fetching playlists:', err.message);
-            alert(`Error: ${err.message}`);
+            // alert(`Error: ${err.message}`);
         }
     };
 
@@ -58,7 +58,7 @@ const PlaylistScreen = ({ isOpen, playlistId, comebackHome, onDeletePlaylist, on
 
             const response = await fetch(`http://localhost:4000/api/playlistDetail/${playlistId}`);
             if (!response.ok) {
-                throw new Error('Error fetching playlist data');
+                // throw new Error('Error fetching playlist data');
             }
 
             const data = await response.json();
@@ -69,7 +69,7 @@ const PlaylistScreen = ({ isOpen, playlistId, comebackHome, onDeletePlaylist, on
 
         } catch (err) {
             console.error('Error fetching playlist data:', err);
-            alert('An error occurred while fetching the playlist data.');
+            // alert('An error occurred while fetching the playlist data.');
         }
     };
 

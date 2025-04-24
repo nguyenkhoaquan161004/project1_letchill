@@ -6,7 +6,7 @@ import clsx from 'clsx';
 import logo from '../../assets/logo_doan1.svg';
 import VoiceSearchingBox from './partials/VoiceSearchingBox/VoiceSearchingBox';
 
-const Header = memo(({ onLogoAndHomeButtonClick, onSearchingSpaceClick, onAccountButtonClick, onSearchInput }) => {
+const Header = memo(({ onLogoAndHomeButtonClick, onSearchingSpaceClick, onAccountButtonClick, onSearchInput, isPremiumChooseScreenOpen, onPremiumChooseButtonClick }) => {
 
     const navigate = useNavigate();
     const [isVoiceSearchingBoxOpen, setIsVoiceSearchingBoxOpen] = useState(false);
@@ -50,6 +50,9 @@ const Header = memo(({ onLogoAndHomeButtonClick, onSearchingSpaceClick, onAccoun
 
                 <div className={styles.otherOption}>
                     <Icon className={styles.nonBGIcon} icon="ri:notification-4-line"></Icon>
+                    <button onClick={() => { onPremiumChooseButtonClick() }}>
+                        <Icon className={styles.nonBGIcon} icon="material-symbols:select-window-2"></Icon>
+                    </button>
                     <Icon onClick={onAccountButtonClick} className={clsx(styles.icon, 'hoverPoiter')} icon="iconamoon:profile-fill"></Icon>
                     <div>
                         <button className='uiSemibold o50 btnLogin hoverPoiter'

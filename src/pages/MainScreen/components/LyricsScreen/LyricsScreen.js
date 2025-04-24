@@ -33,9 +33,18 @@ const LyricsScreen = ({ isOpen, currentSongId }) => {
     return (
         <div className={styles.lyricsContainer} >
             <div className={styles.lyricsOfSong}>
-                {lyrics.length === 0 ? <h2>Không có lời cho bài hát này!</h2> : (
-                    lyrics.map((line, index) => <h4 key={index}>{line}</h4>)
-                )}
+                {lyrics.length === 0 ? <h2 style={{ lineHeight: 1.5 }}>Không có lời cho bài hát này!</h2> :
+                    (
+                        lyrics.map((line, index) => {
+                            return (
+                                <div className={styles.lyricsSpace}>
+                                    <h4>LỜI BÀI HÁT</h4>
+                                    <p className={styles.lyrics} key={index}>{line}</p>
+                                </div>
+
+                            )
+                        })
+                    )}
             </div>
         </div>
     );

@@ -11,3 +11,12 @@
     text-wrap: wrap;
     line-height: 130%;
 }
+
+.lyrics {    
+    font-style: normal;
+    font-weight: 600;
+    font-size: 20px;
+    line-height: 150%;
+
+    color: #CFCFCF;
+}

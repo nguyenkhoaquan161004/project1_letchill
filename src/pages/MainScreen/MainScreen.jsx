@@ -9,11 +9,17 @@ import SearchingScreen from './components/SearchingScreen/SearchingScreen.js';
 import AccountScreen from './components/AccountScreen/AccountScreen.js';
 import PlaylistScreen from './components/PlaylistScreen/PlaylistScreen.js';
 import playlistdData from '../../components/librarySpace/assets/playlistData.js';
+import WorldScreen from './components/WorldScreen/WorldScreen.jsx';
+import PremiumChooseScreen from './components/PremiumChooseScreen';
+import ArtistScreen from './components/ArtistScreen';
+
 import clsx from 'clsx';
 import styles from '../MainScreen/MainScreen.module.css'
 import { useNavigate, useLocation } from 'react-router-dom';
 import { query } from 'firebase/firestore';
 import axios from 'axios';
+
+import { AnimatePresence, motion } from 'framer-motion';
 
 const MainScreen = memo(() => {
     const [isRightBarOpen, setIsRightBarOpen] = useState(false);
@@ -22,6 +28,10 @@ const MainScreen = memo(() => {
     const [isSearchingScreenOpen, setIsSearchingScreenOpen] = useState(false);
     const [isAccountScreenOpen, setIsAccountScreenOpen] = useState(false);
     const [isPlaylistScreenOpen, setIsPlaylistScreenOpen] = useState(false);
+    const [isWorldScreenOpen, setIsWorldScreenOpen] = useState(false);
+    const [isPremiumChooseScreenOpen, setIsPremiumChooseScreenOpen] = useState(false);
+    const [isArtistScreenOpen, setIsArtistScreenOpen] = useState(false);
+
     const [currentSongId, setCurrentSongId] = useState(null);
 
     // Nhận dữ liệu khi nhập tìm kiếm
@@ -32,6 +42,8 @@ const MainScreen = memo(() => {
     const [playlists, setPlaylists] = useState([]);
     const [favoritePlaylist, setFavoritePlaylist] = useState();
     const [selectedPlaylist, setSelectedPlaylist] = useState(null);
+    const [selectedArtist, setSelectedArtist] = useState(null);
+
 
     const nav = useNavigate();
     const location = useLocation();
@@ -57,12 +69,22 @@ const MainScreen = memo(() => {
             else if (previousScreen === "account") {
                 toggleAccountScreen();
             }
+            else if (previousScreen === "worldChat") {
+                toggleWorldOpenScreen();
+            }
             else if (previousScreen === "playlist") {
                 togglePlaylistScreen();
+            }
+            else if (previousScreen === "premium") {
+                togglePremiumChooseScreen();
+            }
+            else if (previousScreen === "artist") {
+                toggleArtistScreen();
             }
         } else {
             if (isHomeScreenOpen) setPreviousScreen("home");
             else if (isLyricsScreenOpen) setPreviousScreen("search");
+            else if (isPremiumChooseScreenOpen) setPreviousScreen("premium");
             else if (previousScreen === "playlist") {
                 togglePlaylistScreen();
             }
@@ -70,8 +92,53 @@ const MainScreen = memo(() => {
             setIsLyricsScreenOpen((prev) => !prev);
             setIsHomeScreenOpen(false);
             setIsAccountScreenOpen(false);
+            setIsWorldScreenOpen(false)
             setIsSearchingScreenOpen(false);
             setIsPlaylistScreenOpen(false);
+            setIsPremiumChooseScreenOpen(false);
+            setIsArtistScreenOpen(false);
+        }
+    }
+
+    const toggleWorldOpenScreen = () => {
+        if (isWorldScreenOpen) {
+            if (previousScreen === "home") {
+                toggleHomeScreen();
+            }
+            else if (previousScreen === "search") {
+                toggleSearchingScreen();
+            }
+            else if (previousScreen === "account") {
+                toggleAccountScreen();
+            }
+            else if (previousScreen === "lyrics") {
+                toggleLyricsScreen();
+            }
+            else if (previousScreen === "playlist") {
+                togglePlaylistScreen();
+            }
+            else if (previousScreen === "premium") {
+                togglePremiumChooseScreen();
+            }
+            else if (previousScreen === "artist") {
+                toggleArtistScreen();
+            }
+        } else {
+            if (isHomeScreenOpen) setPreviousScreen("home");
+            else if (isWorldScreenOpen) setPreviousScreen("search");
+            else if (isPremiumChooseScreenOpen) setPreviousScreen("premium");
+            else if (previousScreen === "playlist") {
+                togglePlaylistScreen();
+            }
+
+            setIsWorldScreenOpen((prev) => !prev);
+            setIsHomeScreenOpen(false);
+            setIsAccountScreenOpen(false);
+            setIsLyricsScreenOpen(false)
+            setIsSearchingScreenOpen(false);
+            setIsPremiumChooseScreenOpen(false);
+            setIsPlaylistScreenOpen(false);
+            setIsArtistScreenOpen(false);
         }
     }
 
@@ -80,8 +147,23 @@ const MainScreen = memo(() => {
         setIsHomeScreenOpen(false);
         setIsLyricsScreenOpen(false);
         setIsAccountScreenOpen(false);
+        setIsWorldScreenOpen(false)
         setIsPlaylistScreenOpen(false);
+        setIsPremiumChooseScreenOpen(false);
+        setIsArtistScreenOpen(false);
         setPreviousScreen("search");
+    }
+
+    const togglePremiumChooseScreen = () => {
+        setIsPremiumChooseScreenOpen(true);
+        setIsSearchingScreenOpen(false);
+        setIsHomeScreenOpen(false);
+        setIsLyricsScreenOpen(false);
+        setIsAccountScreenOpen(false);
+        setIsWorldScreenOpen(false)
+        setIsPlaylistScreenOpen(false);
+        setIsArtistScreenOpen(false);
+        setPreviousScreen("premium");
     }
 
     const toggleHomeScreen = () => {
@@ -89,8 +171,11 @@ const MainScreen = memo(() => {
         setIsLyricsScreenOpen(false);
         setIsSearchingScreenOpen(false);
         setIsAccountScreenOpen(false);
+        setIsWorldScreenOpen(false)
         setIsPlaylistScreenOpen(false);
         setSelectedPlaylist(null);
+        setIsPremiumChooseScreenOpen(false);
+        setIsArtistScreenOpen(false);
         setPreviousScreen("home");
     }
 
@@ -99,9 +184,22 @@ const MainScreen = memo(() => {
         setIsHomeScreenOpen(false);
         setIsLyricsScreenOpen(false);
         setIsSearchingScreenOpen(false);
+        setIsWorldScreenOpen(false)
         setIsPlaylistScreenOpen(false);
+        setIsPremiumChooseScreenOpen(false);
+        setIsArtistScreenOpen(false);
         setPreviousScreen("account");
     }
+
+    // const toggleWorldOpenScreen = () => {
+    //     setIsAccountScreenOpen(false);
+    //     setIsHomeScreenOpen(false);
+    //     setIsLyricsScreenOpen(false);
+    //     setIsSearchingScreenOpen(false);
+    //     setIsWorldScreenOpen(true)
+    //     setIsPlaylistScreenOpen(false);
+    //     setPreviousScreen("worldChat");
+    // }
 
     const togglePlaylistScreen = (playlistId) => {
         setIsPlaylistScreenOpen(true);
@@ -109,16 +207,35 @@ const MainScreen = memo(() => {
         setIsHomeScreenOpen(false);
         setIsLyricsScreenOpen(false);
         setIsSearchingScreenOpen(false);
+        setIsWorldScreenOpen(false)
         setIsAccountScreenOpen(false);
+        setIsPremiumChooseScreenOpen(false);
+        setIsArtistScreenOpen(false);
         setPreviousScreen("playlist");
+    }
+
+    const toggleArtistScreen = (artistId) => {
+        window.scrollTo(0, 0);
+        setIsArtistScreenOpen(true);
+        setSelectedArtist(artistId);
+        setIsHomeScreenOpen(false);
+        setIsLyricsScreenOpen(false);
+        setIsSearchingScreenOpen(false);
+        setIsWorldScreenOpen(false)
+        setIsAccountScreenOpen(false);
+        setIsPremiumChooseScreenOpen(false);
+        setIsPlaylistScreenOpen(false);
+        setPreviousScreen("artist");
+
+        window.scrollTo(0, 0);
     }
 
     const fetchPlaylists = async () => {
         try {
             const response = await fetch('http://localhost:4000/api/playlist');
             if (!response.ok) {
-                const errorMessage = await response.text();
-                throw new Error(`Không thể tải playlists: ${errorMessage}`);
+                // const errorMessage = await response.text();
+                // throw new Error(`Không thể tải playlists: ${errorMessage}`);
             }
 
             const data = await response.json();
@@ -144,7 +261,7 @@ const MainScreen = memo(() => {
             console.log(filteredData);
         } catch (err) {
             console.error('Error fetching playlists:', err);
-            alert('Lỗi khi tải lại danh sách phát.');
+            // alert('Lỗi khi tải lại danh sách phát.');
         }
     };
 
@@ -183,8 +300,8 @@ const MainScreen = memo(() => {
             });
 
             if (!response.ok) {
-                const errorMessage = await response.text();
-                throw new Error(`Không thể xóa playlist: ${errorMessage}`);
+                // const errorMessage = await response.text();
+                // throw new Error(`Không thể xóa playlist: ${errorMessage}`);
             }
 
             // Fetch lại dữ liệu playlists từ server sau khi xóa thành công
@@ -213,6 +330,8 @@ const MainScreen = memo(() => {
         <div id={styles.main}>
             <Header
                 isOpen={isHomeScreenOpen}
+                isPremiumChooseScreenOpen={isPremiumChooseScreenOpen}
+                onPremiumChooseButtonClick={togglePremiumChooseScreen}
                 onLogoAndHomeButtonClick={toggleHomeScreen}
                 onSearchingSpaceClick={toggleSearchingScreen}
                 onSearchInput={handleSearchQueryChange}
@@ -226,31 +345,135 @@ const MainScreen = memo(() => {
                 ></LeftBar>
                 <div className={styles.mainSpace}>
                     <div className={styles.mainContainer}>
-                        <HomeScreen isOpen={isHomeScreenOpen}></HomeScreen>
-                        <LyricsScreen
-                            isOpen={isLyricsScreenOpen}
-                            currentSongId={currentSongId}></LyricsScreen>
-                        <SearchingScreen
-                            isOpen={isSearchingScreenOpen}
-                            searchQuery={isSearchQuery}
-                            onCurrentSongId={handleSongChange}
-                        ></SearchingScreen>
-                        <AccountScreen
-                            isOpen={isAccountScreenOpen}
-                            uid={uid}
-                            onSelectedPlaylist={togglePlaylistScreen}
-                        ></AccountScreen>
-                        {selectedPlaylist && (
-                            <PlaylistScreen
-                                isOpen={isPlaylistScreenOpen}
-                                playlistId={selectedPlaylist}
-                                comebackHome={toggleHomeScreen}
-                                onCurrentSongId={handleSongChange}
-                                onUpdatePlaylist={handleUpdatePlaylist}
-                                onRefreshPlaylists={fetchPlaylists}
-                                onDeletePlaylist={handleDeletePlaylist}></PlaylistScreen>
-                        )}
+                        <AnimatePresence mode='wait'>
+                            {isHomeScreenOpen && (
+                                <motion.div
+                                    key="home"
+                                    initial={{ opacity: 0, y: 10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: -20 }}
+                                    transition={{ duration: 0.15 }}
+                                    style={{ height: '100%', overflowY: 'auto' }}
+                                >
+                                    <HomeScreen
+                                        isOpen={isHomeScreenOpen}
+                                        onSelectedArtist={toggleArtistScreen} />
+                                </motion.div>
+                            )}
+                            {isLyricsScreenOpen && (
+                                <motion.div
+                                    key="lyrics"
+                                    initial={{ opacity: 0, y: 10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: -20 }}
+                                    transition={{ duration: 0.15 }}
+                                    style={{ height: '100%', overflowY: 'auto' }}
+                                >
+                                    <LyricsScreen isOpen={true} currentSongId={currentSongId} />
+                                </motion.div>
+                            )}
 
+                            {isSearchingScreenOpen && (
+                                <motion.div
+                                    key="search"
+                                    initial={{ opacity: 0, y: 10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: -20 }}
+                                    transition={{ duration: 0.15 }}
+                                    style={{ height: '100%', overflowY: 'auto' }}
+                                >
+                                    <SearchingScreen
+                                        isOpen={true}
+                                        searchQuery={isSearchQuery}
+                                        onCurrentSongId={handleSongChange}
+                                    ></SearchingScreen>
+                                </motion.div>
+                            )}
+                            {isAccountScreenOpen && (
+                                <motion.div
+                                    key="account"
+                                    initial={{ opacity: 0, y: 10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: -20 }}
+                                    transition={{ duration: 0.15 }}
+                                    style={{ height: '100%', overflowY: 'auto' }}
+                                >
+                                    <AccountScreen
+                                        isOpen={true}
+                                        uid={uid}
+                                        onSelectedPlaylist={togglePlaylistScreen}
+                                    ></AccountScreen>
+                                </motion.div>
+                            )}
+
+                            {selectedPlaylist && isPlaylistScreenOpen && (
+                                <motion.div
+                                    key="playlist"
+                                    initial={{ opacity: 0, y: 10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: -20 }}
+                                    transition={{ duration: 0.15 }}
+                                    style={{ height: '100%', overflowY: 'auto' }}
+                                >
+                                    <PlaylistScreen
+                                        isOpen={isPlaylistScreenOpen}
+                                        playlistId={selectedPlaylist}
+                                        comebackHome={toggleHomeScreen}
+                                        onCurrentSongId={handleSongChange}
+                                        onUpdatePlaylist={handleUpdatePlaylist}
+                                        onRefreshPlaylists={fetchPlaylists}
+                                        onDeletePlaylist={handleDeletePlaylist}></PlaylistScreen>
+                                </motion.div>
+                            )}
+
+                            {isWorldScreenOpen && (
+                                <motion.div
+                                    key="world"
+                                    initial={{ opacity: 0, y: 10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: -20 }}
+                                    transition={{ duration: 0.15 }}
+                                    style={{ height: '100%', overflowY: 'auto' }}
+                                >
+                                    <WorldScreen
+                                        isOpen={isWorldScreenOpen}>
+                                    </WorldScreen>
+                                </motion.div>
+                            )}
+
+                            {isPremiumChooseScreenOpen && (
+                                <motion.div
+                                    key="premium"
+                                    initial={{ opacity: 0, y: 10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: -20 }}
+                                    transition={{ duration: 0.15 }}
+                                    style={{ height: '100%', overflowY: 'auto' }}
+                                >
+                                    <PremiumChooseScreen
+                                        isOpen={isPremiumChooseScreenOpen}>
+                                    </PremiumChooseScreen>
+                                </motion.div>
+                            )}
+
+                            {isArtistScreenOpen && selectedArtist && (
+                                <motion.div
+                                    key="artist"
+                                    initial={{ opacity: 0, y: 10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: -20 }}
+                                    transition={{ duration: 0.15 }}
+                                    style={{ height: '100%', overflowY: 'auto' }}
+                                >
+                                    <ArtistScreen
+                                        isOpen={isArtistScreenOpen}
+                                        artistId={selectedArtist}
+                                        onSelectedArtist={toggleArtistScreen}>
+                                    </ArtistScreen>
+                                </motion.div>
+                            )}
+
+                        </AnimatePresence>
                     </div>
 
                 </div>
@@ -264,12 +487,14 @@ const MainScreen = memo(() => {
                 isRightBarOpen={isRightBarOpen}
                 playlistsData={playlists}
                 isLyricsOpen={isLyricsScreenOpen}
+                isWorldScreenOpen={isWorldScreenOpen}
                 currentSongId={currentSongId}
+                onWorldScreenButtonClick={toggleWorldOpenScreen}
                 onChangeSong={handleSongChange}
                 onRefreshPlaylists={fetchPlaylists}
                 onLyricsButtonClick={toggleLyricsScreen}></ListeningSpace>
             <div className={styles.graBG}></div>
-        </div>
+        </div >
 
     );
 });

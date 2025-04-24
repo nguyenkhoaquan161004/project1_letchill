@@ -55,7 +55,7 @@ const AccountScreen = ({ isOpen, uid, onSelectedPlaylist }) => {
 
             const response = await fetch(`http://localhost:4000/api/profile/${uid}`);
             if (!response.ok) {
-                throw new Error('Error fetching user data');
+                // throw new Error('Error fetching user data');
             }
 
             const data = await response.json();
@@ -70,7 +70,7 @@ const AccountScreen = ({ isOpen, uid, onSelectedPlaylist }) => {
 
         } catch (err) {
             console.error('Error fetching user data:', err);
-            alert('An error occurred while fetching the user data.');
+            // alert('An error occurred while fetching the user data.');
         }
     };
     useEffect(() => {
@@ -102,8 +102,8 @@ const AccountScreen = ({ isOpen, uid, onSelectedPlaylist }) => {
                             src={selectedImage}
                             alt=''
                             className={clsx(styles.avatarPic)}
-                           style={{ background: selectedImage ? 'transparent' : '' }} 
-                           />
+                            style={{ background: selectedImage ? 'transparent' : '' }}
+                        />
 
                     </div>
 

@@ -7,7 +7,7 @@ import songsData from '../../assets/songsData';
 import Playlist from './Playlist';
 
 
-const ListeningSpace = ({ onInfoButtonClick, onLyricsButtonClick, isRightBarOpen, isLyricsOpen, onChangeSong, playlistsData, currentSongId, onRefreshPlaylists }) => {
+const ListeningSpace = ({ onInfoButtonClick, onLyricsButtonClick, onWorldScreenButtonClick, isRightBarOpen, isLyricsOpen, isWorldScreenOpen, onChangeSong, playlistsData, currentSongId, onRefreshPlaylists }) => {
     const audioPlayer = useRef(null);
     const progressRef = useRef(null);
     const [isPlaying, setIsPlaying] = useState(false);
@@ -36,6 +36,7 @@ const ListeningSpace = ({ onInfoButtonClick, onLyricsButtonClick, isRightBarOpen
     const [lyricsActive, setLyricsActive] = useState(false);
     const [returnActive, setReturnActive] = useState(false);
     const [infoActive, setInfoActive] = useState(false);
+    const [worldSceenActive, setWorldActive] = useState(false);
     const [outputActive, setOutputActive] = useState(true); // Mặc định âm thanh bật
 
     const shortenedName =
@@ -541,6 +542,13 @@ const ListeningSpace = ({ onInfoButtonClick, onLyricsButtonClick, isRightBarOpen
             </div>
 
             <div className={styles.general}>
+                <button onClick={() => { setWorldActive(!worldSceenActive); onWorldScreenButtonClick() }}>
+                    <Icon
+                        className={clsx(styles.icon, { [styles.iconActive]: isWorldScreenOpen })}
+                        icon="bxs:conversation"
+                    />
+                </button>
+
                 <button onClick={() => { setInfoActive(!infoActive); onInfoButtonClick() }}>
                     <Icon
                         className={clsx(styles.icon, { [styles.iconActive]: isRightBarOpen })}

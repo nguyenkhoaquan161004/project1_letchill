@@ -1,0 +1,30 @@
+.infoContainer {
+    display: flex;
+    gap: 16px;
+}
+
+.itemContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.commentContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 20px;
+
+    margin-bottom: 40px;
+    background-color: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    border: solid 1px rgba(255, 255, 255, 0.1);
+
+    overflow-x: hidden;
+}
+
+.worldContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
