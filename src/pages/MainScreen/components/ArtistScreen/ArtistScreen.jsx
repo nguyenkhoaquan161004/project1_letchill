@@ -52,6 +52,7 @@ const ArtistScreen = ({ isOpen, artistId, onSelectedArtist }) => {
     const [selectedArtist, setSelectedArtist] = useState("");
     const [songs, setSongs] = useState(null);
     const [artists, setArtist] = useState(null);
+
     const fetchHometData = async () => {
         try {
 
@@ -99,7 +100,7 @@ const ArtistScreen = ({ isOpen, artistId, onSelectedArtist }) => {
                             accept="image/*"
                             style={{ display: 'none' }}></input>
                         <img
-                            src={selectedArtist.image}
+                            src={selectedArtist.avatarUrl}
                             alt=''
                             className={clsx(styles.avatarPic)} />
 
@@ -155,7 +156,7 @@ const ArtistScreen = ({ isOpen, artistId, onSelectedArtist }) => {
                                     index={index + 1}
                                     // playlistId={playlistId}
                                     songId={song.id}
-                                    cover={selectedArtist.image}
+                                    cover={selectedArtist.avatarUrl}
                                     title={song.name}
                                     artist={selectedArtist.name}
                                     dateAdded={song.releaseDate}

@@ -33,7 +33,7 @@ const LyricsScreen = ({ isOpen, currentSongId }) => {
     return (
         <div className={styles.lyricsContainer} >
             <div className={styles.lyricsOfSong}>
-                {lyrics.length === 0 ? <h2 style={{ lineHeight: 1.5 }}>Không có lời cho bài hát này!</h2> :
+                {lyrics.length === 0 ? <h3 style={{ lineHeight: 1.5 }}>Không có lời cho bài hát này!</h3> :
                     (
                         lyrics.map((line, index) => {
                             return (

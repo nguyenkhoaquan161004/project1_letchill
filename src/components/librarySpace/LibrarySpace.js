@@ -89,7 +89,7 @@ const LibrarySpace = ({ onSelectedPlaylist, playlistsDatas, onRefreshPlaylists }
                                 onSelectedPlaylist={() => {
                                     onSelectedPlaylist({
                                         playlistId: playlistsData.id,
-                                        playlistPic: playlistsData.avtUrl,
+                                        playlistPic: playlistsData.avatarUrl,
                                         namePlaylist: playlistsData.name,
                                         description: playlistsData.description,
                                     });
@@ -97,7 +97,7 @@ const LibrarySpace = ({ onSelectedPlaylist, playlistsDatas, onRefreshPlaylists }
                                     console.log(playlistsData.id);
                                 }}
                                 playlistId={playlistsData.id}
-                                playlistPic={playlistsData.avtUrl}
+                                playlistPic={playlistsData.avatarUrl}
                                 namePlaylist={playlistsData.name}
                                 description={playlistsData.description}
                                 countPlaylist={playlistsData.countPlaylist}

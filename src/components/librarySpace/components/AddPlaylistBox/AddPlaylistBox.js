@@ -72,7 +72,7 @@ const AddPlaylistBox = ({ isOpen, onClose, onAddPlaylist }) => {
             const newPlaylist = {
                 uid: uid,  // Đảm bảo 'uid' được gửi đi
                 name: name,  // Đảm bảo 'name' được gửi đi
-                avtUrl: selectedImage || '',
+                avatarUrl: selectedImage || '',
                 description: description,  // Kiểm tra xem 'description' có bắt buộc hay không
             };
 

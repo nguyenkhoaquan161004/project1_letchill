@@ -12,7 +12,7 @@ const PlaylistItem = ({ index, playlistId, songId, cover, title, artist, dateAdd
         if (!confirmDelete) return;
         try {
             console.log('Fetching playlist with ID:', songId);
-            const response = await fetch(`http://localhost:4000/api/playlistDetail/${playlistId}`, {
+            const response = await fetch(`http://localhost:4000/api/playlist-detail/${playlistId}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',

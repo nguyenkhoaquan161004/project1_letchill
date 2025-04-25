@@ -17,7 +17,7 @@ const SearchingScreen = ({ isOpen, searchQuery, onCurrentSongId }) => {
             setIsLoading(true);
             try {
                 // Gửi yêu cầu GET đến API với query được truyền trong URL
-                const response = await fetch(`http://localhost:4000/api/search/${searchQuery}`, {
+                const response = await fetch(`http://localhost:4000/api/search?query=${searchQuery}`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
@@ -83,7 +83,7 @@ const SearchingScreen = ({ isOpen, searchQuery, onCurrentSongId }) => {
                                     className={styles.itemResult}
                                     onClick={() => handleSongItemClick(song.id)}>
                                     <div className={styles.itemContainer}>
-                                        <img src={song.image || ''} alt="picSong" />
+                                        <img src={song.avatarUrl || ''} alt="picSong" />
                                         <div className={styles.infoSong}>
                                             <p className="uiSemibold" style={{ fontSize: 18, letterSpacing: 2 }}>
                                                 {song.name.length > 20 ? `${song.name.substring(0, 20)}...` : song.name}

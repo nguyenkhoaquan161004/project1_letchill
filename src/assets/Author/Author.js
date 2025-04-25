@@ -20,14 +20,14 @@ const Author = ({ items, onSelectedArtist }) => {
                             onClick={() => {
                                 onSelectedArtist({
                                     artistId: item.id,
-                                    artistPic: item.image,
+                                    artistPic: item.avatarUrl,
                                     nameArtist: item.name,
                                     description: item.description,
                                     followers: item.followers,
                                 });
                                 handleArtistSelect(item.id);
                             }} >
-                            <img className={styles.authorPic} src={item.image} alt='authorPic'></img>
+                            <img className={styles.authorPic} src={item.avatarUrl} alt='authorPic'></img>
                             <div className={styles.authorInfoWrapper}>
                                 <p className='uiSemibold'>{item.name}</p>
                                 <p className='uiRegular o75'>Nghệ sĩ</p>

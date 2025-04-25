@@ -53,7 +53,7 @@ const ListeningSpace = ({ onInfoButtonClick, onLyricsButtonClick, onWorldScreenB
 
         try {
             console.log("Fetching song information for ID:", songId);
-            const response = await fetch(`http://localhost:4000/api/songInformation/${songId}`);
+            const response = await fetch(`http://localhost:4000/api/song/${songId}`);
 
             const data = await response.json();
             if (data && data.name) {
@@ -192,7 +192,7 @@ const ListeningSpace = ({ onInfoButtonClick, onLyricsButtonClick, onWorldScreenB
         const controller = new AbortController();
         const fetchInitialSong = async () => {
             try {
-                const response = await axios.get('http://localhost:4000/api/songInformation/', {
+                const response = await axios.get('http://localhost:4000/api/song/', {
                     signal: controller.signal,
                 });
                 const randomSongId = response.data.id;
@@ -214,7 +214,7 @@ const ListeningSpace = ({ onInfoButtonClick, onLyricsButtonClick, onWorldScreenB
     const handleNext = async () => {
         try {
             console.log("Fetching a random song ID...");
-            const response = await axios.get('http://localhost:4000/api/songInformation');
+            const response = await axios.get('http://localhost:4000/api/song');
             const randomSongId = response.data.id;
 
             if (!randomSongId) {
@@ -420,7 +420,7 @@ const ListeningSpace = ({ onInfoButtonClick, onLyricsButtonClick, onWorldScreenB
         }
 
         try {
-            const response = await axios.patch(`http://localhost:4000/api/playlistDetail/${selectedPlaylistIds}`, {
+            const response = await axios.patch(`http://localhost:4000/api/playlist-detail/${selectedPlaylistIds}`, {
                 playlistIds: selectedPlaylistIds,
                 songId: currentSongData.id,
             });

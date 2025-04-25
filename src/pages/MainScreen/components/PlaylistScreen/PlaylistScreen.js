@@ -56,15 +56,15 @@ const PlaylistScreen = ({ isOpen, playlistId, comebackHome, onDeletePlaylist, on
         try {
             console.log('Fetching playlist with ID:', playlistId);
 
-            const response = await fetch(`http://localhost:4000/api/playlistDetail/${playlistId}`);
+            const response = await fetch(`http://localhost:4000/api/playlist-detail/${playlistId}`);
             if (!response.ok) {
                 // throw new Error('Error fetching playlist data');
             }
 
             const data = await response.json();
-            setPlaylistData(data || { name: 'Danh sách yêu thích', avtUrl: favoritePlaylist });  // Đảm bảo xử lý cho 'favorite'
+            setPlaylistData(data || { name: 'Danh sách yêu thích', avatarUrl: favoritePlaylist });  // Đảm bảo xử lý cho 'favorite'
             setSongsData(data.songs || []); // Giả định API trả về danh sách bài hát trong `songs`
-            console.log(playlistData.avtUrl); // Log dữ liệu để kiểm tra
+            console.log(playlistData); // Log dữ liệu để kiểm tra
             console.log(data.songs)
 
         } catch (err) {
@@ -148,7 +148,7 @@ const PlaylistScreen = ({ isOpen, playlistId, comebackHome, onDeletePlaylist, on
             <div className={styles.infoPlaylistWrapper}>
                 <div className={styles.playlistContainer}>
                     <img
-                        src={playlistData.avtUrl}
+                        src={playlistData.avatarUrl}
                         alt=''
                         className={clsx(styles.playlistAvatarPic)} />
                 </div>
@@ -234,7 +234,7 @@ const PlaylistScreen = ({ isOpen, playlistId, comebackHome, onDeletePlaylist, on
                 isOpen={isUpdatePlaylistOpen}
                 playlistId={playlistId}
                 onClose={handleCloseUpdatePlaylist}
-                playlistPic={playlistData.avtUrl}
+                playlistPic={playlistData.avatarUrl}
                 namePlaylist={playlistData.name}
                 description={playlistData.description}
                 onUpdatePlaylist={handleSaveChanges}

@@ -7,8 +7,8 @@ import axios from 'axios';
 
 const AccountScreen = ({ isOpen, uid, onSelectedPlaylist }) => {
     const [selectedImage, setSelectedImage] = useState(null);
-    const [playlists, setPlaylists] = useState(null);
-    const [user, setUser] = useState(null);
+    const [playlists, setPlaylists] = useState([]);
+    const [user, setUser] = useState("");
     const [playlistCount, setPlaylistCount] = useState(null);
 
     const handleImageChange = async (e) => {
@@ -26,15 +26,15 @@ const AccountScreen = ({ isOpen, uid, onSelectedPlaylist }) => {
             );
 
             // Lấy URL của hình ảnh từ Cloudinary
-            const imageUrl = response.data.secure_url;
-            console.log('Image URL:', imageUrl);
+            const avatarUrl = response.data.secure_url;
+            console.log('Image URL:', avatarUrl);
 
             // Lưu hình ảnh vào state
-            setSelectedImage(imageUrl);
+            setSelectedImage(avatarUrl);
             const updateUser = {
                 uid: uid,
                 newName: user.name,
-                imageUrl: imageUrl,
+                imageUrl: avatarUrl,
             }
             await fetch(`http://localhost:4000/api/profile/${uid}`, {
                 method: 'PATCH',
@@ -43,13 +43,14 @@ const AccountScreen = ({ isOpen, uid, onSelectedPlaylist }) => {
                 },
                 body: JSON.stringify(updateUser),
             });
-            console.log('Image uploaded and link sent to backend:', imageUrl);
+            console.log('Image uploaded and link sent to backend:', avatarUrl);
         } catch (error) {
             console.error('Error uploading image:', error);
         }
     };
 
     const fetchUsertData = async () => {
+        console.log('Fetching user data with ID:', uid);
         try {
             console.log('Fetching user data with ID:', uid);
 
@@ -59,11 +60,13 @@ const AccountScreen = ({ isOpen, uid, onSelectedPlaylist }) => {
             }
 
             const data = await response.json();
+            console.log(data);
             setPlaylists(data.playlist);  // Đảm bảo xử lý cho 'favorite'
             setUser({
                 name: data.name,
             });
-            setSelectedImage(data.imageUrl);
+            console.log(data.name)
+            setSelectedImage(data.avatarUrl);
             setPlaylistCount(data.playlistCount);
             console.log(user);
 
@@ -132,13 +135,12 @@ const AccountScreen = ({ isOpen, uid, onSelectedPlaylist }) => {
                                 onClick={() => {
                                     onSelectedPlaylist({
                                         playlistId: playlist.id,
-                                        playlistPic: playlist.avtUrl,
+                                        playlistPic: playlist.avatarUrl,
                                         namePlaylist: playlist.name,
-                                        description: playlist.description,
                                     })
                                     handlePlaylistSelect(playlist.id)
                                 }}>
-                                <img className={styles.playlistPic} src={playlist.avtUrl} alt='' />
+                                <img className={styles.playlistPic} src={playlist.avatarUrl} alt='' />
                                 <p className={clsx(styles.nameOfPlaylist, 'uiSemibold')}>{playlist.name}</p>
                             </div>
                         )
