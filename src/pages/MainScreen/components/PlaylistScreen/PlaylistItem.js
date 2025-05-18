@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import styles from './PlaylistScreen.module.css';
 import { Icon } from '@iconify/react';
 
-const PlaylistItem = ({ index, playlistId, songId, cover, title, artist, dateAdded, fetchPlaylistData }) => {
+const PlaylistItem = ({ index, playlistId, songId, cover, title, artist, dateAdded, views, fetchPlaylistData }) => {
     const [isDeleteOpen, setIsDeleteOpen] = useState(false);
     const popupRef = useRef(null); // Tham chiếu đến popup
 
@@ -62,7 +62,8 @@ const PlaylistItem = ({ index, playlistId, songId, cover, title, artist, dateAdd
 
             <div style={{ display: 'flex', alignItems: 'center', position: 'relative' }}>
                 <div className={styles.rightItemPlaylist}>
-                    <p>{dateAdded}</p>
+                    {views !== null ? (<p>{views}</p>) : null}
+                    {dateAdded !== null ? (<p>{dateAdded}</p>) : null}
                     <button className={styles.btnDelete} onClick={handleClickDelete}>
                         <Icon className={styles.icon} icon="ri:more-fill" />
                     </button>

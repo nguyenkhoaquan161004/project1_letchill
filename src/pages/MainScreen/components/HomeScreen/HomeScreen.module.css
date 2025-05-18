@@ -23,16 +23,254 @@
     width: 100%;
 }
 
+/* POPULAR ARTIST */
 .popularAuthor {
     display: flex;
     flex-direction: column;
     gap: 12px;
 }
 
+.authorWrapper,
+.songWrapper {
+    
+}
+
+.authorInfoWrapper,
+.songInfoWrapper  {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    align-items: center;
+}
+
+.songInfoWrapper {
+    justify-content: space-around;
+    align-items: start;
+}
+
+.authorPic,
+.songPic{
+    width: 136px;
+    height: 136px;
+    border-radius: 136px;
+    object-fit: cover;
+    object-position: top;
+}
+
+.songPic {
+    width: 100%;
+    height: 200px;
+    border-radius: 20px;
+}
+
+.authorItem,
+.songItem {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: center;
+    border-radius: 8px;
+    padding: 16px 22px;
+}
+
+.songItem {
+    gap: 20px;
+    align-items: start;
+    width: 19%;
+    padding: 16px 16px;
+}
+
+.authorItem:hover,
+.songItem:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    cursor: pointer;
+    transform: scale(1.1);
+        /* Zoom effect */
+    transition: transform 0.15s ease-out;
+        /* Smooth transition */
+}
+
+.authorContainer,
+.songContainer{
+    display: flex;
+    width: 100%;
+    gap: 12px;
+    padding: 5px;
+}
+
+.songContainer {
+    gap: 14px;
+    flex-wrap: wrap;
+    row-gap: 24px;
+    align-content: flex-start;
+    padding: 10px;
+}
+
+.authorContainer {
+    overflow-y: hidden;
+    margin-bottom: 32px;
+}
+
+/* POPULAR SONGS */
 #mainHomeScreen {
     width: 100%;
     overflow-x: hidden;
     flex-direction: column;
     display: flex;
     gap: 12px;
+}
+
+.itemPlaylist {
+    justify-content: space-between;
+}
+
+.infoItemPlaylist img {
+    width: 50px;
+    height: 50px;
+    border-radius: 4px;
+    object-fit: cover;
+}
+
+.infoItemPlaylist .textInfoPlaylist {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.infoItemPlaylist .textInfoPlaylist p {
+    font-size: 12px;
+}
+
+.infoItemPlaylist {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    flex: 10;
+}
+
+.leftItemPlaylist {
+    display: flex;
+    gap: 34px;
+    align-items: center;
+    width: fit-content;
+}
+
+.rightItemPlaylist button {
+    border: none;
+}
+
+.rightItemPlaylist .icon {
+    background-color: transparent;
+    width: 28px;
+    height: 28px;
+}
+
+.rightItemPlaylist {
+    display: flex;
+    gap: 32px;
+    align-items: center;
+    margin-right: 16px;
+}
+
+.itemPlaylist {
+    display: flex;
+    width: 100%;
+}
+
+#mainHomeScreen main {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 32px;
+    width: 100%;
+
+    background-color: rgba(0, 0, 0, 0.25);
+    border-radius: 8px;
+}
+
+.itemPlaylistContainer:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    cursor: pointer;
+}
+
+.optionsWrapper {
+    position: relative;
+}
+
+.optionsMenu {
+    position: absolute;
+    top: 100%;
+    background-color: rgb(0, 0, 0);
+    border: 1px solid #ffffff16;
+    border-radius: 4px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+    width: 200px;
+}
+
+.optionItem {
+    padding: 8px 16px;
+    background: none;
+    border: none;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+    font-size: 14px;
+    color: #ffffff;
+}
+
+.optionItem:hover {
+    background-color: #555555;
+}
+
+/* ADD SONG TO PLAYLIST BOX */
+.infoSong {
+    display: flex;
+    flex-direction: column;
+}
+
+.itemContainer img {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    object-fit: cover;
+}
+
+.itemContainer p {
+    text-wrap: nowrap;
+}
+
+.itemContainer {
+    display: flex;
+    gap: 6px;
+    border-top-left-radius: 12px;
+    border-bottom-left-radius: 12px;
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+    align-items: center;
+}
+
+.itemContainer:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.addSongToPlaylistContainer {
+    display: flex;
+    flex-direction: column;
+    width: 232px;
+    height: fit-content;
+    position: absolute;
+    align-items: center;
+    gap: 2px;
+    padding: 4px 4px;
+    background-color: rgba(0, 0, 0, 0.9);
+    border-radius: 6px;
+    right: 45px;
+    z-index: 1;
+}
+
+.itemPlaylistContainer {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
 }

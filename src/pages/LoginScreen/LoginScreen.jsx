@@ -5,9 +5,12 @@ import { Icon } from '@iconify/react';
 import { useNavigate } from 'react-router-dom';
 import { auth } from '../../firebaseConfig'; // Firebase auth config
 import { signInWithEmailAndPassword } from 'firebase/auth'; // Firebase sign-in function
+import { useAdmin } from '../../contexts/AdminContext';
 
 const LoginScreen = memo(() => {
     const navigate = useNavigate();
+    // USE CONTEXT HERE TO LOGIN IN ADMIN ACCOUNT
+    const { setIsAdmin } = useAdmin();
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -44,17 +47,24 @@ const LoginScreen = memo(() => {
             return;
         }
 
+        // Nếu là admin, không cần xác thực Firebase
+        if (email === 'admin@letchill.com' && password === 'admin123') {
+            setIsAdmin(true);
+            navigate(`/main`);
+            return;
+        }
+
+        // Các tài khoản khác mới xác thực qua Firebase
         try {
             const userCredential = await signInWithEmailAndPassword(auth, email, password);
             const uid = userCredential.user.uid;
+            setIsAdmin(false);
             navigate(`/main?uid=${uid}`);
-
         } catch (error) {
             console.error('Login error:', error);
             alert('Đăng nhập không thành công. Vui lòng kiểm tra lại thông tin.');
         }
     };
-
 
     return (
         <div>

@@ -3,6 +3,7 @@ import Header from '../../components/header/Header.js';
 import ListeningSpace from '../../components/listeningSpace/ListeningSpace.js';
 import LeftBar from '../../components/librarySpace/LibrarySpace.js'
 import RightBar from '../../components/infomationSpace/InformationSpace.js';
+// USER SCREENS
 import HomeScreen from './components/HomeScreen/HomeScreen.js';
 import LyricsScreen from './components/LyricsScreen/LyricsScreen.js';
 import SearchingScreen from './components/SearchingScreen/SearchingScreen.js';
@@ -12,6 +13,9 @@ import playlistdData from '../../components/librarySpace/assets/playlistData.js'
 import WorldScreen from './components/WorldScreen/WorldScreen.jsx';
 import PremiumChooseScreen from './components/PremiumChooseScreen';
 import ArtistScreen from './components/ArtistScreen';
+// ADMIN SCREENS\
+import UserManagerScreen from './components/admin/UserManagerScreen/UserManagerScreen.jsx';
+import SongManagerScreen from './components/admin/SongManagerScreen/SongManagerScreen.jsx';
 
 import clsx from 'clsx';
 import styles from '../MainScreen/MainScreen.module.css'
@@ -20,6 +24,7 @@ import { query } from 'firebase/firestore';
 import axios from 'axios';
 
 import { AnimatePresence, motion } from 'framer-motion';
+import { useAdmin } from '../../contexts/AdminContext.jsx';
 
 const MainScreen = memo(() => {
     const [isRightBarOpen, setIsRightBarOpen] = useState(false);
@@ -32,7 +37,14 @@ const MainScreen = memo(() => {
     const [isPremiumChooseScreenOpen, setIsPremiumChooseScreenOpen] = useState(false);
     const [isArtistScreenOpen, setIsArtistScreenOpen] = useState(false);
 
+    // ADMIN CONTROL VALUES
+    const [isUserManagerScreenOpen, setIsUserManagerScreenOpen] = useState(false);
+    const [isSongManagerScreenOpen, setIsSongManagerScreenOpen] = useState(true);
+
     const [currentSongId, setCurrentSongId] = useState(null);
+
+    // ADMIN CONTEXT 
+    const { isAdmin } = useAdmin();
 
     // Nhận dữ liệu khi nhập tìm kiếm
     const [isSearchQuery, setIsSearchQuery] = useState("");
@@ -58,6 +70,7 @@ const MainScreen = memo(() => {
         setIsRightBarOpen(false);
     }
 
+    // USER'S CONTROL FUNCTION
     const toggleLyricsScreen = () => {
         if (isLyricsScreenOpen) {
             if (previousScreen === "home") {
@@ -230,6 +243,17 @@ const MainScreen = memo(() => {
         window.scrollTo(0, 0);
     }
 
+    // ADMIN'S CONTROL FUNCTION
+    const toggleUserManagerScreen = () => {
+        setIsUserManagerScreenOpen(true);
+        setIsSongManagerScreenOpen(false);
+    }
+
+    const toggleSongManagerScreen = () => {
+        setIsSongManagerScreenOpen(true);
+        setIsUserManagerScreenOpen(false);
+    }
+
     const fetchPlaylists = async () => {
         try {
             const response = await fetch('http://localhost:4000/api/playlist');
@@ -326,6 +350,56 @@ const MainScreen = memo(() => {
         console.log(isSearchQuery);
     }
 
+    if (isAdmin) {
+        return (
+            <div id={styles.main}>
+                <Header
+                ></Header>
+                <div className={clsx(styles.mainContainer)}>
+                    <LeftBar
+                        onUserManagerButtonClick={toggleUserManagerScreen}
+                        onSongManagerButtonClick={toggleSongManagerScreen}
+                    ></LeftBar>
+                    <div className={styles.mainSpace}>
+                        <div className={styles.mainContainer}>
+                            <AnimatePresence mode='wait'>
+                                {isUserManagerScreenOpen && (
+                                    <motion.div
+                                        key="home"
+                                        initial={{ opacity: 0, y: 10 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        exit={{ opacity: 0, y: -20 }}
+                                        transition={{ duration: 0.15 }}
+                                        style={{ height: '100%', width: '100%', overflowY: 'auto' }}
+                                    >
+                                        <UserManagerScreen
+                                            isOpen={isUserManagerScreenOpen}
+                                        ></UserManagerScreen>
+                                    </motion.div>
+                                )}
+
+                                {isSongManagerScreenOpen && (
+                                    <motion.div
+                                        key="home"
+                                        initial={{ opacity: 0, y: 10 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        exit={{ opacity: 0, y: -20 }}
+                                        transition={{ duration: 0.15 }}
+                                        style={{ height: '100%', width: '100%', overflowY: 'auto' }}
+                                    >
+                                        <SongManagerScreen
+                                            isOpen={isSongManagerScreenOpen}
+                                        ></SongManagerScreen>
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
     return (
         <div id={styles.main}>
             <Header
@@ -357,7 +431,10 @@ const MainScreen = memo(() => {
                                 >
                                     <HomeScreen
                                         isOpen={isHomeScreenOpen}
-                                        onSelectedArtist={toggleArtistScreen} />
+                                        onCurrentSongId={handleSongChange}
+                                        onSelectedArtist={toggleArtistScreen}
+                                        onRefreshPlaylists={fetchPlaylists}
+                                        playlistsData={playlists} />
                                 </motion.div>
                             )}
                             {isLyricsScreenOpen && (

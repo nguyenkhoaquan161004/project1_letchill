@@ -6,28 +6,39 @@ import MongYu from '../../../../assets/Slider/MongYu.jpg';
 
 export const popularSongs = [
     {
-        image: NgaoNgo,
+        avatarUrl: NgaoNgo,
         name: "Ngáo ngơ",
-        author: "Erik, Jsol, Orange, HIEUTHUHAI, Anh Tú Atus"
+        artist: "Erik, Jsol, Orange, HIEUTHUHAI, Anh Tú Atus",
+        views: "1.2M",
     },
     {
-        image: DLTTAD,
+        avatarUrl: DLTTAD,
         name: "Đừng làm trái tim anh đau",
-        author: "Sơn Tùng MTP"
+        artist: "Sơn Tùng MTP",
+        views: "1.3M",
     },
     {
-        image: NewWoman,
+        avatarUrl: NewWoman,
         name: "New Woman",
-        author: "Lisa ft. Rosalia"
+        artist: "Lisa ft. Rosalia",
+        views: "1.4M",
     },
     {
-        image: Seenderella,
+        avatarUrl: Seenderella,
         name: "Seenderella",
-        author: "Chi Xê"
+        artist: "Chi Xê",
+        views: "1.5M",
     },
     {
-        image: MongYu,
+        avatarUrl: MongYu,
         name: "Mộng Yu",
-        author: "AMEE"
+        artist: "AMEE",
+        views: "1.6M",
+    },
+    {
+        avatarUrl: NgaoNgo,
+        name: "Ngáo ngơ",
+        artist: "Erik, Jsol, Orange, HIEUTHUHAI, Anh Tú Atus",
+        views: "1.2M",
     },
 ]

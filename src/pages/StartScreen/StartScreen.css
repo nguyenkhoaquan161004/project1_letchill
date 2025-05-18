@@ -6,6 +6,189 @@
     transition: all 0.2s ease;
 }
 
+/* ANIMATION */
+.fade-section {
+    opacity: 0;
+    transform: translateY(100px);
+    transition: opacity 0.8s cubic-bezier(.4, 0, .2, 1), transform 0.8s cubic-bezier(.4, 0, .2, 1);
+    will-change: opacity, transform;
+}
+
+.fade-section.fade-in {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.show-after-type {
+    opacity: 0;
+    transform: translateY(40px);
+    animation: 
+        fadeUp 1.2s cubic-bezier(.4, 0, .2, 1) forwards,
+        bounceIn 0.7s cubic-bezier(.4, 0, .2, 1) forwards;
+}
+
+@keyframes fadeUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* FADE SIDE  */
+@keyframes fadeSlideLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-60px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes fadeSlideRight {
+    from {
+        opacity: 0;
+        transform: translateX(60px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.fade-slide-left {
+    opacity: 0;
+    animation: fadeSlideLeft 0.8s cubic-bezier(.4, 0, .2, 1) forwards;
+}
+
+.fade-slide-right {
+    opacity: 0;
+    animation: fadeSlideRight 0.8s cubic-bezier(.4, 0, .2, 1) forwards;
+}
+
+.show-after-type-slide-right {
+    opacity: 0;
+    transform: translateX(60px);
+    animation: fadeSlideRight 0.8s cubic-bezier(.4, 0, .2, 1) forwards;
+    animation-delay: 0s;
+}
+
+@keyframes bounceIn {
+    0% {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+
+    60% {
+        transform: scale(1.1);
+        opacity: 1;
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+.bounce-in {
+    animation: bounceIn 0.7s cubic-bezier(.4, 0, .2, 1) forwards;
+}
+
+@keyframes glow {
+
+    0%,
+    100% {
+        text-shadow: 0 0 10px #471C4B, 0 0 20px #471C4B;
+    }
+
+    50% {
+        text-shadow: 0 0 20px #fff, 0 0 40px #471C4B;
+    }
+}
+
+.highlightGlow {
+    animation: 
+        glow 2s infinite alternate,
+        fadeUp 0.8s cubic-bezier(.4, 0, .2, 1) forwards;
+}
+
+@keyframes floating {
+    0%,
+    100% {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(-64px);
+    }   
+}
+
+.floating1 {
+    animation: floating 5s ease-out infinite;
+    will-change: transform;
+}
+
+.floating2 {
+    animation: floating 5s ease-out infinite;
+    will-change: transform;
+    animation-delay: 1s;
+}
+
+.floating3 {
+    animation: floating 5s ease-out infinite;
+    will-change: transform;
+    animation-delay: 2s;
+}
+
+.floating4 {
+    animation: floating 5s ease-out infinite;
+    will-change: transform;
+    animation-delay: 3s;
+}
+
+@keyframes floating-2 {
+
+    0%,
+    100% {
+        transform: translateX(0px);
+    }
+
+    50% {
+        transform: translateX(32px);
+    }
+}
+
+.floating-2-1 {
+    animation: floating-2 5s ease-out infinite;
+    will-change: transform;
+}
+
+.floating-2-2 {
+    animation: floating-2 5s ease-out infinite;
+    will-change: transform;
+    animation-delay: 1s;
+}
+
+.floating-2-3 {
+    animation: floating-2 5s ease-out infinite;
+    will-change: transform;
+    animation-delay: 2s;
+}
+
+.floating-2-4 {
+    animation: floating-2 5s ease-out infinite;
+    will-change: transform;
+    animation-delay: 3s;
+}
+
+/* Thêm vào StartScreen.css */
+.typewriter-holder {
+    display: inline-block;
+    min-width: 320px;
+    /* hoặc width cố định phù hợp với tiêu đề dài nhất */
+}
 /* Rectangle 2 */
 .graBG1{
     position: absolute;
@@ -180,6 +363,9 @@
     z-index: 1;
 }
 
+#heroSection {
+    min-height: 408px;
+}
 /* TREANDING SONGS */
 
 #trendingSong .topic .highlight,
@@ -279,6 +465,7 @@ background: linear-gradient(90.98deg, #296265 13.07%, #344A5C 40.71%, #3F2F52 64
     gap: 83px;
     align-items: center;
     z-index: 1;
+    min-height: 990px;
 }
 
 /* VOICE SEARCHING */
@@ -304,6 +491,10 @@ background: linear-gradient(90.98deg, #296265 13.07%, #344A5C 40.71%, #3F2F52 64
     -webkit-text-fill-color: transparent;
     background-clip: text;
     text-fill-color: transparent;
+}
+
+#voiceSearching {
+    min-height: 550px;
 }
 
 /* PERSONAL LIBRARY */
@@ -364,6 +555,7 @@ background: linear-gradient(90.98deg, #296265 13.07%, #344A5C 40.71%, #3F2F52 64
     gap: 46px;
     justify-content: center;
     z-index: 1;
+    min-height: 530px;
 }
 
 #footer .line {

@@ -1,0 +1,105 @@
+
+.headerRow {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 24px;
+}
+
+.header {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    align-items: center;
+    margin: 8px 0;
+    justify-content: center;
+}
+
+.searchBox {
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-radius: 50px;
+    padding: 12px 30px;
+    width: 40%;
+    background-color: transparent;
+}
+
+.searchBtn {
+    background: #2C666E;
+    color: #fff;
+    border: none;
+    border-radius: 24px;
+    padding: 10px 32px;
+    font-size: 20px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.searchBtn:hover {
+    background: #224d53;
+}
+
+.table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 16px 0 rgba(44, 102, 110, 0.08);
+    margin-top: 24px;
+    margin-bottom: 40px;
+}
+
+.table th,
+.table td {
+    padding: 16px 20px;
+    font-size: 22px;
+    text-align: left;
+}
+
+.table th {
+    color: #C6C6C6;
+    font-weight: 700;
+    background: #000 !important;
+    border-bottom: 2px solid #222;
+    user-select: none;
+    transition: background 0.2s;
+    
+}
+
+.table th:hover {
+    background: #111;
+}
+
+.table td {
+    color: #fff;
+    border-bottom: 1px solid #222;
+    background: #000;
+}
+
+.table tr:last-child td {
+    border-bottom: none;
+}
+
+.table tr {
+    vertical-align: -webkit-baseline-middle;
+}
+
+.table tr:hover td {
+    background: #181818;
+}
+
+.table th:first-child,
+.table td:first-child {
+    width: 40px;
+    text-align: center;
+}
+
+input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: #fff;
+    background: #000;
+    border: 2px solid #fff;
+    border-radius: 4px;
+    margin: 0 6px 0 12px;
+    vertical-align: middle;
+}

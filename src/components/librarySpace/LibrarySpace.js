@@ -5,11 +5,25 @@ import { InlineIcon } from '@iconify/react';
 import clsx from 'clsx';
 import AddPlaylistBox from './components/AddPlaylistBox/AddPlaylistBox';
 import favoritePlaylist from './assets/favoritePlaylist.svg';
+import { useAdmin } from '../../contexts/AdminContext';
+import { AnimatePresence, motion } from 'framer-motion';
 
-const LibrarySpace = ({ onSelectedPlaylist, playlistsDatas, onRefreshPlaylists }) => {
+const LibrarySpace = ({ onSelectedPlaylist, playlistsDatas, onRefreshPlaylists, onUserManagerButtonClick, onSongManagerButtonClick }) => {
     const [isAddPlaylistOpen, setIsAddPlaylistOpen] = useState(false);
     //const [playlists, setPlaylists] = useState([]);
+    const { isAdmin } = useAdmin();
 
+    // State cho menu admin
+    // const [showSongManage, setShowSongManage] = useState(true);
+    // const [showAccountManage, setShowAccountManage] = useState(false);
+    // const [showReportProcess, setShowReportProcess] = useState(false);
+    // const [showCommentManage, setShowCommentManage] = useState(false);
+
+    const [activeAdminBox, setActiveAdminBox] = useState('song'); // 'song', 'account', 'report', 'comment', hoặc null
+
+    const handleToggleAdminBox = (box) => {
+        setActiveAdminBox(prev => prev === box ? null : box);
+    };
 
     const handleOpenAddPlaylistBox = () => {
         setIsAddPlaylistOpen(true);
@@ -18,7 +32,6 @@ const LibrarySpace = ({ onSelectedPlaylist, playlistsDatas, onRefreshPlaylists }
     const handleCloseAddPlaylistBox = () => {
         setIsAddPlaylistOpen(false);
     }
-
 
     // const fetchPlaylists = useCallback(async () => {
     //     try {
@@ -52,6 +65,132 @@ const LibrarySpace = ({ onSelectedPlaylist, playlistsDatas, onRefreshPlaylists }
             console.error('Error updating playlists: ', err);
         }
     };
+
+    if (isAdmin) {
+        return (
+            <div id={styles.leftBarAdmin} className={clsx('w24')}>
+                <div className={styles.leftBarAdminContainer}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                        <AnimatePresence mode="wait">
+                            {/* Quản lý bài hát */}
+                            <motion.div
+                                initial={{ opacity: 0, height: 0, y: -16 }}
+                                animate={{ opacity: 1, height: 'auto', y: 0 }}
+                                exit={{ opacity: 0, height: 0, y: -16 }}
+                                transition={{ duration: 1, ease: 'easeInOut' }}
+                                style={{ overflow: 'hidden', cursor: 'pointer' }}
+                                className={styles.adminBox}
+                                onClick={() => { handleToggleAdminBox('song'); onSongManagerButtonClick() }
+                                }
+                            >
+                                <div style={{ fontWeight: 700, fontSize: 24, textAlign: 'center', padding: 16 }}>
+                                    Quản lý bài hát
+                                </div>
+
+                                {activeAdminBox === 'song' && (
+                                    <div
+                                        onClick={() => handleToggleAdminBox('song')}
+                                        style={{
+                                            padding: '0 0 16px 0',
+                                            display: 'flex',
+                                            flexDirection: 'column',
+                                            gap: 20,
+                                            overflow: 'hidden'
+                                        }}
+                                    >
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: 12, paddingLeft: 24 }}>
+                                            <InlineIcon style={{ width: 26, height: 26, backgroundColor: 'transparent' }} icon="ic:round-add" width={24} />
+                                            <span className='uiSemibold'>Thêm bài hát</span>
+                                        </div>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: 12, paddingLeft: 24 }}>
+                                            <InlineIcon style={{ width: 26, height: 26, backgroundColor: 'transparent' }} icon="mdi:playlist-music" width={24} />
+                                            <span className='uiSemibold'>Duyệt bài hát</span>
+                                        </div>
+                                    </div>
+                                )}
+
+                            </motion.div>
+                            {/* Quản lý tài khoản */}
+                            <motion.div
+                                initial={{ opacity: 0, height: 0, y: -16 }}
+                                animate={{ opacity: 1, height: 'auto', y: 0 }}
+                                exit={{ opacity: 0, height: 0, y: -16 }}
+                                transition={{ duration: 0.3, ease: 'linear' }}
+                                className={styles.adminBox}
+                                style={{ cursor: 'pointer' }}
+                                onClick={() => { handleToggleAdminBox('account'); onUserManagerButtonClick() }
+                                }
+                            >
+                                <div
+                                    style={{ fontWeight: 700, fontSize: 24, textAlign: 'center', padding: 16 }}>
+                                    Quản lý tài khoản
+                                </div>
+
+                                {activeAdminBox === 'account' && (
+                                    <div
+                                        onClick={() => handleToggleAdminBox('account')}
+                                        style={{
+                                            display: 'flex',
+                                            flexDirection: 'column',
+                                            gap: 16,
+                                            padding: '0 0 16px 0',
+                                            overflow: 'hidden'
+                                        }}
+                                    >
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: 12, paddingLeft: 24 }}>
+                                            <InlineIcon style={{ width: 26, height: 26, backgroundColor: 'transparent' }} icon="ic:round-add" width={24} />
+                                            <span className='uiSemibold'>Thêm tài khoản</span>
+                                        </div>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: 12, paddingLeft: 24 }}>
+                                            <InlineIcon style={{ width: 26, height: 26, backgroundColor: 'transparent' }} icon="ic:round-edit" width={24} />
+                                            <span className='uiSemibold'>Cập nhật tài khoản</span>
+                                        </div>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: 12, paddingLeft: 24 }}>
+                                            <InlineIcon style={{ width: 26, height: 26, backgroundColor: 'transparent' }} icon="ic:round-delete" width={24} />
+                                            <span className='uiSemibold'>Xóa tài khoản</span>
+                                        </div>
+                                    </div>
+                                )}
+
+                            </motion.div>
+                            {/* Xử lý báo cáo */}
+                            <div
+                                className={styles.adminBox}
+                                style={{ cursor: 'pointer' }}
+                                onClick={() => handleToggleAdminBox('report')}
+                            >
+                                <div
+                                    style={{
+                                        fontWeight: 700,
+                                        fontSize: 24,
+                                        textAlign: 'center',
+                                        padding: 16
+                                    }}
+                                    onClick={() => handleToggleAdminBox('account')}
+                                >
+                                    Xử lý báo cáo
+                                </div>
+                                {/* Nếu muốn có submenu cho báo cáo, thêm ở đây */}
+                                {/* {activeAdminBox === 'report' && (...)} */}
+                            </div>
+                            {/* Duyệt bình luận */}
+                            <div
+                                className={styles.adminBox}
+                                style={{ cursor: 'pointer' }}
+                                onClick={() => handleToggleAdminBox('comment')}
+                            >
+                                <div style={{ fontWeight: 700, fontSize: 24, textAlign: 'center', padding: 16 }}>
+                                    Duyệt bình luận
+                                </div>
+                                {/* Nếu muốn có submenu cho bình luận, thêm ở đây */}
+                                {/* {activeAdminBox === 'comment' && (...)} */}
+                            </div>
+                        </AnimatePresence>
+                    </div>
+                </div>
+            </div >
+        );
+    }
 
     return (
         <div id={styles.leftBar}

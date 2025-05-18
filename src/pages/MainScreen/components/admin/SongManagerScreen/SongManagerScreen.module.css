@@ -1,0 +1,83 @@
+.table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    background: transparent;
+    margin-top: 24px;
+    margin-bottom: 52px;
+}
+
+.table th,
+.table td {
+    padding: 16px 20px;
+    text-align: left;
+}
+
+.table th {
+    background: transparent;
+    border-bottom: none;
+    user-select: none;
+}
+
+.table td {
+    color: #C6C6C6;
+    font-weight: 500;
+    background: transparent;
+    border-bottom: none;
+}
+
+.songInfoContainer {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.songImg {
+    width: 52px;
+    height: 52px;
+    border-radius: 8px;
+    object-fit: cover;
+    background: #eee;
+}
+
+.songName {
+    font-size: 20px;
+    color: #C6C6C6;
+    font-weight: 500;
+}
+
+.songGenre {
+    color: #C6C6C6;
+    font-size: 20px;
+    font-weight: 500;
+}
+
+.songInfo {
+    display: flex;
+    flex-direction: column;
+}
+
+.table tr:hover td {
+    background: #181818;
+}
+
+.table th:first-child,
+.table td:first-child {
+    width: 40px;
+    text-align: center;
+}
+
+input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: #fff;
+    background: #000;
+    border: 2px solid #fff;
+    border-radius: 4px;
+    margin: 0 6px 0 12px;
+    vertical-align: middle;
+}
+
+.container h3 {
+    text-align: center;
+}

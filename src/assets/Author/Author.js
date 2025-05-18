@@ -1,5 +1,5 @@
 import React from 'react';
-import styles from './Author.module.css';
+import styles from '../../pages/MainScreen/components/HomeScreen/HomeScreen.module.css';
 import clsx from 'clsx';
 
 

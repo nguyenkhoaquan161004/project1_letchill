@@ -53,6 +53,17 @@
     margin-bottom: 32px;
 }
 
+/* ADMIN */
+.adminBox {
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.10);
+    border-radius: 10px;
+    z-index: 1;
+    display: flex;
+    gap: 12px;
+    flex-direction: column;
+}
+
 /* Tùy chỉnh thanh cuộn cho toàn bộ trang hoặc một phần tử */
 ::-webkit-scrollbar {
     width: 6px;
