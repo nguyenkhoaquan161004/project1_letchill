@@ -1,0 +1,57 @@
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.box {
+    background: #181818;
+    padding: 32px 24px;
+    border-radius: 12px;
+    min-width: 350px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    box-shadow: 0 2px 16px rgba(0, 0, 0, 0.15);
+}
+
+.box h2 {
+    margin-bottom: 8px;
+    text-align: center;
+}
+
+.box input,
+.box select {
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 15px;
+}
+
+.actions {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    margin-top: 8px;
+}
+
+.actions button {
+    padding: 8px 16px;
+    border-radius: 6px;
+    border: none;
+    background: #1976d2;
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.actions button[type="button"] {
+    background: #aaa;
+}

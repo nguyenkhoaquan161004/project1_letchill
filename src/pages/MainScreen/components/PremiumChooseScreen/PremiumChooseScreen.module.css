@@ -73,7 +73,6 @@
     flex-direction: column;
     gap: 2px;
     width: auto;
-    height: 124px;
 }
 
 .nameAndTime {
@@ -98,7 +97,7 @@
     display: flex;
     flex-direction: column;
     gap: 10px;
-    width: 32%;
+    width: 22vw;
     padding: 32px 28px;
     background: rgba(255, 255, 255, 0.1);
     box-shadow: 10px 16px 16px rgba(255, 255, 255, 0.25);
@@ -121,4 +120,74 @@
     background: transparent;
     height: 1px;
     align-self: center;
+}
+
+/* PAYMENT BOX */
+.paymentBox {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.paymentBoxContent {
+    background-color: #1e1e1e;
+    padding: 32px;
+    border-radius: 10px;
+    width: 24vw;
+    max-width: 400px;
+    color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.paymentBoxContent header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.paymentBoxContent h4 {
+    font-size: 1.5rem;
+}
+
+.closeButton {
+    background-color: transparent;
+    color: #ffffff;
+    border: none;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.closeButton:hover {
+    text-decoration: underline;
+}
+
+.paymentBoxContent main p {
+    margin: 10px 0;
+}
+
+.paymentMethod {
+    background-color: #296265;
+    color: #ffffff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+    width: 100%;
+    text-align: center;
+    transition: background-color 0.3s ease;
+}
+
+.paymentMethod:hover {
+    background-color: #296265;
 }

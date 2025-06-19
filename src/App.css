@@ -141,3 +141,102 @@ h1, h2, h3, h4, h5, p, a, button, img, div, span, label, header, nav, main {
 .hoverPoiter {
   cursor: pointer;
 }
+
+/* Responsive for tablets */
+@media (max-width: 1024px) {
+  h1 {
+    font-size: 64px;
+  }
+
+  h2 {
+    font-size: 48px;
+  }
+
+  h3 {
+    font-size: 28px;
+  }
+
+  h4 {
+    font-size: 20px;
+  }
+
+  h5,
+  h6 {
+    font-size: 18px;
+  }
+
+  .p1 {
+    font-size: 18px;
+  }
+
+  .p2 {
+    font-size: 16px;
+  }
+
+  .p3,
+  .uiSemibold,
+  .uiMedium,
+  .uiRegular {
+    font-size: 12px;
+  }
+
+  .w20 {
+    width: 40vw;
+  }
+
+  .w24 {
+    width: 48vw;
+  }
+
+  .w60 {
+    width: 80vw;
+  }
+
+  .w76 {
+    width: 90vw;
+  }
+}
+
+/* Responsive for mobile */
+@media (max-width: 600px) {
+  h1 {
+    font-size: 36px;
+  }
+
+  h2 {
+    font-size: 28px;
+  }
+
+  h3 {
+    font-size: 20px;
+  }
+
+  h4 {
+    font-size: 16px;
+  }
+
+  h5,
+  h6 {
+    font-size: 14px;
+  }
+
+  .p1,
+  .p2,
+  .p3,
+  .uiSemibold,
+  .uiMedium,
+  .uiRegular {
+    font-size: 12px;
+  }
+
+  .w20,
+  .w24,
+  .w60,
+  .w76 {
+    width: 96vw;
+  }
+
+  .ml20 {
+    margin-left: 8px;
+  }
+}

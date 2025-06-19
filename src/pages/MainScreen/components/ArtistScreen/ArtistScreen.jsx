@@ -48,34 +48,76 @@ const generateSongsData = () => {
 
 const songsData = generateSongsData();
 
-const ArtistScreen = ({ isOpen, artistId, onSelectedArtist }) => {
-    const [selectedArtist, setSelectedArtist] = useState("");
-    const [songs, setSongs] = useState(null);
-    const [artists, setArtist] = useState(null);
+const ArtistScreen = ({ isOpen, artistId, onSelectedArtist, uid }) => {
+    const [selectedArtist, setSelectedArtist] = useState({});
+    const [songs, setSongs] = useState([]);
+    const [artists, setArtists] = useState([]);
 
-    const fetchHometData = async () => {
+    const [visibleSongsCount, setVisibleSongsCount] = useState(5); // Số lượng bài hát hiển thị ban đầu
+
+    const fetchArtistData = async () => {
         try {
-
-            const response = await fetch('http://localhost:4000/api');
+            const response = await fetch(`http://localhost:4000/api/singer/${artistId}`);
             if (!response.ok) {
-                // throw new Error('Error fetching home data');
+                throw new Error('Error fetching artist data');
             }
-
             const data = await response.json();
+            setSelectedArtist(data);
+            console.log(data);
+        } catch (error) {
+            console.error('Error fetching artist data:', error);
+        }
+    };
 
-            setSongs(data.topSongs);  // Đảm bảo xử lý cho 'favorite'
-            setArtist(data.topSingers);
-            console.log(songs);
-            console.log(artists);
+    useEffect(() => {
+        fetchArtistData();
+    }, [artistId, isOpen]);
+
+    const fetchSameArtist = async (top_n1 = 5, top_n2 = 8) => {
+        try {
+            const response1 = await fetch(`http://localhost:4000/api/dashboard?user_id=${uid}&top_n=${top_n1}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            const data = await response1.json();
+            setArtists(data.singersRecommentation || []);
 
         } catch (err) {
             console.error('Error fetching home data:', err);
-            // alert('An error occurred while fetching the home data.');
         }
     };
+
     useEffect(() => {
-        fetchHometData();
-    }, []);
+        fetchSameArtist();
+    }, [artistId, isOpen]); // Fetch artist data when artistId or isOpen changes
+
+    const fetchSongsByArtist = async () => {
+        try {
+            const response = await fetch(`http://localhost:4000/api/singer/${artistId}/songs`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error('Error fetching songs by artist');
+            }
+
+            const data = await response.json();
+            setSongs(data.songs || []);
+            console.log(data.songs);
+        } catch (error) {
+            console.error('Error fetching songs by artist:', error);
+        }
+    };
+
+    useEffect(() => {
+        fetchSongsByArtist();
+    }, [artistId, isOpen]); // Fetch songs when artistId or isOpen changes
 
     useEffect(() => {
         const artist = popularAuthor.find(author => author.id === artistId);
@@ -83,11 +125,11 @@ const ArtistScreen = ({ isOpen, artistId, onSelectedArtist }) => {
         window.scrollTo(0, 0);
     }, [artistId]);
 
+    const handleArtistSelect = (artistId) => {
+        onSelectedArtist(artistId);
+    };
+
     if (!isOpen) return null;
-
-    if (!selectedArtist) return null;
-
-    const { name, image, description, followers } = selectedArtist;
 
     return (
         <div id={styles.artistScreen}>
@@ -100,7 +142,7 @@ const ArtistScreen = ({ isOpen, artistId, onSelectedArtist }) => {
                             accept="image/*"
                             style={{ display: 'none' }}></input>
                         <img
-                            src={selectedArtist.avatarUrl}
+                            src={selectedArtist?.avatarUrl || null}
                             alt=''
                             className={clsx(styles.avatarPic)} />
 
@@ -109,13 +151,13 @@ const ArtistScreen = ({ isOpen, artistId, onSelectedArtist }) => {
                     <div className={styles.textSpace}>
                         <p className='p1'>Nghệ sĩ</p>
                         <div className={styles.infoUser}>
-                            <h3 className={styles.nameOfUsesr}>{selectedArtist.name || 'Artist'}</h3>
-                            {selectedArtist.description && (
-                                <p className='uiRegular o50'>{selectedArtist.description}</p>
+                            <h3 className={styles.nameOfUsesr}>{selectedArtist?.name || 'Artist'}</h3>
+                            {selectedArtist?.description && (
+                                <p className='uiRegular o50'>{selectedArtist?.description}</p>
                             )}
 
                             <p className='uiSemibold o50'>
-                                <span className='uiSemibold o75'>{selectedArtist.followers || 0}</span> người theo dõi</p>
+                                <span className='uiSemibold o75'>{selectedArtist?.followers || 0}</span> người theo dõi</p>
                         </div>
                     </div>
                 </div>
@@ -144,8 +186,8 @@ const ArtistScreen = ({ isOpen, artistId, onSelectedArtist }) => {
                 </header>
 
                 <main>
-                    {songsData.length > 0 ? (
-                        songsData.map((song, index) => (
+                    {songs.length > 0 ? (
+                        songs.slice(0, visibleSongsCount).map((song, index) => (
                             <div
                                 key={song.id}
                                 className={styles.itemPlaylistContainer}
@@ -156,9 +198,9 @@ const ArtistScreen = ({ isOpen, artistId, onSelectedArtist }) => {
                                     index={index + 1}
                                     // playlistId={playlistId}
                                     songId={song.id}
-                                    cover={selectedArtist.avatarUrl}
+                                    cover={song.avatarUrl}
                                     title={song.name}
-                                    artist={selectedArtist.name}
+                                    artist={selectedArtist?.name || 'Unknown Artist'}
                                     dateAdded={song.releaseDate}
                                 // fetchPlaylistData={fetchPlaylistData}
                                 />
@@ -168,6 +210,18 @@ const ArtistScreen = ({ isOpen, artistId, onSelectedArtist }) => {
                         <p className={styles.noSongsMessage}>Danh sách phát hiện không có bài hát.</p>
                     )}
                 </main>
+
+                <button
+                    className={styles.showMoreButton}
+                    onClick={() => {
+                        setVisibleSongsCount(
+                            visibleSongsCount === 5 ? songs.length : 5 // Chuyển đổi giữa hiển thị 5 bài hát và toàn bộ bài hát
+                        );
+                        window.scrollTo(0, 0);
+                    }} // Hiển thị toàn bộ bài hát
+                >
+                    {songs.length > visibleSongsCount ? 'Xem thêm' : 'Thu gọn'}
+                </button>
                 {/* <main>
                 {songsData.length > 0 ? (
                     songsData.map((song, index) => (
@@ -198,10 +252,29 @@ const ArtistScreen = ({ isOpen, artistId, onSelectedArtist }) => {
             <div className={styles.sameArtists}>
                 <h4>Các nghệ sĩ tương tự</h4>
                 <div className={styles.authorContainer}>
-                    <Author
-                        items={artists || popularAuthor}
-                        onSelectedArtist={onSelectedArtist}
-                    ></Author>
+                    <div className={styles.authorWrapper}>
+                        <div className={styles.authorContainer}>
+                            {artists.map((item, index) => {
+                                return (
+                                    <Author
+                                        artistId={item.artist_id}
+                                        artistPic={item.avatarUrl}
+                                        nameArtist={item.name}
+                                        description={item.description}
+                                        followers={item.followers}
+                                        onSelectedArtist={() => {
+                                            onSelectedArtist({
+                                                artistId: item.artist_id,
+                                            });
+                                            handleArtistSelect(item.artist_id);
+                                            console.log(item.artist_id);
+                                        }}
+                                    ></Author>
+                                )
+                            })}
+
+                        </div>
+                    </div>
                 </div>
             </div>
 

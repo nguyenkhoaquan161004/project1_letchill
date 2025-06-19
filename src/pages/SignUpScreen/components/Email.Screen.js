@@ -1,6 +1,9 @@
 import React, { memo } from 'react';
 import { Icon } from '@iconify/react';
 import { useNavigate } from 'react-router-dom';
+import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { auth, db } from '../../../firebaseConfig';
 
 const EmailScreen = ({ nextStep, setEmail }) => {
     const navigate = useNavigate();
@@ -18,6 +21,55 @@ const EmailScreen = ({ nextStep, setEmail }) => {
     const handleSetEmail = (e) => {
         setEmail(e.target.value);
     }
+
+    const handleLoginWithGoogle = async () => {
+        const provider = new GoogleAuthProvider();
+        try {
+            const result = await signInWithPopup(auth, provider);
+            const user = result.user;
+            const uid = user.uid;
+
+            const userDocRef = doc(db, 'user', uid);
+            const useDoc = await getDoc(userDocRef);
+
+            if (!useDoc.exists()) {
+                await setDoc(userDocRef, {
+                    email: user.email || null,
+                    name: user.displayName || null,
+                    imageUrl: user.photoURL || null, // Sửa lại từ user.imageUrl thành user.photoURL
+                    birth: null, // Google không trả về birth, để null hoặc cho user cập nhật sau
+                    gender: null, // Google không trả về gender, để null hoặc cho user cập nhật sau
+                    createdAt: new Date()
+                });
+            }
+
+            const idToken = await user.getIdToken();
+
+            await fetch('http://localhost:4000/api/user/sign-up', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${idToken}`
+                },
+                body: JSON.stringify({
+                    uid,
+                    email: user.email,
+                    name: user.displayName,
+                    imageUrl: user.photoURL,
+                    birth: null,
+                    gender: null,
+                    createdAt: new Date(),
+                    idToken,
+                }),
+            });
+
+            navigate(`/main?uid=${uid}`);
+        } catch (error) {
+            console.error('Login with Google error:', error);
+            alert('Đăng nhập với Google không thành công.');
+        }
+
+    };
 
     return (
         <div className='step'>
@@ -40,7 +92,7 @@ const EmailScreen = ({ nextStep, setEmail }) => {
                 </div>
 
                 <div className='listOfWay'>
-                    <button className='btnOtherWay'>
+                    <button className='btnOtherWay' onClick={handleLoginWithGoogle}>
                         <Icon className='iconOtherWay' icon="flat-color-icons:google" />
                         <h4>Đăng ký với Google</h4>
                     </button>

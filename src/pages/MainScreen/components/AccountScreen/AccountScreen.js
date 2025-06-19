@@ -33,8 +33,8 @@ const AccountScreen = ({ isOpen, uid, onSelectedPlaylist }) => {
             setSelectedImage(avatarUrl);
             const updateUser = {
                 uid: uid,
-                newName: user.name,
-                imageUrl: avatarUrl,
+                name: user.name,
+                avatarUrl: avatarUrl,
             }
             await fetch(`http://localhost:4000/api/profile/${uid}`, {
                 method: 'PATCH',
@@ -127,7 +127,7 @@ const AccountScreen = ({ isOpen, uid, onSelectedPlaylist }) => {
             <div className={styles.playlistOfAccount}>
                 <h3>Danh sách phát</h3>
                 <div className={styles.listOfPlaylist}>
-                    {playlists.map((playlist, i) => {
+                    {Array.isArray(playlists) && playlists.map((playlist, i) => {
                         return (
                             <div
                                 key={i}

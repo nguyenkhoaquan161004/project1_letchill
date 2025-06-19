@@ -3,11 +3,15 @@ import clsx from 'clsx';
 import axios from 'axios';
 import { Icon } from '@iconify/react';
 import styles from './ListeningSpace.module.css';
-import songsData from '../../assets/songsData';
 import Playlist from './Playlist';
 
 
-const ListeningSpace = ({ onInfoButtonClick, onLyricsButtonClick, onWorldScreenButtonClick, isRightBarOpen, isLyricsOpen, isWorldScreenOpen, onChangeSong, playlistsData, currentSongId, onRefreshPlaylists }) => {
+const ListeningSpace = ({ onInfoButtonClick, onLyricsButtonClick, onWorldScreenButtonClick,
+    isRightBarOpen, isLyricsOpen, isWorldScreenOpen, onChangeSong, playlistsData,
+    currentSongId, onRefreshPlaylists, uid, onCurrentArtistId }) => {
+    const token = localStorage.getItem('token');
+    const [isLoading, setIsLoading] = useState(false);
+
     const audioPlayer = useRef(null);
     const progressRef = useRef(null);
     const [isPlaying, setIsPlaying] = useState(false);
@@ -51,15 +55,18 @@ const ListeningSpace = ({ onInfoButtonClick, onLyricsButtonClick, onWorldScreenB
             return; // Không thực hiện nếu songId không hợp lệ
         }
 
+
         try {
             console.log("Fetching song information for ID:", songId);
-            const response = await fetch(`http://localhost:4000/api/song/${songId}`);
+            const response = await fetch(`http://localhost:4000/api/song/${songId}/${uid}`);
 
             const data = await response.json();
+            setDuration('Loading...');
             if (data && data.name) {
                 console.log("Fetched song data:", data);
                 setCurrentSongData(data)
                 setDuration(formatTime(data.duration));
+                onCurrentArtistId(data.artist); // Cập nhật ID nghệ sĩ hiện tại`
                 // Chỉ cập nhật nếu cần thiết
                 setCurrentSongData((prevData) => {
                     if (prevData?.id === data.id) return prevData; // Không thay đổi nếu giống nhau
@@ -87,7 +94,7 @@ const ListeningSpace = ({ onInfoButtonClick, onLyricsButtonClick, onWorldScreenB
                 image: '/path/to/default-image.jpg',
                 name: 'Unknown Song',
                 artist: 'Unknown Artist',
-                audio: null,
+                link: null,
                 duration: 0
             });
 
@@ -95,7 +102,7 @@ const ListeningSpace = ({ onInfoButtonClick, onLyricsButtonClick, onWorldScreenB
             setSongs((prevSongs) => {
                 if (prevSongs.length === 0) {
                     return [
-                        { id: 1, name: 'Default Song', artist: 'Unknown Artist', audio: '/path/to/default.mp3', duration: 0 },
+                        { id: 1, name: 'Default Song', artist: 'Unknown Artist', link: '/path/to/default.mp3', duration: 0 },
                     ];
                 }
                 return prevSongs;
@@ -188,33 +195,34 @@ const ListeningSpace = ({ onInfoButtonClick, onLyricsButtonClick, onWorldScreenB
         }
     }, [currentSongData, isPlaying]);
 
-    useEffect(() => {
-        const controller = new AbortController();
-        const fetchInitialSong = async () => {
-            try {
-                const response = await axios.get('http://localhost:4000/api/song/', {
-                    signal: controller.signal,
-                });
-                const randomSongId = response.data.id;
-                await fetchSongs(randomSongId);
-            } catch (error) {
-                if (axios.isCancel(error)) {
-                    console.log("Fetch cancelled");
-                } else {
-                    console.error("Error fetching initial song:", error.message);
-                }
-            }
-        };
+    // useEffect(() => {
+    //     const controller = new AbortController();
+    //     const fetchInitialSong = async () => {
+    //         try {
+    //             const response = await axios.get('http://localhost:4000/api/song/', {
+    //                 signal: controller.signal,
+    //             });
+    //             const randomSongId = response.data.id;
+    //             await fetchSongs(randomSongId);
+    //         } catch (error) {
+    //             if (axios.isCancel(error)) {
+    //                 console.log("Fetch cancelled");
+    //             } else {
+    //                 console.error("Error fetching initial song:", error.message);
+    //             }
+    //         }
+    //     };
 
-        fetchInitialSong();
+    //     fetchInitialSong();
 
-        return () => controller.abort();
-    }, []);
+    //     return () => controller.abort();
+    // }, []);
 
     const handleNext = async () => {
         try {
+            setDuration('Loading...');
             console.log("Fetching a random song ID...");
-            const response = await axios.get('http://localhost:4000/api/song');
+            const response = await axios.get('http://localhost:4000/api/song/random-id');
             const randomSongId = response.data.id;
 
             if (!randomSongId) {
@@ -233,7 +241,7 @@ const ListeningSpace = ({ onInfoButtonClick, onLyricsButtonClick, onWorldScreenB
             await fetchSongs(randomSongId);
             onChangeSong(randomSongId);
 
-            if (currentSongData?.audio) {
+            if (currentSongData?.link) {
                 // Start playing the new song after loading
                 togglePlay()
             } else {
@@ -273,6 +281,7 @@ const ListeningSpace = ({ onInfoButtonClick, onLyricsButtonClick, onWorldScreenB
 
     // TIME PROGRESS OF SONG
     useEffect(() => {
+        // console.log(token)
         const updateProgress = () => {
             const audio = audioPlayer.current;
             if (audio) {
@@ -308,6 +317,7 @@ const ListeningSpace = ({ onInfoButtonClick, onLyricsButtonClick, onWorldScreenB
     };
 
     const togglePlay = () => {
+        setDuration('Loading...');
         const audio = audioPlayer.current;
         if (audio.paused) {
             audio.currentTime = savedTime; // Tiếp tục từ thời gian đã lưu
@@ -420,10 +430,19 @@ const ListeningSpace = ({ onInfoButtonClick, onLyricsButtonClick, onWorldScreenB
         }
 
         try {
-            const response = await axios.patch(`http://localhost:4000/api/playlist-detail/${selectedPlaylistIds}`, {
-                playlistIds: selectedPlaylistIds,
-                songId: currentSongData.id,
-            });
+            const response = await axios.patch(
+                `http://localhost:4000/api/playlist-detail/${selectedPlaylistIds}?songId=${currentSongData.id}`,
+                {
+                    playlistId: selectedPlaylistIds,
+                    songId: currentSongData.id,
+                },
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`,
+                    },
+                }
+            );
             console.log("Song added to playlists:", response.data);
             alert("Bài hát đã được thêm vào các danh sách phát thành công!");
             setSelectedPlaylists({}); // Reset trạng thái chọn
@@ -442,7 +461,7 @@ const ListeningSpace = ({ onInfoButtonClick, onLyricsButtonClick, onWorldScreenB
             <div className={styles.info}>
                 <div style={{ display: "flex", gap: 20, alignItems: "center" }}>
                     <img
-                        src={currentSongData?.image || '/path/to/default-image.jpg'}
+                        src={currentSongData?.avatarUrl || '/path/to/default-image.jpg'}
                         alt="Song cover"
                         className={styles.picOfSong}
                     />
@@ -474,7 +493,7 @@ const ListeningSpace = ({ onInfoButtonClick, onLyricsButtonClick, onWorldScreenB
                                 <Playlist
                                     key={playlist.id}
                                     playlistId={playlist.id}
-                                    playlistPic={playlist.avtUrl}
+                                    playlistPic={playlist.avatarUrl}
                                     namePlaylist={playlist.name}
                                     description={playlist.description}></Playlist>
                                 <input
@@ -498,7 +517,7 @@ const ListeningSpace = ({ onInfoButtonClick, onLyricsButtonClick, onWorldScreenB
             </div>
 
             <div className={styles.musicPlayer}>
-                <audio ref={audioPlayer} src={currentSongData?.audio} />
+                <audio ref={audioPlayer} src={currentSongData?.link} />
 
 
                 <div className={styles.controlbar}>

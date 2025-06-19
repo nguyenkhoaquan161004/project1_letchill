@@ -47,6 +47,15 @@ const PlaylistItem = ({ index, playlistId, songId, cover, title, artist, dateAdd
         };
     }, []);
 
+    function formatDateToDDMMYYYY(date) {
+        const d = new Date(date);
+        if (isNaN(d)) return ''; // Invalid date
+        const day = String(d.getDate()).padStart(2, '0');
+        const month = String(d.getMonth() + 1).padStart(2, '0');
+        const year = d.getFullYear();
+        return `${day}/${month}/${year}`;
+    }
+
     return (
         <div className={styles.itemPlaylist}>
             <div className={styles.leftItemPlaylist}>
@@ -63,7 +72,7 @@ const PlaylistItem = ({ index, playlistId, songId, cover, title, artist, dateAdd
             <div style={{ display: 'flex', alignItems: 'center', position: 'relative' }}>
                 <div className={styles.rightItemPlaylist}>
                     {views !== null ? (<p>{views}</p>) : null}
-                    {dateAdded !== null ? (<p>{dateAdded}</p>) : null}
+                    {dateAdded !== null ? (<p>{formatDateToDDMMYYYY(dateAdded)}</p>) : null}
                     <button className={styles.btnDelete} onClick={handleClickDelete}>
                         <Icon className={styles.icon} icon="ri:more-fill" />
                     </button>

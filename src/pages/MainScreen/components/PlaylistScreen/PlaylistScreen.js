@@ -7,7 +7,7 @@ import UpdatePlaylist from './UpdatePlaylist';
 import { useNavigate } from 'react-router-dom';
 import favoritePlaylist from '../../../../components/librarySpace/assets/favoritePlaylist.svg';
 
-const PlaylistScreen = ({ isOpen, playlistId, comebackHome, onDeletePlaylist, onCurrentSongId, onRefreshPlaylists }) => {
+const PlaylistScreen = ({ isOpen, playlistId, comebackHome, onDeletePlaylist, onCurrentSongId, onRefreshPlaylists, uid }) => {
     const [isPlaying, setIsPlaying] = useState(false);
     const [isOptionsOpen, setIsOptionsOpen] = useState(false);
     const [isUpdatePlaylistOpen, setIsUpdatePlaylistOpen] = useState(false);
@@ -217,7 +217,7 @@ const PlaylistScreen = ({ isOpen, playlistId, comebackHome, onDeletePlaylist, on
                                 index={index + 1}
                                 playlistId={playlistId}
                                 songId={song.id}
-                                cover={song.image}
+                                cover={song.avatarUrl}
                                 title={song.name}
                                 artist={song.artist}
                                 dateAdded={song.releaseDate}
@@ -239,6 +239,7 @@ const PlaylistScreen = ({ isOpen, playlistId, comebackHome, onDeletePlaylist, on
                 description={playlistData.description}
                 onUpdatePlaylist={handleSaveChanges}
                 onRefreshPlaylists={onRefreshPlaylists}
+                uid={uid}
             />
         </div>
     );

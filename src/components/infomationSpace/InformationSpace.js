@@ -5,14 +5,13 @@ import { Icon } from '@iconify/react';
 import Comment from './components/Comment/Comment';
 import CommentBox from './components/CommentBox/CommentBox.js';
 
-const InformationSpace = ({ isOpen, onClose, songId }) => {
+const InformationSpace = ({ isOpen, onClose, songId, uid, onSelectedArtist }) => {
+    const token = localStorage.getItem('token');
     const [songData, setSongData] = useState([]);
 
-    const ratings = [
-        { name: 'Nguyen Khoa Quan', stars: 3, comment: 'good' },
-    ]
-
+    const [ratings, setRatings] = useState([]);
     const [isCommentBoxOpen, setIsCommentBoxOpen] = useState(false);
+    const [isAddRating, setIsAddRating] = useState(false);
 
     const handleOnClickShowAllCommentButton = () => {
         setIsCommentBoxOpen(true);
@@ -34,7 +33,7 @@ const InformationSpace = ({ isOpen, onClose, songId }) => {
 
             try {
 
-                const response = await fetch(`http://localhost:4000/api/songInformation/${songId}`);
+                const response = await fetch(`http://localhost:4000/api/song/${songId}/${uid}`);
 
                 if (!response.ok) {
                     // throw new Error(`HTTP error! status: ${response.status}`);
@@ -49,8 +48,34 @@ const InformationSpace = ({ isOpen, onClose, songId }) => {
         };
 
         fetchData();
-    }, [songId]);
+    }, [songId, uid]); // Chỉ gọi lại khi songId hoặc uid thay đổi
 
+    const fetchRating = async () => {
+        if (!songId) return; // Bỏ qua nếu songId không tồn tại
+
+        try {
+            const response = await fetch(`http://localhost:4000/api/rate-and-comment?songId=${songId}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            setRatings(data.rateAndComments.list); // Lưu danh sách đánh giá vào state
+        } catch (error) {
+            console.error('Error fetching ratings:', error.message);
+        }
+    };
+    useEffect(() => {
+        console.log(token);
+        fetchRating();
+    }, [songId, token]);
 
     return (
         <div
@@ -73,7 +98,7 @@ const InformationSpace = ({ isOpen, onClose, songId }) => {
                 <main>
                     <div className={styles.infoSong}>
                         <img
-                            src={songData.image}
+                            src={songData.avatarUrl}
                             alt="songPic"
                             className={styles.songPic}></img>
 
@@ -101,21 +126,24 @@ const InformationSpace = ({ isOpen, onClose, songId }) => {
                             </header>
 
                             <div viewOnly={true}>
-                                {ratings.map((rating, index) => (
+                                {Array.isArray(ratings) && ratings.length > 0 ? (
                                     <Comment
-                                        key={index}
-                                        name={rating.name}
-                                        numberOfStar={rating.stars}
-                                        comment={rating.comment} />
-                                ))}
+                                        key={0}
+                                        name={ratings[0].creator.name}
+                                        numberOfStar={ratings[0].rate}
+                                        comment={ratings[0].comment}
+                                    />
+                                ) : (
+                                    <p className={styles.noComment}>Chưa có bình luận nào</p>
+                                )}
                             </div>
                         </div>
 
-                        <div className={styles.authorInfo} >
+                        <div className={styles.authorInfo}>
                             <div
                                 className={styles.authorPic}
                                 style={{
-                                    backgroundImage: `url(${songData.image})`,
+                                    backgroundImage: `url(${songData.avatarUrl})`,
                                 }}>
                                 <p className={clsx('uiSemibold')}>Nghệ sĩ</p>
                             </div>
@@ -132,6 +160,10 @@ const InformationSpace = ({ isOpen, onClose, songId }) => {
             </div >
             <CommentBox
                 isOpen={isCommentBoxOpen}
+                uid={uid}
+                ratings={ratings}
+                songId={songId}
+                fetchRating={fetchRating}
                 onClose={handleCloseCommentBox} ></CommentBox>
         </div >
     );

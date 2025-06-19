@@ -13,10 +13,13 @@ const StartScreen = memo(() => {
         console.log('CLick');
     }
 
+    // Responsive
+    const [menuOpen, setMenuOpen] = useState(false);
+
     const navigate = useNavigate();
 
     const [heroRef, heroInView] = useInView({ threshold: 0.6 });
-    const [trendingRef, trendingInView] = useInView({ threshold: 0.4 });
+    const [trendingRef, trendingInView] = useInView({ threshold: 0.2 });
     const [voiceRef, voiceInView] = useInView({ threshold: 0.4 });
     const [libRef, libInView] = useInView({ threshold: 0.5 });
 
@@ -25,7 +28,7 @@ const StartScreen = memo(() => {
     const highlightStart = 7; // vị trí bắt đầu "THỊNH HÀNH"
     const fullTextVoiceSearching = "TÌM KIẾM BẰNG GIỌNG NÓI";
     const fullTextLib = "TẠO NÊN THƯ VIỆN CỦA CHÍNH BẠN";
-    const highlightStartLib = 20; // vị trí bắt đầu "CHÍNH BẠN"
+    const highlightStartLib = 21; // vị trí bắt đầu "CHÍNH BẠN"
 
     const [displayed, setDisplayed] = useState('');
     const [isTyping, setIsTyping] = useState(false);
@@ -93,7 +96,7 @@ const StartScreen = memo(() => {
             setDisplayedLib('');
             let i = 0;
             const interval = setInterval(() => {
-                setDisplayedLib(fullTextTrending.slice(0, i + 1));
+                setDisplayedLib(fullTextLib.slice(0, i + 1));
                 i++;
                 if (i === fullTextLib.length) {
                     clearInterval(interval);
@@ -113,7 +116,7 @@ const StartScreen = memo(() => {
                         <img src={logo} alt="logo" />
                     </div>
 
-                    <div className="genaralOption">
+                    <div className="genaralOption header-desktop">
                         <div>
                             <p className='uiSemibold'>TRANG CHỦ</p>
                         </div>
@@ -125,7 +128,7 @@ const StartScreen = memo(() => {
                         </div>
                     </div>
 
-                    <div className="inOutOption">
+                    <div className="inOutOption header-desktop">
                         <div>
                             <button className='uiSemibold o50 btnLogin'
                                 onClick={() => navigate("/login")}>ĐĂNG NHẬP
@@ -136,7 +139,40 @@ const StartScreen = memo(() => {
                                 onClick={() => navigate("/signup")}>ĐĂNG KÝ</button>
                         </div>
                     </div>
+
+                    {/* Mobile menu icon */}
+                    <div className="header-mobile">
+                        <button
+                            className="menuIcon"
+                            onClick={() => setMenuOpen(!menuOpen)}
+                            style={{ background: 'none', border: 'none' }}
+                        >
+                            <Icon icon="mdi:menu" width={32} height={32} color="#fff" />
+                        </button>
+                    </div>
                 </div>
+                {menuOpen && (
+                    <div className="mobileMenu">
+                        <div onClick={() => { setMenuOpen(false); navigate('/'); }}>
+                            <p className='uiSemibold'>TRANG CHỦ</p>
+                        </div>
+                        <div onClick={() => { setMenuOpen(false); /* navigate to explore */ }}>
+                            <p className='uiSemibold o50'>KHÁM PHÁ</p>
+                        </div>
+                        <div onClick={() => { setMenuOpen(false); /* navigate to about */ }}>
+                            <p className='uiSemibold o50'>CHÚNG TÔI</p>
+                        </div>
+                        <div>
+                            <p className='uiSemibold o50 btnLogin'
+                                onClick={() => { setMenuOpen(false); navigate("/login"); }}>ĐĂNG NHẬP
+                            </p>
+                        </div>
+                        <div>
+                            <p className='uiSemibold btnSignUp'
+                                onClick={() => { setMenuOpen(false); navigate("/signup"); }}>ĐĂNG KÝ</p>
+                        </div>
+                    </div>
+                )}
             </div>
 
             <div className='mainContainer'>
@@ -160,8 +196,7 @@ const StartScreen = memo(() => {
                         </h1>
 
                         {!isTyping &&
-                            <p
-                                className={`p1 o50 show-after-type`}
+                            <p style={{ width: '92%' }} className={`p1 o50 show-after-type`}
                             >Mỗi giai điệu đều mang trong mình sự sáng tạo, tự do không biên giới và chính bạn sẽ là người tìm ra chúng.</p>
                         }
                     </div>
@@ -179,7 +214,7 @@ const StartScreen = memo(() => {
                     ref={trendingRef}
                     className={trendingInView ? "fade-section fade-in" : "fade-section"}>
                     <div className="topic">
-                        <h2 style={{ textAlign: 'center' }} className='typewriter-holder'>
+                        <h2 style={{ textAlign: 'center', alignSelf: 'center' }} className='typewriter-holder'>
                             {displayedTrending.length <= highlightStart
                                 ? displayedTrending
                                 : <>
@@ -296,7 +331,6 @@ const StartScreen = memo(() => {
                             {displayedLib.length <= highlightStartLib
                                 ? displayedLib
                                 : <>
-                                    {displayedLib}
                                     {displayedLib.slice(0, highlightStartLib)}
                                     <span className="highlight">
                                         {displayedLib.slice(highlightStartLib)}
@@ -305,7 +339,7 @@ const StartScreen = memo(() => {
                             }
                         </h2>
                         {!isTypingLib &&
-                            <p style={{ textAlign: 'center' }} className="p1 o50 show-after-type">Xây dựng nên một thế giới âm nhạc của chỉ riêng bản thân bạn.</p>
+                            <p style={{ textAlign: 'center', width: '65%' }} className="p1 o50 show-after-type">Xây dựng nên một thế giới âm nhạc của chỉ riêng bản thân bạn.</p>
                         }
                     </div>
 

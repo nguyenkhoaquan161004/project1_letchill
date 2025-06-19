@@ -3,43 +3,17 @@ import styles from '../../pages/MainScreen/components/HomeScreen/HomeScreen.modu
 import clsx from 'clsx';
 
 
-const Author = ({ items, onSelectedArtist }) => {
-    const handleArtistSelect = (artistId) => {
-        window.scrollTo(0, 0);
-        onSelectedArtist(artistId);
-    };
-
+const Author = ({ artistPic, nameArtist, onSelectedArtist }) => {
     return (
-        <div className={styles.authorWrapper}>
-            <div className={styles.authorContainer}>
-                {items.map((item, index) => {
-                    return (
-                        <div
-                            key={index}
-                            className={styles.authorItem}
-                            onClick={() => {
-                                onSelectedArtist({
-                                    artistId: item.id,
-                                    artistPic: item.avatarUrl,
-                                    nameArtist: item.name,
-                                    description: item.description,
-                                    followers: item.followers,
-                                });
-                                handleArtistSelect(item.id);
-                            }} >
-                            <img className={styles.authorPic} src={item.avatarUrl} alt='authorPic'></img>
-                            <div className={styles.authorInfoWrapper}>
-                                <p className='uiSemibold'>{item.name}</p>
-                                <p className='uiRegular o75'>Nghệ sĩ</p>
-                            </div>
-                        </div>
-                    )
-                })}
-
+        <div onClick={onSelectedArtist}
+            className={styles.authorItem}>
+            <img className={styles.authorPic} src={artistPic} alt='authorPic'></img>
+            <div className={styles.authorInfoWrapper}>
+                <p className='uiSemibold'>{nameArtist}</p>
+                <p className='uiRegular o75'>Nghệ sĩ</p>
             </div>
         </div>
-
-    );
+    )
 };
 
 export default Author;

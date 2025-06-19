@@ -4,12 +4,14 @@ import Playlist from './components/Playlist/Playlist';
 import { InlineIcon } from '@iconify/react';
 import clsx from 'clsx';
 import AddPlaylistBox from './components/AddPlaylistBox/AddPlaylistBox';
+import UploadSongBox from './components/UploadSongBox/UploadSongBox';
 import favoritePlaylist from './assets/favoritePlaylist.svg';
 import { useAdmin } from '../../contexts/AdminContext';
 import { AnimatePresence, motion } from 'framer-motion';
 
 const LibrarySpace = ({ onSelectedPlaylist, playlistsDatas, onRefreshPlaylists, onUserManagerButtonClick, onSongManagerButtonClick }) => {
     const [isAddPlaylistOpen, setIsAddPlaylistOpen] = useState(false);
+    const [isUploadSongOpen, setIsUploadSongOpen] = useState(false);
     //const [playlists, setPlaylists] = useState([]);
     const { isAdmin } = useAdmin();
 
@@ -66,6 +68,47 @@ const LibrarySpace = ({ onSelectedPlaylist, playlistsDatas, onRefreshPlaylists, 
         }
     };
 
+    const handleOpenUploadSongBox = (e) => {
+        e.stopPropagation();
+        setIsUploadSongOpen(true);
+    };
+
+    const handleCloseUploadSongBox = () => {
+        setIsUploadSongOpen(false);
+    };
+
+    const handleUploadSong = async (songData) => {
+        try {
+            const token = localStorage.getItem('token'); // hoặc lấy từ context
+            const songData = {
+                uid: 'user_id',
+                name: 'Tên bài hát',
+                link: 'https://link.mp3',
+                download: 'https://download.mp3',
+                avatarUrl: 'https://img.jpg',
+                releaseDate: '2024-01-01',
+                lyric: 'Lời bài hát',
+                composer: 'Nhạc sĩ',
+                artist: 'Nghệ sĩ',
+                genre: 'Thể loại'
+            };
+
+            fetch('http://localhost:4000/api/song/upload', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify(songData)
+            })
+                .then(res => res.json())
+                .then(data => console.log(data))
+                .catch(err => alert('Lỗi upload: ' + err.message));
+        } catch (err) {
+            alert('Lỗi upload: ' + err.message);
+        }
+    };
+
     if (isAdmin) {
         return (
             <div id={styles.leftBarAdmin} className={clsx('w24')}>
@@ -98,7 +141,10 @@ const LibrarySpace = ({ onSelectedPlaylist, playlistsDatas, onRefreshPlaylists, 
                                             overflow: 'hidden'
                                         }}
                                     >
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: 12, paddingLeft: 24 }}>
+                                        <div
+                                            style={{ display: 'flex', alignItems: 'center', gap: 12, paddingLeft: 24, cursor: 'pointer' }}
+                                            onClick={handleOpenUploadSongBox}
+                                        >
                                             <InlineIcon style={{ width: 26, height: 26, backgroundColor: 'transparent' }} icon="ic:round-add" width={24} />
                                             <span className='uiSemibold'>Thêm bài hát</span>
                                         </div>
@@ -188,6 +234,12 @@ const LibrarySpace = ({ onSelectedPlaylist, playlistsDatas, onRefreshPlaylists, 
                         </AnimatePresence>
                     </div>
                 </div>
+                {/* Box upload bài hát */}
+                <UploadSongBox
+                    isOpen={isUploadSongOpen}
+                    onClose={handleCloseUploadSongBox}
+                    onUploadSong={handleUploadSong}
+                />
             </div >
         );
     }

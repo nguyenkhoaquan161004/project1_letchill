@@ -5,15 +5,17 @@ import Comment from '../Comment/Comment';
 import CommentCanChange from '../Comment/CommentCanChange';
 
 
-const CommentBox = ({ isOpen, onClose }) => {
-    const ratingsData = [
-        { name: 'Nguyen Khoa Quan', stars: 3, comment: 'good' },
-        { name: 'Năng Tiến Thành', stars: 5, comment: 'excellent' },
-        { name: 'Kim Yến', stars: 4, comment: 'quite good' },
-    ];
+const CommentBox = ({ isOpen, onClose, ratings, songId, uid, fetchRating }) => {
+    // const ratingsData = [
+    //     { name: 'Nguyen Khoa Quan', stars: 3, comment: 'good' },
+    //     { name: 'Năng Tiến Thành', stars: 5, comment: 'excellent' },
+    //     { name: 'Kim Yến', stars: 4, comment: 'quite good' },
+    // ];
+    const token = localStorage.getItem('token');
+
     const [newComment, setNewComment] = useState('');
     const [newStars, setNewStars] = useState(0);
-    const [ratings, setRatings] = useState([...ratingsData]);
+    // const [ratings, setRatings] = useState([...ratingsData]);
 
     if (!isOpen) return null;
 
@@ -27,19 +29,42 @@ const CommentBox = ({ isOpen, onClose }) => {
         setNewStars(stars);
     }
 
-    const handleAddComment = () => {
+    const handleAddComment = async () => {
         if (newComment.trim() === '') {
             alert('Vui lòng nhập bình luận');
             return;
         }
 
-        const newRating = {
-            name: "Nguyen Khoa Quan",
-            stars: newStars,
-            comment: newComment,
-        };
+        try {
+            const response = await fetch(`http://localhost:4000/api/rate-and-comment?songId=${songId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    rate: newStars,
+                    comment: newComment
+                })
+            });
 
-        setRatings([...ratings, newRating]);
+            const data = await response.json();
+
+            if (!response.ok) {
+                console.error('❌ Lỗi từ server:', data.error || data);
+                alert(`Gửi bình luận thất bại: ${data.error || 'Lỗi không xác định'}`);
+                return;
+            }
+
+            console.log('✅ Bình luận thành công:', data);
+
+            fetchRating();
+
+        } catch (error) {
+            console.error('Error adding comment:', error.message);
+            alert('Có lỗi xảy ra khi thêm bình luận. Vui lòng thử lại.');
+        }
+        // setRatings([...ratings, newRating]);
         setNewComment('');
         setNewStars(0);
     }
@@ -58,11 +83,14 @@ const CommentBox = ({ isOpen, onClose }) => {
                     <main>
                         <div className={styles.allOfComments} viewOnly={true}>
                             <div className={styles.commentContainer}>
-                                {ratings.map((rating, i) => (
+                                {(!Array.isArray(ratings) || ratings.length === 0) && (
+                                    <p className={styles.noComment}>Chưa có bình luận nào</p>
+                                )}
+                                {Array.isArray(ratings) && ratings.map((rating, i) => (
                                     <Comment
                                         key={i}
-                                        name={rating.name}
-                                        numberOfStar={rating.stars}
+                                        name={rating.creator.name}
+                                        numberOfStar={rating.rate}
                                         comment={rating.comment}
                                     />
                                 ))}

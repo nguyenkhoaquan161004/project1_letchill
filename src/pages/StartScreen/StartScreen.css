@@ -6,6 +6,10 @@
     transition: all 0.2s ease;
 }
 
+svg {
+    background-color: transparent;
+}
+
 /* ANIMATION */
 .fade-section {
     opacity: 0;
@@ -256,8 +260,9 @@
     flex-direction: column;
     gap: 250px;
     justify-self: center;
-    top: 216px;
+    top: 60px;
     position: relative;
+    width: 100%;
 }
 
 /* HEADER */
@@ -319,6 +324,16 @@
     z-index: 2;
 }
 
+/* Hide desktop header on mobile, show mobile icon */
+.header-desktop {
+    display: flex;
+}
+
+.header-mobile,
+.mobileMenu {
+    display: none;
+}
+
 /* HERO SECTION */
 #heroSection .info,
 #voiceSearching .info {
@@ -345,6 +360,10 @@
     font-weight: 700;
     position: relative;
     width: fit-content;
+}
+
+#heroSection {
+    margin: 10% 0 0 5%;
 }
 
 #heroSection button:hover,
@@ -433,7 +452,7 @@ background: linear-gradient(90.98deg, #296265 13.07%, #344A5C 40.71%, #3F2F52 64
 #trendingSong .infoSong {
     display: flex;
     flex-direction: column;
-    height: 200px;
+    height: 22vh;
     justify-content: space-between;
 }
 
@@ -466,6 +485,7 @@ background: linear-gradient(90.98deg, #296265 13.07%, #344A5C 40.71%, #3F2F52 64
     align-items: center;
     z-index: 1;
     min-height: 990px;
+    padding: 0 10px;
 }
 
 /* VOICE SEARCHING */
@@ -483,6 +503,7 @@ background: linear-gradient(90.98deg, #296265 13.07%, #344A5C 40.71%, #3F2F52 64
 #voiceSearching,
 #voiceSearching .info {
     align-items: end;
+    width: 90%;
 }
 
 .topicHighlight {
@@ -502,13 +523,14 @@ background: linear-gradient(90.98deg, #296265 13.07%, #344A5C 40.71%, #3F2F52 64
     display: flex;
     flex-direction: column;
     gap: 51px;
-    width: 1040px;
+    width: 100%;
     justify-self: center;
+    align-items: center;
 }
 
 #personalLib .listItem .iconPic {
-    width: 78px;
-    height: 68px;
+    width: 6vw;
+    height: 6vw;
     padding: 43px 38px;
     background: linear-gradient(69.93deg, #296265 1.75%, #344A5C 34.18%, #3F2F52 62.3%, #471C4B 88.25%);
     border-radius: 37px;
@@ -536,8 +558,8 @@ background: linear-gradient(90.98deg, #296265 13.07%, #344A5C 40.71%, #3F2F52 64
 }
 
 #personalLib .listItem .noneItem { 
-    width: 155px;
-    height: 155px;
+    width: 12vw;
+    height: 12vw;
     border-radius: 155px;
     background: linear-gradient(180deg, #FFFFFF 0%, rgba(118, 118, 118, 0.5) 90%);
 }
@@ -545,8 +567,9 @@ background: linear-gradient(90.98deg, #296265 13.07%, #344A5C 40.71%, #3F2F52 64
 #personalLib .listItem {
     display: flex;
     flex-direction: row;
-    gap: 115px;
+    gap: 10vw;
     align-items: center;
+    justify-content: center;
 }
 
 #personalLib {
@@ -598,4 +621,236 @@ background: linear-gradient(90.98deg, #296265 13.07%, #344A5C 40.71%, #3F2F52 64
     flex-direction: column;
     gap: 40px;
     padding-bottom: 40px;
+    align-items: center;
+    align-self: center;
+}
+
+/* Responsive for tablets and below */
+@media (max-width: 1024px) {
+    #header .headerContainer {
+        gap: 60px;
+        padding: 10px 20px;
+        width: 90%;
+        justify-content: space-around;
+    }
+
+    #heroSection .info,
+    #voiceSearching .info {
+        width: 90vw;
+        gap: 30px;
+    }
+
+    #heroSection .info p,
+    #voiceSearching .info p {
+        width: 90vw;
+    }
+
+    #trendingSong .topic,
+    #personalLib .topic {
+        width: 80vw;
+        align-self: center;
+    }
+
+    #trendingSong .listSong {
+        gap: 16px;
+    }
+
+    #trendingSong .listSong .item {
+        padding: 1.5em;
+        width: 100%;
+        
+    }
+    
+    #trendingSong .listSong .picSong1,
+    #trendingSong .listSong .picSong2,
+    #trendingSong .listSong .picSong3 {
+        width: 100%;
+        height: 32vh;
+    }
+
+    #personalLib .listItem .favoriteItem {
+        width: min-content;
+    }
+
+    #footer .line {
+        width: 90vw;
+    }
+}
+
+/* Responsive for mobile */
+@media (max-width: 600px) {
+    .header-desktop {
+        display: none !important;
+    }
+
+    .header-mobile {
+        display: flex !important;
+        align-items: center;
+    }
+
+    .mobileMenu {
+        display: flex !important;
+        flex-direction: column;
+        justify-self: center;
+        background: #111;
+        padding: 16px 4vw;
+        z-index: 100;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+        gap: 20px;
+        width: 80%;
+    }
+
+    #header .headerContainer {
+        justify-content: space-around;
+        padding: 8px 4vw;
+        border-radius: 12px;
+        width: 80%;
+    }
+
+    #header .genaralOption {
+        gap: 16px;
+    }
+
+    #header .inOutOption {
+        gap: 12px;
+    }
+
+    #heroSection .info,
+    #voiceSearching .info {
+        gap: 18px;
+    }
+
+    #heroSection .info p,
+    #voiceSearching .info p {
+        font-size: 14px;
+    }
+
+    #heroSection button,
+    #voiceSearching button {
+        padding: 12px 24px;
+        font-size: 14px;
+    }
+
+    #heroSection,
+    #voiceSearching {
+        gap: 32px;
+        min-height: unset;
+        margin: 10% 0 0 5%;
+    }
+
+    .typewriter-holder {
+        width: 92%;
+    }
+
+    #trendingSong .topic,
+    #personalLib .topic {
+        width: 98vw;
+        gap: 18px;
+        align-self: center;
+    }
+
+    #trendingSong .listSong {
+        flex-direction: column;
+        gap: 48px;
+        align-items: center;
+    }
+
+    #trendingSong .listSong .item {
+        width: 50vw;
+        padding: 16px;
+    }
+
+    #trendingSong .infoSong {
+        height: 15vh;
+    }
+
+    #trendingSong .listSong .picSong1,
+    #trendingSong .listSong .picSong2,
+    #trendingSong .listSong .picSong3 {
+        width: 100%;
+        height: 32vh;
+    }
+
+    #personalLib .listItem {
+        gap: 24px;
+        align-items: stretch;
+    }
+
+    #personalLib .listItem .favoriteItem {
+        width: min-content;
+        gap: 18px;
+    }
+
+    #personalLib .listItem .noneItem {
+        width: 16vw;
+        height: 16vw;
+        border-radius: 50vw;
+    }
+
+    #personalLib .listItem .iconPic {
+        padding: 6vw 6vw;
+        border-radius: 12px;
+    }
+
+    #personalLib .listItem .favoriteItem .itemInfo {
+        gap: 6px;
+    }
+
+    #footer .footerContainer {
+        flex-direction: column;
+        gap: 24px;
+        align-items: stretch;
+    }
+
+    #footer .footerContainer .space {
+        gap: 8px;
+    }
+
+    #footer .footerContainer .socialSpace {
+        gap: 16px;
+    }
+
+    #footer {
+        gap: 18px;
+        padding-bottom: 18px;
+        z-index: 100;
+    }
+
+    #startScreen .mainContainer {
+        gap: 112px;
+        top: 100px;
+    }
+
+    #footer .logo {
+        width: 12vw;
+    }
+
+    .graBG1 {
+        top: 75px;
+        left: -92px;
+    }
+
+    .graBG2 {
+        top: 40em;
+        left: 0em;
+    }
+
+    .graBG3 {
+        top: 100em
+    }
+
+    .graBG4 {
+        top: 124em;
+        left: -30em;
+    }
+
+    .stuff1 {
+        display: none;
+    }
+}
+
+/* Hide or adjust background gradients on mobile for performance */
+@media (max-width: 600px) {
+
+
 }

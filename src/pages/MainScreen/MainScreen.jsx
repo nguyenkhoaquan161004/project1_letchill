@@ -25,6 +25,7 @@ import axios from 'axios';
 
 import { AnimatePresence, motion } from 'framer-motion';
 import { useAdmin } from '../../contexts/AdminContext.jsx';
+import { HomeDataProvider } from '../../contexts/HomeDataContext.jsx';
 
 const MainScreen = memo(() => {
     const [isRightBarOpen, setIsRightBarOpen] = useState(false);
@@ -350,6 +351,10 @@ const MainScreen = memo(() => {
         console.log(isSearchQuery);
     }
 
+    const handleArtistChange = (artistId) => {
+        setSelectedArtist(artistId);
+    }
+
     if (isAdmin) {
         return (
             <div id={styles.main}>
@@ -429,12 +434,15 @@ const MainScreen = memo(() => {
                                     transition={{ duration: 0.15 }}
                                     style={{ height: '100%', overflowY: 'auto' }}
                                 >
-                                    <HomeScreen
-                                        isOpen={isHomeScreenOpen}
-                                        onCurrentSongId={handleSongChange}
-                                        onSelectedArtist={toggleArtistScreen}
-                                        onRefreshPlaylists={fetchPlaylists}
-                                        playlistsData={playlists} />
+                                    <HomeDataProvider>
+                                        <HomeScreen
+                                            isOpen={isHomeScreenOpen}
+                                            uid={uid}
+                                            onCurrentSongId={handleSongChange}
+                                            onSelectedArtist={toggleArtistScreen}
+                                            onRefreshPlaylists={fetchPlaylists}
+                                            playlistsData={playlists} />
+                                    </HomeDataProvider>
                                 </motion.div>
                             )}
                             {isLyricsScreenOpen && (
@@ -446,7 +454,10 @@ const MainScreen = memo(() => {
                                     transition={{ duration: 0.15 }}
                                     style={{ height: '100%', overflowY: 'auto' }}
                                 >
-                                    <LyricsScreen isOpen={true} currentSongId={currentSongId} />
+                                    <LyricsScreen
+                                        isOpen={true}
+                                        currentSongId={currentSongId}
+                                        uid={uid} />
                                 </motion.div>
                             )}
 
@@ -473,7 +484,7 @@ const MainScreen = memo(() => {
                                     animate={{ opacity: 1, y: 0 }}
                                     exit={{ opacity: 0, y: -20 }}
                                     transition={{ duration: 0.15 }}
-                                    style={{ height: '100%', overflowY: 'auto' }}
+                                    style={{ height: '100%', overflowY: 'auto', width: '100%' }}
                                 >
                                     <AccountScreen
                                         isOpen={true}
@@ -490,10 +501,11 @@ const MainScreen = memo(() => {
                                     animate={{ opacity: 1, y: 0 }}
                                     exit={{ opacity: 0, y: -20 }}
                                     transition={{ duration: 0.15 }}
-                                    style={{ height: '100%', overflowY: 'auto' }}
+                                    style={{ height: '100%', overflowY: 'auto', width: '100%' }}
                                 >
                                     <PlaylistScreen
                                         isOpen={isPlaylistScreenOpen}
+                                        uid={uid}
                                         playlistId={selectedPlaylist}
                                         comebackHome={toggleHomeScreen}
                                         onCurrentSongId={handleSongChange}
@@ -510,10 +522,11 @@ const MainScreen = memo(() => {
                                     animate={{ opacity: 1, y: 0 }}
                                     exit={{ opacity: 0, y: -20 }}
                                     transition={{ duration: 0.15 }}
-                                    style={{ height: '100%', overflowY: 'auto' }}
+                                    style={{ height: '100%', overflowY: 'auto', width: '100%' }}
                                 >
                                     <WorldScreen
-                                        isOpen={isWorldScreenOpen}>
+                                        isOpen={isWorldScreenOpen}
+                                        uid={uid}>
                                     </WorldScreen>
                                 </motion.div>
                             )}
@@ -528,7 +541,8 @@ const MainScreen = memo(() => {
                                     style={{ height: '100%', overflowY: 'auto' }}
                                 >
                                     <PremiumChooseScreen
-                                        isOpen={isPremiumChooseScreenOpen}>
+                                        isOpen={isPremiumChooseScreenOpen}
+                                        uid={uid}>
                                     </PremiumChooseScreen>
                                 </motion.div>
                             )}
@@ -540,9 +554,10 @@ const MainScreen = memo(() => {
                                     animate={{ opacity: 1, y: 0 }}
                                     exit={{ opacity: 0, y: -20 }}
                                     transition={{ duration: 0.15 }}
-                                    style={{ height: '100%', overflowY: 'auto' }}
+                                    style={{ height: '100%', overflowY: 'auto', width: '100%' }}
                                 >
                                     <ArtistScreen
+                                        uid={uid}
                                         isOpen={isArtistScreenOpen}
                                         artistId={selectedArtist}
                                         onSelectedArtist={toggleArtistScreen}>
@@ -557,7 +572,9 @@ const MainScreen = memo(() => {
                 <RightBar
                     isOpen={isRightBarOpen}
                     onClose={handleCloseRightBar}
-                    songId={currentSongId}></RightBar>
+                    songId={currentSongId}
+                    onSelectedArtist={toggleArtistScreen}
+                    uid={uid}></RightBar>
             </div>
             <ListeningSpace
                 onInfoButtonClick={toggleRightBar}
@@ -568,8 +585,10 @@ const MainScreen = memo(() => {
                 currentSongId={currentSongId}
                 onWorldScreenButtonClick={toggleWorldOpenScreen}
                 onChangeSong={handleSongChange}
+                onCurrentArtistId={handleArtistChange}
                 onRefreshPlaylists={fetchPlaylists}
-                onLyricsButtonClick={toggleLyricsScreen}></ListeningSpace>
+                onLyricsButtonClick={toggleLyricsScreen}
+                uid={uid}></ListeningSpace>
             <div className={styles.graBG}></div>
         </div >
 

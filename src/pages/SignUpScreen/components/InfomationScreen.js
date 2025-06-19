@@ -3,10 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { Icon } from '@iconify/react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import { auth } from '../../../firebaseConfig'; // Firebase config
-import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { db } from '../../../firebaseConfig'; // Firestore config (nếu cần)
-import { doc, setDoc } from 'firebase/firestore';
+import { v4 as uuidv4 } from 'uuid'; // Import uuid library
+import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
+import { auth } from '../../../firebaseConfig';
 
 const InfomationScreen = memo(({ email, password }) => {
     const navigate = useNavigate();
@@ -34,7 +33,7 @@ const InfomationScreen = memo(({ email, password }) => {
             return;
         }
 
-        console.log(email, password)
+        console.log(email, password);
 
         if (!email || !password) {
             alert('Email và mật khẩu không được để trống.');
@@ -47,17 +46,23 @@ const InfomationScreen = memo(({ email, password }) => {
         }
 
         try {
-            //const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-            //const user = userCredential.user;
+            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+            const user = userCredential.user;
+
+            // Cập nhật tên hiển thị
+            await updateProfile(user, { fullName });
+
+            console.log("User registered:", user);
+
             const userData = {
+                uid: user.uid,
                 email: email,
                 password: password,
                 name: fullName,
                 birth: selectedDate ? selectedDate.toISOString() : '',
                 gender: gender,
             };
-
-            const response = await fetch('http://localhost:4000/api/user/signup', {
+            const response = await fetch('http://localhost:4000/api/user/sign-up', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -68,7 +73,12 @@ const InfomationScreen = memo(({ email, password }) => {
             if (response.ok) {
                 alert('Đăng ký thành công!');
                 navigate('/login');
+            } else {
+                const errorData = await response.json();
+                console.error('Error response:', errorData);
+                alert(`Đã xảy ra lỗi: ${errorData.message}`);
             }
+
         } catch (error) {
             console.error('Error creating user:', error);
             switch (error.code) {
@@ -85,8 +95,7 @@ const InfomationScreen = memo(({ email, password }) => {
                     alert('Đã xảy ra lỗi. Vui lòng thử lại sau.');
             }
         }
-    }
-
+    };
 
     return (
         <div className='step'>

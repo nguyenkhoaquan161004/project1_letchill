@@ -6,6 +6,9 @@ import { useNavigate } from 'react-router-dom';
 import { auth } from '../../firebaseConfig'; // Firebase auth config
 import { signInWithEmailAndPassword } from 'firebase/auth'; // Firebase sign-in function
 import { useAdmin } from '../../contexts/AdminContext';
+import { GoogleAuthProvider, FacebookAuthProvider, signInWithPopup } from 'firebase/auth';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { db } from '../../firebaseConfig';
 
 const LoginScreen = memo(() => {
     const navigate = useNavigate();
@@ -50,7 +53,7 @@ const LoginScreen = memo(() => {
         // Nếu là admin, không cần xác thực Firebase
         if (email === 'admin@letchill.com' && password === 'admin123') {
             setIsAdmin(true);
-            navigate(`/main`);
+            navigate(`/main`, { state: { authorize: 'ADMIN' } });
             return;
         }
 
@@ -58,11 +61,67 @@ const LoginScreen = memo(() => {
         try {
             const userCredential = await signInWithEmailAndPassword(auth, email, password);
             const uid = userCredential.user.uid;
-            setIsAdmin(false);
-            navigate(`/main?uid=${uid}`);
+            const response = await fetch(`http://localhost:4000/api/user/sign-in`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ uid })
+            });
+
+            const userCurrent = await response.json();
+            // const token = userCurrent.token.idToken;
+            localStorage.setItem('token', userCurrent.token.idToken);
+
+
+            console.log(userCurrent.role)
+
+            if (userCurrent.role === 'ADMIN') {
+                setIsAdmin(true);
+                navigate(`/main`);
+                return;
+            }
+            else {
+                setIsAdmin(false);
+                navigate(`/main?uid=${uid}`);
+            }
+
         } catch (error) {
             console.error('Login error:', error);
             alert('Đăng nhập không thành công. Vui lòng kiểm tra lại thông tin.');
+        }
+    };
+
+    const handleLoginWithGoogle = async () => {
+        const provider = new GoogleAuthProvider();
+        try {
+            const result = await signInWithPopup(auth, provider);
+            const user = result.user;
+            const idToken = await user.getIdToken();
+
+            await fetch('http://localhost:4000/api/user/sign-up', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${idToken}`
+                },
+                body: JSON.stringify({
+                    uid: user.uid,
+                    email: user.email,
+                    name: user.displayName,
+                    imageUrl: user.photoURL,
+                    birth: null,
+                    gender: null,
+                    createdAt: new Date(),
+                    idToken,
+                }),
+            });
+
+            setIsAdmin(false);
+            navigate(`/main?uid=${user.uid}`);
+        } catch (error) {
+            console.error('Login with Google error:', error);
+            alert('Đăng nhập với Google không thành công.');
         }
     };
 
@@ -110,7 +169,7 @@ const LoginScreen = memo(() => {
                         </div>
 
                         <div className={styles.listOfWay}>
-                            <button className={styles.btnOtherWay}>
+                            <button className={styles.btnOtherWay} onClick={handleLoginWithGoogle}>
                                 <Icon className={styles.iconOtherWay} icon="flat-color-icons:google" />
                                 <h4>Đăng nhập với Google</h4>
                             </button>

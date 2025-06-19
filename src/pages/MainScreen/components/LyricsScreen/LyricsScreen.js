@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import styles from './LyricsScreen.module.css';
 
-const LyricsScreen = ({ isOpen, currentSongId }) => {
+const LyricsScreen = ({ isOpen, currentSongId, uid }) => {
     const [lyrics, setLyrics] = useState([]);
 
     useEffect(() => {
@@ -9,7 +9,7 @@ const LyricsScreen = ({ isOpen, currentSongId }) => {
             if (!currentSongId) return; // Bỏ qua nếu currentSongId không tồn tại
 
             try {
-                const response = await fetch(`http://localhost:4000/api/songInformation/${currentSongId}`);
+                const response = await fetch(`http://localhost:4000/api/song/${currentSongId}/${uid}`);
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }

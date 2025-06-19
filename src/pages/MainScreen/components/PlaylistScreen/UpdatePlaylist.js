@@ -3,9 +3,12 @@ import styles from './PlaylistScreen.module.css';
 import { InlineIcon } from '@iconify/react/dist/iconify.js';
 import clsx from 'clsx';
 import { use } from 'react';
+import imageCompression from 'browser-image-compression';
 import axios from 'axios';
 
-const UpdatePlaylist = ({ playlistId, isOpen, onClose, onUpdatePlaylist, playlistPic, namePlaylist, description, onRefreshPlaylists }) => {
+const UpdatePlaylist = ({ playlistId, isOpen, onClose, onUpdatePlaylist, playlistPic, namePlaylist, description, onRefreshPlaylists, uid }) => {
+    const token = localStorage.getItem('token');
+
     const [selectedImage, setSelectedImage] = useState(null);
     const [playlistName, setPlaylistName] = useState('');
     const [playlistDescription, setPlaylistDescription] = useState('');
@@ -26,34 +29,32 @@ const UpdatePlaylist = ({ playlistId, isOpen, onClose, onUpdatePlaylist, playlis
     const handleImageChange = async (e) => {
         const file = e.target.files[0];
         if (!file) return;
-        const compressedImage = await (file);
-        const formData = new FormData();
-        formData.append('file', compressedImage);
-        formData.append('upload_preset', 'playlistAvtUrl');  // Đảm bảo bạn đã tạo preset trong Cloudinary
 
         try {
-            // Gửi hình ảnh lên Cloudinary
+            // Nén ảnh xuống dưới 1MB (có thể chỉnh lại maxSizeMB)
+            const compressedFile = await imageCompression(file, {
+                maxSizeMB: 1,
+                maxWidthOrHeight: 1024,
+                useWebWorker: true
+            });
+
+            const formData = new FormData();
+            formData.append('file', compressedFile);
+            formData.append('upload_preset', 'playlistAvtUrl');
+
             const response = await axios.post(
                 'https://api.cloudinary.com/v1_1/di4kdlfr3/image/upload',
                 formData
             );
 
-            // Lấy URL của hình ảnh từ Cloudinary
             const imageUrl = response.data.secure_url;
             console.log('Image URL:', imageUrl);
-
-            // Lưu hình ảnh vào state
             setSelectedImage(imageUrl);
         } catch (error) {
-            console.error('Lỗi khi nén ảnh:', error);
-        }
-
-
-        if (file) {
-            const imageUrl = URL.createObjectURL(file);
-            setSelectedImage(imageUrl);
+            console.error('Lỗi khi upload ảnh:', error.response?.data || error.message);
         }
     };
+
 
     const handleUpdatePlaylist = async () => {
         if (!playlistId) {
@@ -70,17 +71,18 @@ const UpdatePlaylist = ({ playlistId, isOpen, onClose, onUpdatePlaylist, playlis
             const updatedData = {
 
                 name: playlistName.trim(),
-                ...(selectedImage && { avtUrl: selectedImage }), // Chỉ gửi ảnh nếu có thay đổi
+                ...(selectedImage && { avatarUrl: selectedImage }), // Chỉ gửi ảnh nếu có thay đổi
                 description: playlistDescription.trim(),
             };
 
             console.log('Dữ liệu gửi đi:', updatedData); // Kiểm tra dữ liệu
 
             // Gửi request PATCH đến API
-            const response = await fetch(`http://localhost:4000/api/playlist/${playlistId}`, {
+            const response = await fetch(`http://localhost:4000/api/playlist/${playlistId}?uid=${uid}`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
                 },
                 body: JSON.stringify(updatedData),
             });
