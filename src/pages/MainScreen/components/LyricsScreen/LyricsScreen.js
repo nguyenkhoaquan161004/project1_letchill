@@ -27,6 +27,11 @@ const LyricsScreen = ({ isOpen, currentSongId, uid }) => {
         fetchData();
     }, [currentSongId]);
 
+    const lyricsLines = typeof lyrics === 'string'
+        ? lyrics.split('.').map(line => line.trim()).filter(line => line !== '')
+        : Array.isArray(lyrics)
+            ? lyrics
+            : [];
 
     if (!isOpen) return null;
 
@@ -35,15 +40,18 @@ const LyricsScreen = ({ isOpen, currentSongId, uid }) => {
             <div className={styles.lyricsOfSong}>
                 {lyrics.length === 0 ? <h3 style={{ lineHeight: 1.5 }}>Không có lời cho bài hát này!</h3> :
                     (
-                        lyrics.map((line, index) => {
-                            return (
-                                <div className={styles.lyricsSpace}>
-                                    <h4>LỜI BÀI HÁT</h4>
-                                    <p className={styles.lyrics} key={index}>{line}</p>
-                                </div>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                            <h4>LỜI BÀI HÁT</h4>
+                            {lyricsLines.map((line, index) => {
+                                return (
+                                    <div className={styles.lyricsSpace}>
+                                        <p className={styles.lyrics} key={index}>{line}</p>
+                                    </div>
 
-                            )
-                        })
+                                )
+                            })}
+                        </div>
+
                     )}
             </div>
         </div>

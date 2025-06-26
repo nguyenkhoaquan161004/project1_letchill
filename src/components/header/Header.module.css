@@ -1,14 +1,14 @@
 .headerContainer .icon {
-    width: 32px;
-    height: 32px;
+    width: 24px;
+    height: 24px;
     padding: 6px;
     background: rgba(255, 255, 255, 0.25);
     border-radius: 100px;
 }
 
 .headerContainer .nonBGIcon {
-    width: 32px;
-    height: 32px;
+    width: 24px;
+    height: 24px;
     padding: 6px;
     background: none;
     border-radius: 100px;
@@ -49,22 +49,21 @@
     display: flex;
     align-items: center;
     gap: 24px;
+    margin-right: 30px;
 }
 
 .headerContainer {
     display: flex;
-    gap: 114px;
-    width: fit-content;
-    padding: 10px 55px;
+    width: 100%;
+    padding: 16px;
+    margin: 0 12px;
+    justify-content: space-between;
     background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 24px;
     justify-self: center;
 }
 
 #header {
     position: relative;
-    margin-top: 24px;
 }
 
 

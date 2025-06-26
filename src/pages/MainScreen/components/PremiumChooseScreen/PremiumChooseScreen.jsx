@@ -52,6 +52,7 @@ const PremiumChooseScreen = ({ isOpen, uid }) => {
     };
 
     const handleUpdateAccount = async (method) => {
+        console.log(method)
         try {
             const response = await fetch(`http://localhost:4000/api/subscription/${uid}/upgrade`, {
                 method: 'POST',
@@ -65,12 +66,17 @@ const PremiumChooseScreen = ({ isOpen, uid }) => {
             });
 
             if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+                const errorText = await response.text();
+                throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
             }
 
-            const data = await response.json();
+            const text = await response.text();
+            const data = text ? JSON.parse(text) : {};
             console.log('✅ Tài khoản đã được nâng cấp:', data);
             alert('Tài khoản của bạn đã được nâng cấp thành công!');
+            setIsPaymentBoxOpen(false);
+
+            window.location.reload();
         } catch (error) {
             console.error('❌ Lỗi khi nâng cấp tài khoản:', error.message);
             alert('Có lỗi xảy ra khi nâng cấp tài khoản. Vui lòng thử lại.');
@@ -168,16 +174,12 @@ const PremiumChooseScreen = ({ isOpen, uid }) => {
                             <h5>Chọn phương thức thanh toán:</h5>
                             <button
                                 className={styles.paymentMethod}
-                                onClick={() => {
-                                    setMethod('MOMO');
-                                    handleUpdateAccount(method)
-                                }}>Thanh toán qua MOMO</button>
+                                onClick={() => handleUpdateAccount('MOBILE_BANKING')}
+                            >Thanh toán qua Mobile Banking</button>
                             <button
                                 className={styles.paymentMethod}
-                                onClick={() => {
-                                    setMethod('E_WALLET');
-                                    handleUpdateAccount(method);
-                                }}>Thanh toán qua ví điện tử</button>
+                                onClick={() => handleUpdateAccount('E_WALLET')}
+                            >Thanh toán qua ví điện tử</button>
                         </main>
                     </div>
                 </div>

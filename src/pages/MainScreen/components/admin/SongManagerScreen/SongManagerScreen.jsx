@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from './SongManagerScreen.module.css';
 
 const songs = [
@@ -61,30 +61,49 @@ const songs = [
 ];
 
 const SongManagerScreen = () => {
+    const [allSongs, setAllSongs] = useState([]);
+
+    const fetchAllSong = async () => {
+        try {
+            const response = await fetch(`http://localhost:4000/api/song/allsong`, {
+                method: 'GET'
+            });
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+
+            const data = await response.json();
+            console.log(data);
+            setAllSongs(data);
+            console.log(allSongs);
+        } catch (error) {
+            console.error('Lỗi khi tải danh sách bài hát');
+        }
+
+    }
+
+    useEffect(() => {
+        fetchAllSong()
+    }, [])
+
     return (
         <div className={styles.container}>
-            <h3>DANH SÁCH BÀI HÁT CẦN DUYỆT</h3>
+            <h3>DANH SÁCH BÀI HÁT</h3>
             <table className={styles.table}>
                 <thead>
                     <tr>
-                        <th>
-                            <input type='checkbox' className={styles.checkbox} style={{ visibility: 'hidden' }} />
-                        </th>
                         <th className='uiMedium'>#</th>
                         <th className='uiMedium'>Tên bài hát</th>
                         <th className='uiMedium'>Thể loại</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {songs.map((song, idx) => (
+                    {allSongs.map((song, idx) => (
                         <tr key={song.id}>
-                            <td>
-                                <input type='checkbox' className={styles.checkbox} />
-                            </td>
                             <td>{idx + 1}</td>
                             <td>
                                 <div className={styles.songInfoContainer}>
-                                    <img src={song.image} alt={song.name} className={styles.songImg} />
+                                    <img src={song.avatarUrl} alt={song.name} className={styles.songImg} />
                                     <div className={styles.songInfo}>
                                         <h4>{song.name}</h4>
                                         <p className='p3 o50'>{song.artist}</p>

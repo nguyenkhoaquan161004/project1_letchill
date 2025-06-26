@@ -1,66 +1,76 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useReactTable, getCoreRowModel, getSortedRowModel, flexRender } from '@tanstack/react-table';
 import styles from './UserManagerScreen.module.css';
 
-const users = [
-    { id: 1, username: 'nguyenvana', package: 'Premium', startDate: '2024-05-01', endDate: '2025-05-01' },
-    { id: 2, username: 'tranthib', package: 'Free', startDate: '2024-01-10', endDate: '-' },
-    { id: 3, username: 'lequocd', package: 'Family', startDate: '2023-12-20', endDate: '2024-12-20' },
-    { id: 4, username: 'phamthanh', package: 'Premium', startDate: '2024-03-15', endDate: '2025-03-15' },
-    { id: 5, username: 'ngocminh', package: 'Free', startDate: '2024-02-01', endDate: '-' },
-    { id: 6, username: 'hoanglong', package: 'Premium', startDate: '2024-04-10', endDate: '2025-04-10' },
-    { id: 7, username: 'buitran', package: 'Family', startDate: '2023-11-05', endDate: '2024-11-05' },
-    { id: 8, username: 'nguyenthuy', package: 'Premium', startDate: '2024-06-01', endDate: '2025-06-01' },
-    { id: 9, username: 'phamquang', package: 'Free', startDate: '2024-01-20', endDate: '-' },
-    { id: 10, username: 'lethanh', package: 'Premium', startDate: '2024-07-12', endDate: '2025-07-12' },
-    { id: 11, username: 'tranhoa', package: 'Family', startDate: '2023-10-18', endDate: '2024-10-18' },
-    { id: 12, username: 'nguyenbao', package: 'Premium', startDate: '2024-08-01', endDate: '2025-08-01' },
-    { id: 13, username: 'phamlinh', package: 'Free', startDate: '2024-03-22', endDate: '-' },
-    { id: 14, username: 'hoangnam', package: 'Premium', startDate: '2024-09-10', endDate: '2025-09-10' },
-    { id: 15, username: 'bichngoc', package: 'Family', startDate: '2023-09-25', endDate: '2024-09-25' },
-    { id: 16, username: 'nguyetanh', package: 'Premium', startDate: '2024-10-01', endDate: '2025-10-01' },
-    { id: 17, username: 'phuongthao', package: 'Free', startDate: '2024-04-15', endDate: '-' },
-    { id: 18, username: 'hoangphuc', package: 'Premium', startDate: '2024-11-11', endDate: '2025-11-11' },
-    { id: 19, username: 'lethao', package: 'Family', startDate: '2023-08-30', endDate: '2024-08-30' },
-    { id: 20, username: 'trungkien', package: 'Premium', startDate: '2024-12-01', endDate: '2025-12-01' },
-    { id: 21, username: 'ngocanh', package: 'Free', startDate: '2024-05-20', endDate: '-' },
-    { id: 22, username: 'minhquan', package: 'Premium', startDate: '2025-01-01', endDate: '2026-01-01' },
-    { id: 23, username: 'thanhdat', package: 'Family', startDate: '2023-07-12', endDate: '2024-07-12' }
+// Dữ liệu mẫu ca sĩ
+const singers = [
+    { id: 1, name: 'Sơn Tùng M-TP', songCount: 25, followers: 1000000, avatarUrl: 'https://i.imgur.com/1.jpg' },
+    { id: 2, name: 'Mỹ Tâm', songCount: 40, followers: 900000, avatarUrl: 'https://i.imgur.com/2.jpg' },
+    { id: 3, name: 'Đen Vâu', songCount: 18, followers: 800000, avatarUrl: 'https://i.imgur.com/3.jpg' },
+    { id: 4, name: 'Noo Phước Thịnh', songCount: 30, followers: 700000, avatarUrl: 'https://i.imgur.com/4.jpg' },
+    { id: 5, name: 'Min', songCount: 22, followers: 600000, avatarUrl: 'https://i.imgur.com/5.jpg' },
 ];
 
 const columns = [
     { accessorKey: 'id', header: '#' },
-    { accessorKey: 'username', header: 'Tên tài khoản' },
-    { accessorKey: 'package', header: 'Gói đang dùng' },
-    { accessorKey: 'startDate', header: 'Ngày bắt đầu gói' },
-    { accessorKey: 'endDate', header: 'Ngày kết thúc gói' },
+    {
+        accessorKey: 'avatarUrl',
+        header: 'Avatar',
+        cell: info => (
+            <img
+                src={info.getValue()}
+                alt="avatar"
+                style={{ width: 40, height: 40, borderRadius: '50%', objectFit: 'cover' }}
+            />
+        )
+    },
+    { accessorKey: 'name', header: 'Tên ca sĩ' },
+    { accessorKey: 'songCount', header: 'Số lượng bài hát' },
+    { accessorKey: 'followers', header: 'Số lượng người theo dõi' },
 ];
 
-const UserManagerScreen = () => {
-    const [sorting, setSorting] = React.useState([]);
+const SingerManagerScreen = ({ singerChanged, selectedSinger, setSelectedSinger, setSingerChanged }) => {
+    const [sorting, setSorting] = useState([]);
     const [search, setSearch] = useState('');
-    const [filteredUsers, setFilteredUsers] = useState(users);
+    const [singers, setSingers] = useState([]);
+    const [filteredSingers, setFilteredSingers] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState('');
+
+    useEffect(() => {
+        const fetchSingers = async () => {
+            setLoading(true);
+            setError('');
+            try {
+                const res = await fetch('http://localhost:4000/api/singer'); // Đổi lại endpoint nếu cần
+                if (!res.ok) throw new Error('Lỗi khi lấy dữ liệu ca sĩ');
+                const data = await res.json();
+                setSingers(data);
+                setFilteredSingers(data);
+            } catch (err) {
+                setError(err.message || 'Lỗi không xác định');
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchSingers();
+    }, [singerChanged]);
 
     const handleSearch = () => {
         const keyword = search.trim().toLowerCase();
         if (!keyword) {
-            setFilteredUsers(users);
+            setFilteredSingers(singers);
             return;
         }
-
-        setFilteredUsers(
-            users.filter(
-                u =>
-                    u.username.toLowerCase().includes(keyword) ||
-                    u.package.toLowerCase().includes(keyword) ||
-                    u.startDate.toLowerCase().includes(keyword) ||
-                    u.endDate.toLowerCase().includes(keyword)
+        setFilteredSingers(
+            singers.filter(
+                s =>
+                    s.name.toLowerCase().includes(keyword)
             )
-        )
-    }
-
+        );
+    };
     const table = useReactTable({
-        data: filteredUsers,
+        data: filteredSingers,
         columns,
         state: { sorting },
         onSortingChange: setSorting,
@@ -68,13 +78,17 @@ const UserManagerScreen = () => {
         getSortedRowModel: getSortedRowModel(),
     });
 
+    useEffect(() => {
+        console.log('selectedSinger:', selectedSinger);
+    }, [selectedSinger]);
+
     return (
         <div style={{ overflowX: 'auto' }}>
             <div className={styles.header}>
                 <input
                     className={styles.searchBox}
                     type="text"
-                    placeholder="Tìm kiếm"
+                    placeholder="Tìm kiếm ca sĩ"
                     value={search}
                     onChange={e => setSearch(e.target.value)}
                     onKeyDown={e => { if (e.key === 'Enter') handleSearch() }}
@@ -91,7 +105,17 @@ const UserManagerScreen = () => {
                     {table.getHeaderGroups().map(headerGroup => (
                         <tr key={headerGroup.id}>
                             <th>
-                                <input type="checkbox" style={{ accentColor: "#fff", visibility: 'hidden' }} />
+                                <input
+                                    type="checkbox"
+                                    checked={filteredSingers.length > 0 && selectedSinger.length === filteredSingers.length}
+                                    onChange={e => {
+                                        if (e.target.checked) {
+                                            setSelectedSinger(filteredSingers.map(s => s.id));
+                                        } else {
+                                            setSelectedSinger([]);
+                                        }
+                                    }}
+                                />
                             </th>
                             {headerGroup.headers.map(header => (
                                 <th
@@ -111,7 +135,17 @@ const UserManagerScreen = () => {
                     {table.getRowModel().rows.map(row => (
                         <tr key={row.id}>
                             <td>
-                                <input type="checkbox" />
+                                <input
+                                    type="checkbox"
+                                    checked={Array.isArray(selectedSinger) && selectedSinger.includes(row.original.id)}
+                                    onChange={e => {
+                                        if (e.target.checked) {
+                                            setSelectedSinger(prev => Array.isArray(prev) ? [...prev, row.original.id] : [row.original.id]);
+                                        } else {
+                                            setSelectedSinger(prev => Array.isArray(prev) ? prev.filter(id => id !== row.original.id) : []);
+                                        }
+                                    }}
+                                />
                             </td>
                             {row.getVisibleCells().map(cell => (
                                 <td key={cell.id}>
@@ -128,4 +162,4 @@ const UserManagerScreen = () => {
     );
 };
 
-export default UserManagerScreen;
+export default SingerManagerScreen;

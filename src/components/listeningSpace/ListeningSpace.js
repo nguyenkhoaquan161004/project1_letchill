@@ -1,15 +1,24 @@
-import React, { useRef, useState, useEffect, useCallback } from 'react';
+import React, { useRef, useState, useEffect, useCallback, useContext } from 'react';
 import clsx from 'clsx';
 import axios from 'axios';
 import { Icon } from '@iconify/react';
 import styles from './ListeningSpace.module.css';
 import Playlist from './Playlist';
 
+// CONTEXT
+import { useCreator } from '../../contexts/CreatorContext'
+
 
 const ListeningSpace = ({ onInfoButtonClick, onLyricsButtonClick, onWorldScreenButtonClick,
     isRightBarOpen, isLyricsOpen, isWorldScreenOpen, onChangeSong, playlistsData,
     currentSongId, onRefreshPlaylists, uid, onCurrentArtistId }) => {
+
+    // TOKEN
     const token = localStorage.getItem('token');
+    //CREATOR CONTEXT
+    const { isCreator } = useCreator();
+
+
     const [isLoading, setIsLoading] = useState(false);
 
     const audioPlayer = useRef(null);
@@ -33,8 +42,6 @@ const ListeningSpace = ({ onInfoButtonClick, onLyricsButtonClick, onWorldScreenB
     // const [currentSongIndex, setCurrentSongIndex] = useState(0);
     const [songHistory, setSongHistory] = useState([]);
     // const currentSong = songsData[currentSongIndex];
-
-
 
     // Các state quản lý trạng thái icon
     const [lyricsActive, setLyricsActive] = useState(false);
@@ -66,7 +73,7 @@ const ListeningSpace = ({ onInfoButtonClick, onLyricsButtonClick, onWorldScreenB
                 console.log("Fetched song data:", data);
                 setCurrentSongData(data)
                 setDuration(formatTime(data.duration));
-                onCurrentArtistId(data.artist); // Cập nhật ID nghệ sĩ hiện tại`
+                onCurrentArtistId(data.artistId); // Cập nhật ID nghệ sĩ hiện tại`
                 // Chỉ cập nhật nếu cần thiết
                 setCurrentSongData((prevData) => {
                     if (prevData?.id === data.id) return prevData; // Không thay đổi nếu giống nhau
@@ -456,6 +463,56 @@ const ListeningSpace = ({ onInfoButtonClick, onLyricsButtonClick, onWorldScreenB
 
     const isAnySelected = Object.values(selectedPlaylists).some((isSelected) => isSelected);
 
+    const handleDownloadSong = async () => {
+        if (!isCreator) {
+            alert("Bạn cần phải đăng ký Premium để download nhạc.");
+            return;
+        }
+        setIsLoading(true);
+        try {
+            const response = await fetch(`http://localhost:4000/api/song/${currentSongData.id}/download`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                }
+            })
+
+            if (!response.ok) {
+                throw new Error("Không thể download bài hát.");
+            }
+
+            const data = await response.json(); // ✅ await
+            const download = data.link;
+            console.log("Link download:", download);
+
+            // ✅ Tải file blob từ đường dẫn đó
+            const fileResponse = await fetch(download);
+            const blob = await fileResponse.blob();
+
+            // ✅ Tạo link ẩn và gán tên file
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+
+            // ✅ Tên file mong muốn: <song_name>.mp3
+            const fileName = `${currentSongData.name || 'song'}.mp3`;
+            a.download = fileName;
+
+            document.body.appendChild(a);
+            a.click();
+
+            // ✅ Dọn dẹp
+            a.remove();
+            window.URL.revokeObjectURL(url);
+
+        } catch (error) {
+            console.log(error);
+        }
+        setTimeout(() => setIsLoading(false), 1500)
+    }
+
+
     return (
         <div className={styles.listeningSpace}>
             <div className={styles.info}>
@@ -521,7 +578,9 @@ const ListeningSpace = ({ onInfoButtonClick, onLyricsButtonClick, onWorldScreenB
 
 
                 <div className={styles.controlbar}>
-                    <button onClick={() => { setLyricsActive(!lyricsActive); onLyricsButtonClick() }}>
+                    <button
+
+                        onClick={() => { setLyricsActive(!lyricsActive); onLyricsButtonClick() }}>
                         <Icon
                             className={clsx(styles.icon, { [styles.iconActive]: isLyricsOpen })}
                             icon="maki:karaoke"
@@ -561,6 +620,25 @@ const ListeningSpace = ({ onInfoButtonClick, onLyricsButtonClick, onWorldScreenB
             </div>
 
             <div className={styles.general}>
+                <button
+                    title={
+                        !isCreator
+                            ? "Rất tiếc! Bạn cần phải đăng ký Premium để download nhạc."
+                            : isLoading
+                                ? "Đang tải..."
+                                : ""
+                    }
+                    style={{
+                        opacity: (!isCreator || !isLoading) ? 1 : 0.5
+                    }}
+                    disable={!isCreator || isLoading}
+                    onClick={() => { handleDownloadSong() }}>
+                    <Icon
+                        className={clsx(styles.icon)}
+                        icon={!isLoading ? "material-symbols:download-2-rounded" : "line-md:loading-loop"}
+                    />
+                </button>
+
                 <button onClick={() => { setWorldActive(!worldSceenActive); onWorldScreenButtonClick() }}>
                     <Icon
                         className={clsx(styles.icon, { [styles.iconActive]: isWorldScreenOpen })}

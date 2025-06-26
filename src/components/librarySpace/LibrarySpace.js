@@ -8,12 +8,30 @@ import UploadSongBox from './components/UploadSongBox/UploadSongBox';
 import favoritePlaylist from './assets/favoritePlaylist.svg';
 import { useAdmin } from '../../contexts/AdminContext';
 import { AnimatePresence, motion } from 'framer-motion';
+import { useCreator } from '../../contexts/CreatorContext';
+import SingerItem from './components/Playlist/SingerItem';
+import AddSingerBox from './components/AddSingerBox/AddSingerBox';
+import UpdateSingerBox from './components/UpdateSingerBox/UpdateSongBox';
+import DeleteSingerBox from './components/DeleteSingerBox/DeleteSingerBox';
 
-const LibrarySpace = ({ onSelectedPlaylist, playlistsDatas, onRefreshPlaylists, onUserManagerButtonClick, onSongManagerButtonClick }) => {
+const LibrarySpace = ({ onSelectedPlaylist, playlistsDatas, onReportManagerButtonClick,
+    onRefreshPlaylists, onUserManagerButtonClick, onSelectedArtist,
+    onSongManagerButtonClick, uid, followedSingers, singerChanged, setSingerChanged,
+    selectedSinger, setSelectedSinger }) => {
     const [isAddPlaylistOpen, setIsAddPlaylistOpen] = useState(false);
     const [isUploadSongOpen, setIsUploadSongOpen] = useState(false);
+    const [showAddMenu, setShowAddMenu] = useState(false);
+    const [showFollowedSingers, setShowFollowedSingers] = useState(false);
+    const [isAddSingerOpen, setIsAddSingerOpen] = useState(false);
+    const [isUpdateSingerOpen, setIsUpdateSingerOpen] = useState(false);
+    const [isDeleteSingerOpen, setIsDeleteSingerOpen] = useState(false);
+    const [singers, setSingers] = useState([]);
+
     //const [playlists, setPlaylists] = useState([]);
     const { isAdmin } = useAdmin();
+    const { isCreator } = useCreator();
+
+    const [mp3File, setMp3File] = useState(null);
 
     // State cho menu admin
     // const [showSongManage, setShowSongManage] = useState(true);
@@ -69,44 +87,52 @@ const LibrarySpace = ({ onSelectedPlaylist, playlistsDatas, onRefreshPlaylists, 
     };
 
     const handleOpenUploadSongBox = (e) => {
+        if (!isAdmin) {
+            alert("Bạn cần phải đăng ký Premium để sử dụng tính năng này.");
+            return;
+        } else if (!isCreator) {
+            alert("Bạn cần phải đăng ký Premium để sử dụng tính năng này.");
+            return;
+        }
         e.stopPropagation();
         setIsUploadSongOpen(true);
+    };
+
+    const handleAddMenuClick = () => {
+        setShowAddMenu((prev) => !prev);
     };
 
     const handleCloseUploadSongBox = () => {
         setIsUploadSongOpen(false);
     };
 
-    const handleUploadSong = async (songData) => {
-        try {
-            const token = localStorage.getItem('token'); // hoặc lấy từ context
-            const songData = {
-                uid: 'user_id',
-                name: 'Tên bài hát',
-                link: 'https://link.mp3',
-                download: 'https://download.mp3',
-                avatarUrl: 'https://img.jpg',
-                releaseDate: '2024-01-01',
-                lyric: 'Lời bài hát',
-                composer: 'Nhạc sĩ',
-                artist: 'Nghệ sĩ',
-                genre: 'Thể loại'
-            };
+    const handleFileChange = (e) => {
+        setMp3File(e.target.files[0]);
+    };
 
-            fetch('http://localhost:4000/api/song/upload', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify(songData)
-            })
-                .then(res => res.json())
-                .then(data => console.log(data))
-                .catch(err => alert('Lỗi upload: ' + err.message));
-        } catch (err) {
-            alert('Lỗi upload: ' + err.message);
-        }
+    const handleArtistSelect = (artistId) => {
+        onSelectedArtist(artistId);
+    }
+
+    const handleOpenAddSingerBox = () => setIsAddSingerOpen(true);
+    const handleCloseAddSingerBox = () => setIsAddSingerOpen(false);
+
+    const handleOpenUpdateSingerBox = () => {
+        setIsUpdateSingerOpen(true);
+    };
+    const handleCloseUpdateSingerBox = () => setIsUpdateSingerOpen(false);
+
+    const handleOpenDeleteSingerBox = () => {
+        setIsDeleteSingerOpen(true);
+    };
+    const handleCloseDeleteSingerBox = () => setIsDeleteSingerOpen(false);
+
+    const handleSingerActionSuccess = () => {
+        setIsAddSingerOpen(false);
+        setIsUpdateSingerOpen(false);
+        setIsDeleteSingerOpen(false);
+        setSingerChanged(prev => prev + 1);
+        console.log(singerChanged);
     };
 
     if (isAdmin) {
@@ -169,7 +195,7 @@ const LibrarySpace = ({ onSelectedPlaylist, playlistsDatas, onRefreshPlaylists, 
                             >
                                 <div
                                     style={{ fontWeight: 700, fontSize: 24, textAlign: 'center', padding: 16 }}>
-                                    Quản lý tài khoản
+                                    Quản lý ca sĩ
                                 </div>
 
                                 {activeAdminBox === 'account' && (
@@ -183,18 +209,46 @@ const LibrarySpace = ({ onSelectedPlaylist, playlistsDatas, onRefreshPlaylists, 
                                             overflow: 'hidden'
                                         }}
                                     >
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: 12, paddingLeft: 24 }}>
+                                        <button
+                                            style={{
+                                                display: 'flex',
+                                                border: 'none',
+                                                alignItems: 'center',
+                                                gap: 12,
+                                                paddingLeft: 24,
+                                            }}
+                                            onClick={handleOpenAddSingerBox}>
                                             <InlineIcon style={{ width: 26, height: 26, backgroundColor: 'transparent' }} icon="ic:round-add" width={24} />
-                                            <span className='uiSemibold'>Thêm tài khoản</span>
-                                        </div>
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: 12, paddingLeft: 24 }}>
+                                            <span className='uiSemibold'>Thêm ca sĩ</span>
+                                        </button>
+                                        <button
+                                            style={{
+                                                display: 'flex',
+                                                border: 'none',
+                                                alignItems: 'center',
+                                                gap: 12,
+                                                paddingLeft: 24,
+                                                opacity: selectedSinger.length === 1 ? 1 : 0.5,
+                                            }}
+                                            disabled={selectedSinger.length !== 1}
+                                            onClick={handleOpenUpdateSingerBox}>
                                             <InlineIcon style={{ width: 26, height: 26, backgroundColor: 'transparent' }} icon="ic:round-edit" width={24} />
-                                            <span className='uiSemibold'>Cập nhật tài khoản</span>
-                                        </div>
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: 12, paddingLeft: 24 }}>
+                                            <span className='uiSemibold'>Cập nhật tài khoản ca sĩ</span>
+                                        </button>
+                                        <button
+                                            style={{
+                                                display: 'flex',
+                                                border: 'none',
+                                                alignItems: 'center',
+                                                gap: 12,
+                                                paddingLeft: 24,
+                                                opacity: selectedSinger.length > 0 ? 1 : 0.5,
+                                            }}
+                                            disabled={selectedSinger.length <= 0}
+                                            onClick={handleOpenDeleteSingerBox}>
                                             <InlineIcon style={{ width: 26, height: 26, backgroundColor: 'transparent' }} icon="ic:round-delete" width={24} />
-                                            <span className='uiSemibold'>Xóa tài khoản</span>
-                                        </div>
+                                            <span className='uiSemibold'>Xóa ca sĩ</span>
+                                        </button>
                                     </div>
                                 )}
 
@@ -203,7 +257,7 @@ const LibrarySpace = ({ onSelectedPlaylist, playlistsDatas, onRefreshPlaylists, 
                             <div
                                 className={styles.adminBox}
                                 style={{ cursor: 'pointer' }}
-                                onClick={() => handleToggleAdminBox('report')}
+                                onClick={() => { handleToggleAdminBox('report'); onReportManagerButtonClick() }}
                             >
                                 <div
                                     style={{
@@ -219,18 +273,6 @@ const LibrarySpace = ({ onSelectedPlaylist, playlistsDatas, onRefreshPlaylists, 
                                 {/* Nếu muốn có submenu cho báo cáo, thêm ở đây */}
                                 {/* {activeAdminBox === 'report' && (...)} */}
                             </div>
-                            {/* Duyệt bình luận */}
-                            <div
-                                className={styles.adminBox}
-                                style={{ cursor: 'pointer' }}
-                                onClick={() => handleToggleAdminBox('comment')}
-                            >
-                                <div style={{ fontWeight: 700, fontSize: 24, textAlign: 'center', padding: 16 }}>
-                                    Duyệt bình luận
-                                </div>
-                                {/* Nếu muốn có submenu cho bình luận, thêm ở đây */}
-                                {/* {activeAdminBox === 'comment' && (...)} */}
-                            </div>
                         </AnimatePresence>
                     </div>
                 </div>
@@ -238,7 +280,27 @@ const LibrarySpace = ({ onSelectedPlaylist, playlistsDatas, onRefreshPlaylists, 
                 <UploadSongBox
                     isOpen={isUploadSongOpen}
                     onClose={handleCloseUploadSongBox}
-                    onUploadSong={handleUploadSong}
+                    onFileChange={handleFileChange}
+                />
+                <AddSingerBox
+                    isOpen={isAddSingerOpen}
+                    onClose={handleCloseAddSingerBox}
+                    onSuccess={handleSingerActionSuccess}
+                />
+                <UpdateSingerBox
+                    isOpen={isUpdateSingerOpen}
+                    onClose={handleCloseUpdateSingerBox}
+                    onSuccess={handleSingerActionSuccess}
+                    selectedSinger={selectedSinger}
+                    setSelectedSinger={setSelectedSinger}
+                />
+                <DeleteSingerBox
+                    isOpen={isDeleteSingerOpen}
+                    onClose={handleCloseDeleteSingerBox}
+                    singer={selectedSinger}
+                    onSuccess={handleSingerActionSuccess}
+                    selectedSinger={selectedSinger}
+                    setSelectedSinger={setSelectedSinger}
                 />
             </div >
         );
@@ -248,7 +310,7 @@ const LibrarySpace = ({ onSelectedPlaylist, playlistsDatas, onRefreshPlaylists, 
         <div id={styles.leftBar}
             className={clsx('w24')}
             style={{
-                zIndex: isAddPlaylistOpen ? 3 : 1
+                zIndex: (isAddPlaylistOpen ? 3 : 1) + (isUploadSongOpen ? 3 : 1)
             }} >
             <div className={styles.leftBarContainer}>
                 <div className={styles.topicContainer}>
@@ -257,9 +319,61 @@ const LibrarySpace = ({ onSelectedPlaylist, playlistsDatas, onRefreshPlaylists, 
                             <InlineIcon icon="fluent:library-24-filled" style={{ width: 26, height: 26, backgroundColor: 'transparent' }}></InlineIcon>
                             <h4>Thư viện</h4>
                         </div>
-                        <button onClick={handleOpenAddPlaylistBox} style={{ border: 'none' }}>
-                            <InlineIcon icon="ic:round-add" style={{ width: 26, height: 26, backgroundColor: 'transparent' }}></InlineIcon>
-                        </button>
+                        <div
+                            style={{ position: 'relative', display: 'inline-block' }}
+                            onClick={handleAddMenuClick}
+                        >
+                            <button
+                                style={{ border: 'none', background: 'transparent', cursor: 'pointer' }}
+                            >
+                                <InlineIcon icon="ic:round-add" style={{ width: 26, height: 26 }} />
+                            </button>
+
+                            {showAddMenu && (
+                                <div
+                                    style={{
+                                        position: 'absolute',
+                                        background: '#000',
+                                        boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+                                        borderRadius: 8,
+                                        zIndex: 10,
+                                        minWidth: 140,
+                                        padding: 8,
+                                        right: 0,
+                                        top: 30, // giảm khoảng cách nếu muốn liền khối
+                                    }}
+                                >
+                                    <button
+                                        style={{
+                                            width: '100%',
+                                            padding: 8,
+                                            border: 'none',
+                                            background: 'none',
+                                            textAlign: 'left',
+                                            cursor: 'pointer',
+                                            color: '#fff',
+                                        }}
+                                        onClick={handleOpenAddPlaylistBox}
+                                    >
+                                        Thêm playlist
+                                    </button>
+                                    <button
+                                        style={{
+                                            width: '100%',
+                                            padding: 8,
+                                            border: 'none',
+                                            background: 'none',
+                                            textAlign: 'left',
+                                            cursor: 'pointer',
+                                            color: '#fff',
+                                        }}
+                                        onClick={handleOpenUploadSongBox}
+                                    >
+                                        Thêm bài hát
+                                    </button>
+                                </div>
+                            )}
+                        </div>
                     </header>
 
                     <nav>
@@ -297,6 +411,26 @@ const LibrarySpace = ({ onSelectedPlaylist, playlistsDatas, onRefreshPlaylists, 
                     ) : (
                         <p>Không có playlist nào để hiển thị.</p>
                     )}
+
+                    {Array.isArray(followedSingers) && followedSingers.length > 0 ? (
+                        followedSingers.map((artist) => (
+                            <SingerItem
+                                key={artist.id}
+                                artist={artist}
+                                onSelectedArtist={() => {
+                                    onSelectedArtist(
+                                        artist.artist_id,
+                                    );
+                                    handleArtistSelect(artist.artist_id);
+                                    console.log(artist.artist_id);
+                                }}
+                                name={artist.name}
+                                avatarUrl={artist.avatarUrl}
+                            />
+                        ))
+                    ) : (
+                        <p></p>
+                    )}
                 </div>
 
             </div>
@@ -305,6 +439,13 @@ const LibrarySpace = ({ onSelectedPlaylist, playlistsDatas, onRefreshPlaylists, 
                 onClose={handleCloseAddPlaylistBox}
                 onAddPlaylist={handleAddPlaylist}
             ></AddPlaylistBox>
+            {/* Box upload bài hát */}
+            <UploadSongBox
+                isOpen={isUploadSongOpen}
+                onClose={handleCloseUploadSongBox}
+                onFileChange={handleFileChange}
+                uid={uid}
+            />
         </div >
     );
 };

@@ -9,11 +9,13 @@ import { useAdmin } from '../../contexts/AdminContext';
 import { GoogleAuthProvider, FacebookAuthProvider, signInWithPopup } from 'firebase/auth';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { db } from '../../firebaseConfig';
+import { useCreator } from '../../contexts/CreatorContext';
 
 const LoginScreen = memo(() => {
     const navigate = useNavigate();
     // USE CONTEXT HERE TO LOGIN IN ADMIN ACCOUNT
     const { setIsAdmin } = useAdmin();
+    const { setIsCreator } = useCreator();
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -81,6 +83,12 @@ const LoginScreen = memo(() => {
                 navigate(`/main`);
                 return;
             }
+
+            else if (userCurrent.role === 'CREATOR') {
+                setIsCreator(true)
+                navigate(`/main?uid=${uid}`);
+            }
+
             else {
                 setIsAdmin(false);
                 navigate(`/main?uid=${uid}`);
@@ -99,6 +107,7 @@ const LoginScreen = memo(() => {
             const user = result.user;
             const idToken = await user.getIdToken();
 
+            // Tự động đăng ký nếu chưa có tài khoản
             await fetch('http://localhost:4000/api/user/sign-up', {
                 method: 'POST',
                 headers: {
@@ -117,8 +126,30 @@ const LoginScreen = memo(() => {
                 }),
             });
 
-            setIsAdmin(false);
-            navigate(`/main?uid=${user.uid}`);
+            // Sau khi sign-up, gọi sign-in để lấy thông tin user (bao gồm role)
+            const res = await fetch('http://localhost:4000/api/user/sign-in', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ uid: user.uid })
+            });
+
+            const userCurrent = await res.json();
+            localStorage.setItem('token', userCurrent.token.idToken);
+
+            // Xử lý theo role
+            if (userCurrent.role === 'ADMIN') {
+                setIsAdmin(true);
+                navigate(`/main`);
+            } else if (userCurrent.role === 'CREATOR') {
+                setIsCreator(true);
+                navigate(`/main?uid=${user.uid}`);
+            } else {
+                setIsAdmin(false);
+                navigate(`/main?uid=${user.uid}`);
+            }
+
         } catch (error) {
             console.error('Login with Google error:', error);
             alert('Đăng nhập với Google không thành công.');

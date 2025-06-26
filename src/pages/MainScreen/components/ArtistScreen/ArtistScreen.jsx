@@ -48,10 +48,11 @@ const generateSongsData = () => {
 
 const songsData = generateSongsData();
 
-const ArtistScreen = ({ isOpen, artistId, onSelectedArtist, uid }) => {
+const ArtistScreen = ({ isOpen, artistId, artists, onSelectedArtist, onCurrentSongId, onFollowChange, uid }) => {
     const [selectedArtist, setSelectedArtist] = useState({});
     const [songs, setSongs] = useState([]);
-    const [artists, setArtists] = useState([]);
+    const [isFollowing, setIsFollowing] = useState(false);
+    const [followers, setFollowers] = useState(0);
 
     const [visibleSongsCount, setVisibleSongsCount] = useState(5); // Số lượng bài hát hiển thị ban đầu
 
@@ -63,6 +64,7 @@ const ArtistScreen = ({ isOpen, artistId, onSelectedArtist, uid }) => {
             }
             const data = await response.json();
             setSelectedArtist(data);
+            setFollowers(data.followers || 0);
             console.log(data);
         } catch (error) {
             console.error('Error fetching artist data:', error);
@@ -71,28 +73,8 @@ const ArtistScreen = ({ isOpen, artistId, onSelectedArtist, uid }) => {
 
     useEffect(() => {
         fetchArtistData();
-    }, [artistId, isOpen]);
+    }, [artistId]);
 
-    const fetchSameArtist = async (top_n1 = 5, top_n2 = 8) => {
-        try {
-            const response1 = await fetch(`http://localhost:4000/api/dashboard?user_id=${uid}&top_n=${top_n1}`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            });
-
-            const data = await response1.json();
-            setArtists(data.singersRecommentation || []);
-
-        } catch (err) {
-            console.error('Error fetching home data:', err);
-        }
-    };
-
-    useEffect(() => {
-        fetchSameArtist();
-    }, [artistId, isOpen]); // Fetch artist data when artistId or isOpen changes
 
     const fetchSongsByArtist = async () => {
         try {
@@ -117,7 +99,7 @@ const ArtistScreen = ({ isOpen, artistId, onSelectedArtist, uid }) => {
 
     useEffect(() => {
         fetchSongsByArtist();
-    }, [artistId, isOpen]); // Fetch songs when artistId or isOpen changes
+    }, [artistId]); // Fetch songs when artistId or isOpen changes
 
     useEffect(() => {
         const artist = popularAuthor.find(author => author.id === artistId);
@@ -127,6 +109,65 @@ const ArtistScreen = ({ isOpen, artistId, onSelectedArtist, uid }) => {
 
     const handleArtistSelect = (artistId) => {
         onSelectedArtist(artistId);
+    };
+
+    const handleSongSelect = (songId) => {
+        onCurrentSongId(songId);
+    }
+
+    // Check follow status
+    const checkIsFollowing = async () => {
+        try {
+            const response = await fetch(`http://localhost:4000/api/singer/${artistId}/follows/${uid}`);
+            if (response.ok) {
+                const data = await response.json();
+                setIsFollowing(data.isFollowing === true || data.message === "ALREADY_FOLLOWED");
+            } else {
+                setIsFollowing(false);
+            }
+        } catch {
+            setIsFollowing(false);
+        }
+    };
+
+    useEffect(() => {
+        if (isOpen) {
+            fetchArtistData();
+            checkIsFollowing();
+        }
+    }, [artistId, isOpen]);
+
+    // Follow
+    const handleFollowArtist = async () => {
+        try {
+            const response = await fetch(`http://localhost:4000/api/singer/${artistId}/follows/${uid}`, {
+                method: 'POST',
+            });
+            const data = await response.json();
+            if (response.ok && data.message === "ALREADY_FOLLOWED") {
+                setIsFollowing(true);
+                if (onFollowChange) onFollowChange();
+                setFollowers(f => f + 1);
+            }
+        } catch {
+            alert('Lỗi khi theo dõi nghệ sĩ');
+        }
+    };
+
+    // Unfollow
+    const handleUnfollowArtist = async () => {
+        try {
+            const response = await fetch(`http://localhost:4000/api/singer/${artistId}/follows/${uid}`, {
+                method: 'DELETE',
+            });
+            if (response.ok) {
+                setIsFollowing(false);
+                if (onFollowChange) onFollowChange();
+                setFollowers(f => Math.max(0, f - 1));
+            }
+        } catch {
+            alert('Lỗi khi hủy theo dõi nghệ sĩ');
+        }
     };
 
     if (!isOpen) return null;
@@ -157,7 +198,7 @@ const ArtistScreen = ({ isOpen, artistId, onSelectedArtist, uid }) => {
                             )}
 
                             <p className='uiSemibold o50'>
-                                <span className='uiSemibold o75'>{selectedArtist?.followers || 0}</span> người theo dõi</p>
+                                <span className='uiSemibold o75'>{followers}</span> người theo dõi</p>
                         </div>
                     </div>
                 </div>
@@ -168,8 +209,11 @@ const ArtistScreen = ({ isOpen, artistId, onSelectedArtist, uid }) => {
                     <button>
                         <Icon icon="ri:more-fill" className={styles.icon}></Icon>
                     </button>
-                    <button className={styles.followBtn}>
-                        <p className="uiMedium">Theo dõi</p>
+                    <button
+                        className={styles.followBtn}
+                        onClick={isFollowing ? handleUnfollowArtist : handleFollowArtist}
+                    >
+                        <p className="uiMedium">{isFollowing ? "Đã theo dõi" : "Theo dõi"}</p>
                     </button>
                 </div>
             </div>
@@ -191,8 +235,11 @@ const ArtistScreen = ({ isOpen, artistId, onSelectedArtist, uid }) => {
                             <div
                                 key={song.id}
                                 className={styles.itemPlaylistContainer}
-                                style={{ padding: '8px 12px', borderRadius: 8 }}
-                            // onClick={() => onCurrentSongId(song.id)}
+                                style={{
+                                    padding: '8px 12px',
+                                    borderRadius: 8
+                                }}
+                                onClick={() => onCurrentSongId(song.id)}
                             >
                                 <PlaylistItem
                                     index={index + 1}
@@ -201,7 +248,13 @@ const ArtistScreen = ({ isOpen, artistId, onSelectedArtist, uid }) => {
                                     cover={song.avatarUrl}
                                     title={song.name}
                                     artist={selectedArtist?.name || 'Unknown Artist'}
-                                    dateAdded={song.releaseDate}
+                                    dateAdded={song.releaseDay}
+                                // onCurrentSongId={() => {
+                                //     onCurrentSongId({
+                                //         songId: song.id
+                                //     })
+                                //     handleSongSelect(song.id)
+                                // }}
                                 // fetchPlaylistData={fetchPlaylistData}
                                 />
                             </div>
@@ -263,9 +316,7 @@ const ArtistScreen = ({ isOpen, artistId, onSelectedArtist, uid }) => {
                                         description={item.description}
                                         followers={item.followers}
                                         onSelectedArtist={() => {
-                                            onSelectedArtist({
-                                                artistId: item.artist_id,
-                                            });
+                                            onSelectedArtist(item.artist_id);
                                             handleArtistSelect(item.artist_id);
                                             console.log(item.artist_id);
                                         }}

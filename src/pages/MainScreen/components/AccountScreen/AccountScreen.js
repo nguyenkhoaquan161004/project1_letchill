@@ -4,12 +4,14 @@ import { Icon } from '@iconify/react';
 import clsx from 'clsx';
 import favoritePlaylist from '../../../../components/librarySpace/assets/favoritePlaylist.svg'
 import axios from 'axios';
+import ItemSongs from '../HomeScreen/components/ItemSongs';
 
-const AccountScreen = ({ isOpen, uid, onSelectedPlaylist }) => {
+const AccountScreen = ({ isOpen, uid, onSelectedPlaylist, onCurrentSongId, onRefreshPlaylists, playlistsData }) => {
     const [selectedImage, setSelectedImage] = useState(null);
     const [playlists, setPlaylists] = useState([]);
     const [user, setUser] = useState("");
     const [playlistCount, setPlaylistCount] = useState(null);
+    const [creatorSong, setCreatorSong] = useState([]);
 
     const handleImageChange = async (e) => {
         const file = e.target.files[0];
@@ -68,6 +70,7 @@ const AccountScreen = ({ isOpen, uid, onSelectedPlaylist }) => {
             console.log(data.name)
             setSelectedImage(data.avatarUrl);
             setPlaylistCount(data.playlistCount);
+            setCreatorSong(data.song);
             console.log(user);
 
 
@@ -83,6 +86,33 @@ const AccountScreen = ({ isOpen, uid, onSelectedPlaylist }) => {
     const handlePlaylistSelect = (playlistId) => {
         onSelectedPlaylist(playlistId);
     };
+
+    const handleSongSelected = (songId) => {
+        onCurrentSongId(songId);
+    };
+
+    // const fetchSongByCreatorId = async () => {
+    //     try {
+    //         const response = await fetch(`http://localhost:4000/api/song/${uid}`);
+    //         if (!response.ok) {
+    //             throw new Error('Error fetching song data');
+    //         }
+    //         const data = await response.json();
+    //         console.log(data);
+    //         setCreatorSong(data);
+    //     } catch (error) {
+
+    //     }
+    // }
+
+    function formatDateToDDMMYYYY(date) {
+        const d = new Date(date);
+        if (isNaN(d)) return ''; // Invalid date
+        const day = String(d.getDate()).padStart(2, '0');
+        const month = String(d.getMonth() + 1).padStart(2, '0');
+        const year = d.getFullYear();
+        return `${day}/${month}/${year}`;
+    }
 
     if (!isOpen) { return null; }
 
@@ -142,6 +172,42 @@ const AccountScreen = ({ isOpen, uid, onSelectedPlaylist }) => {
                                 }}>
                                 <img className={styles.playlistPic} src={playlist.avatarUrl} alt='' />
                                 <p className={clsx(styles.nameOfPlaylist, 'uiSemibold')}>{playlist.name}</p>
+                            </div>
+                        )
+                    })}
+                </div>
+
+            </div>
+
+            <div className={styles.playlistOfAccount}>
+                <h3>Bài hát đã đăng</h3>
+                <div className={styles.listOfSong}>
+                    {Array.isArray(creatorSong) && creatorSong.map((song, i) => {
+                        return (
+                            <div
+                                key={song.id}
+                                className={styles.itemPlaylistContainer}
+                                onClick={onCurrentSongId(song.id)}
+                                style={{ padding: '12px 32px', borderRadius: 8, width: "auto" }}
+                            >
+                                <ItemSongs
+                                    index={i + 1}
+                                    songId={song.id}
+                                    cover={song.avatarUrl}
+                                    title={song.name}
+                                    artist={song.artistName}
+                                    dateAdded={song.releaseDay}
+                                    views={song.listens}
+                                    onRefreshPlaylists={onRefreshPlaylists}
+                                    playlistsData={playlistsData}
+                                    onCurrentSongId={() => {
+                                        onCurrentSongId({
+                                            songId: song.song_id,
+                                        });
+                                        handleSongSelected(song.song_id)
+                                        console.log(song.song_id)
+                                    }}
+                                />
                             </div>
                         )
                     })}

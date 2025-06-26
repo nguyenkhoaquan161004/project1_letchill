@@ -40,11 +40,19 @@
     flex-direction: column;
     gap: 16px;
     width: 180px;
+    padding: 12px;
+    border-radius: 12px;
+    margin-bottom: 12px;
+}
+
+.itemContainer:hover {
+    cursor: pointer;
+    background-color: rgba(255, 255, 255, 0.15);
 }
 
 .listOfHistory {
     display: flex;
-    gap: 30px;
+    gap: 16px;
     overflow-y: hidden;
 }
 

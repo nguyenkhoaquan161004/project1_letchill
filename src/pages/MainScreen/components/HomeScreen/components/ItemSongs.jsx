@@ -4,7 +4,9 @@ import { Icon } from '@iconify/react';
 import axios from 'axios';
 import Playlist from '../../../../../components/listeningSpace/Playlist';
 
-const ItemSongs = ({ index, playlistId, songId, cover, title, artist, dateAdded, views, onRefreshPlaylists, playlistsData }) => {
+const ItemSongs = ({ index, playlistId, songId, cover, title, artist, dateAdded, views,
+    onRefreshPlaylists, playlistsData, onCurrentSongId }) => {
+
     const [isDeleteOpen, setIsDeleteOpen] = useState(false);
     const popupRef = useRef(null); // Tham chiếu đến popup
     // Quản lí danh sách phát được chọn để thêm nhạc 
@@ -64,8 +66,17 @@ const ItemSongs = ({ index, playlistId, songId, cover, title, artist, dateAdded,
 
     const isAnySelected = Object.values(selectedPlaylists).some((isSelected) => isSelected);
 
+    function formatDateToDDMMYYYY(date) {
+        const d = new Date(date);
+        if (isNaN(d)) return ''; // Invalid date
+        const day = String(d.getDate()).padStart(2, '0');
+        const month = String(d.getMonth() + 1).padStart(2, '0');
+        const year = d.getFullYear();
+        return `${day}/${month}/${year}`;
+    }
+
     return (
-        <div className={styles.itemPlaylist}>
+        <div className={styles.itemPlaylist} onClick={onCurrentSongId}>
             <div className={styles.leftItemPlaylist}>
                 <h5 style={{ width: 50 }}>{index}</h5>
                 <div className={styles.infoItemPlaylist}>
@@ -80,7 +91,7 @@ const ItemSongs = ({ index, playlistId, songId, cover, title, artist, dateAdded,
             <div style={{ display: 'flex', alignItems: 'center', position: 'relative' }}>
                 <div className={styles.rightItemPlaylist}>
                     {views !== null ? (<p>{views}</p>) : null}
-                    {dateAdded !== null ? (<p>{dateAdded}</p>) : null}
+                    {dateAdded !== null ? (<p>{formatDateToDDMMYYYY(dateAdded)}</p>) : null}
                     <button className={styles.btnDelete}>
                         <Icon className={styles.icon} icon="ri:more-fill" onClick={handleAddSongButtonClick} />
                     </button>
@@ -92,13 +103,13 @@ const ItemSongs = ({ index, playlistId, songId, cover, title, artist, dateAdded,
                         <p className="uiSemibold o75" style={{ fontSize: 12 }}>Thêm bài hát vào danh sách phát</p>
                         <hr style={{ width: '70%', position: 'relative', left: 0, right: 0, border: "1px solid rgba(255, 255, 255, 0.5)" }} />
                         <div className={styles.listOfPlaylists}>
-                            {playlistsData.map((playlist, i) => (
+                            {Array.isArray(playlistsData) && playlistsData.map((playlist, i) => (
 
                                 <div className={styles.itemPlaylistContainer}>
                                     <Playlist
                                         key={playlist.id}
                                         playlistId={playlist.id}
-                                        playlistPic={playlist.avtUrl}
+                                        playlistPic={playlist.avatarUrl}
                                         namePlaylist={playlist.name}
                                         description={playlist.description}></Playlist>
                                     <input

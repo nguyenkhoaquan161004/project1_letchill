@@ -111,6 +111,18 @@
     margin-bottom: 32px;
 }
 
+.leftInfo {
+    display: flex;
+    width: 75%;
+}
+
+.trendingSong header {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin: 6px 12px;
+}
+
 /* POPULAR SONGS */
 #mainHomeScreen {
     width: 100%;

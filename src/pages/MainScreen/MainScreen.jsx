@@ -1,4 +1,4 @@
-import React, { memo, useEffect, useState } from 'react';
+import React, { memo, useCallback, useEffect, useState } from 'react';
 import Header from '../../components/header/Header.js';
 import ListeningSpace from '../../components/listeningSpace/ListeningSpace.js';
 import LeftBar from '../../components/librarySpace/LibrarySpace.js'
@@ -9,23 +9,22 @@ import LyricsScreen from './components/LyricsScreen/LyricsScreen.js';
 import SearchingScreen from './components/SearchingScreen/SearchingScreen.js';
 import AccountScreen from './components/AccountScreen/AccountScreen.js';
 import PlaylistScreen from './components/PlaylistScreen/PlaylistScreen.js';
-import playlistdData from '../../components/librarySpace/assets/playlistData.js';
 import WorldScreen from './components/WorldScreen/WorldScreen.jsx';
 import PremiumChooseScreen from './components/PremiumChooseScreen';
 import ArtistScreen from './components/ArtistScreen';
-// ADMIN SCREENS\
+// ADMIN SCREENS
 import UserManagerScreen from './components/admin/UserManagerScreen/UserManagerScreen.jsx';
 import SongManagerScreen from './components/admin/SongManagerScreen/SongManagerScreen.jsx';
 
 import clsx from 'clsx';
 import styles from '../MainScreen/MainScreen.module.css'
 import { useNavigate, useLocation } from 'react-router-dom';
-import { query } from 'firebase/firestore';
-import axios from 'axios';
-
 import { AnimatePresence, motion } from 'framer-motion';
+
+// CONTEXT
 import { useAdmin } from '../../contexts/AdminContext.jsx';
 import { HomeDataProvider } from '../../contexts/HomeDataContext.jsx';
+import ReportManagerScreen from './components/admin/ReportManagerScreen/ReportManagerScreen.jsx';
 
 const MainScreen = memo(() => {
     const [isRightBarOpen, setIsRightBarOpen] = useState(false);
@@ -37,10 +36,14 @@ const MainScreen = memo(() => {
     const [isWorldScreenOpen, setIsWorldScreenOpen] = useState(false);
     const [isPremiumChooseScreenOpen, setIsPremiumChooseScreenOpen] = useState(false);
     const [isArtistScreenOpen, setIsArtistScreenOpen] = useState(false);
+    const [followedSingers, setFollowedSingers] = useState([]);
 
     // ADMIN CONTROL VALUES
     const [isUserManagerScreenOpen, setIsUserManagerScreenOpen] = useState(false);
     const [isSongManagerScreenOpen, setIsSongManagerScreenOpen] = useState(true);
+    const [isReportManagerScreenOpen, setIsReportManagerScreenOpen] = useState(false);
+    const [singerChanged, setSingerChanged] = useState(0);
+    const [selectedSinger, setSelectedSinger] = useState([]);
 
     const [currentSongId, setCurrentSongId] = useState(null);
 
@@ -56,6 +59,11 @@ const MainScreen = memo(() => {
     const [favoritePlaylist, setFavoritePlaylist] = useState();
     const [selectedPlaylist, setSelectedPlaylist] = useState(null);
     const [selectedArtist, setSelectedArtist] = useState(null);
+
+    const [artists, setArtists] = useState([]);
+    const [topSongs, setTopSongs] = useState([]);
+    const [recommentSongs, setRecommentSongs] = useState([]);
+    const [followArtists, setFollowArtists] = useState([]);
 
 
     const nav = useNavigate();
@@ -248,10 +256,19 @@ const MainScreen = memo(() => {
     const toggleUserManagerScreen = () => {
         setIsUserManagerScreenOpen(true);
         setIsSongManagerScreenOpen(false);
+        setIsReportManagerScreenOpen(false);
+
     }
 
     const toggleSongManagerScreen = () => {
         setIsSongManagerScreenOpen(true);
+        setIsUserManagerScreenOpen(false);
+        setIsReportManagerScreenOpen(false);
+    }
+
+    const toggleReportManagerScreen = () => {
+        setIsReportManagerScreenOpen(true);
+        setIsSongManagerScreenOpen(false);
         setIsUserManagerScreenOpen(false);
     }
 
@@ -355,6 +372,33 @@ const MainScreen = memo(() => {
         setSelectedArtist(artistId);
     }
 
+    const handleFollowArtist = (artistId) => {
+        setFollowArtists((prevFollowArtists) => [...prevFollowArtists, artistId]);
+    }
+
+    // Hàm fetch danh sách nghệ sĩ đã theo dõi
+    const updateFollowedSingers = useCallback(async () => {
+        if (!uid) return;
+        try {
+            const response = await fetch(`http://localhost:4000/api/singer/followed/${uid}`, {
+                method: 'GET'
+            });
+            if (!response.ok) throw new Error("Failed to fetch followed singers");
+            const data = await response.json();
+            console.log(data);
+            setFollowedSingers(data);
+        } catch (err) {
+            setFollowedSingers([]);
+            console.error(err)
+        }
+    }, [uid]);
+
+    // Gọi khi mở danh sách nghệ sĩ đã theo dõi
+    useEffect(() => {
+        updateFollowedSingers();
+    }, [updateFollowedSingers]);
+
+
     if (isAdmin) {
         return (
             <div id={styles.main}>
@@ -364,6 +408,10 @@ const MainScreen = memo(() => {
                     <LeftBar
                         onUserManagerButtonClick={toggleUserManagerScreen}
                         onSongManagerButtonClick={toggleSongManagerScreen}
+                        onReportManagerButtonClick={toggleReportManagerScreen}
+                        selectedSinger={selectedSinger}
+                        setSelectedSinger={setSelectedSinger}
+                        setSingerChanged={setSingerChanged}
                     ></LeftBar>
                     <div className={styles.mainSpace}>
                         <div className={styles.mainContainer}>
@@ -379,6 +427,10 @@ const MainScreen = memo(() => {
                                     >
                                         <UserManagerScreen
                                             isOpen={isUserManagerScreenOpen}
+                                            singerChanged={singerChanged}
+                                            setSingerChanged={setSingerChanged}
+                                            selectedSinger={selectedSinger}
+                                            setSelectedSinger={setSelectedSinger}
                                         ></UserManagerScreen>
                                     </motion.div>
                                 )}
@@ -397,6 +449,21 @@ const MainScreen = memo(() => {
                                         ></SongManagerScreen>
                                     </motion.div>
                                 )}
+
+                                {isReportManagerScreenOpen && (
+                                    <motion.div
+                                        key="home"
+                                        initial={{ opacity: 0, y: 10 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        exit={{ opacity: 0, y: -20 }}
+                                        transition={{ duration: 0.15 }}
+                                        style={{ height: '100%', width: '100%', overflowY: 'auto' }}
+                                    >
+                                        <ReportManagerScreen
+                                            isOpen={isReportManagerScreenOpen}
+                                        ></ReportManagerScreen>
+                                    </motion.div>
+                                )}
                             </AnimatePresence>
                         </div>
                     </div>
@@ -405,10 +472,12 @@ const MainScreen = memo(() => {
         )
     }
 
+
     return (
         <div id={styles.main}>
             <Header
                 isOpen={isHomeScreenOpen}
+                uid={uid}
                 isPremiumChooseScreenOpen={isPremiumChooseScreenOpen}
                 onPremiumChooseButtonClick={togglePremiumChooseScreen}
                 onLogoAndHomeButtonClick={toggleHomeScreen}
@@ -421,6 +490,9 @@ const MainScreen = memo(() => {
                     onAddPlaylist={handleAddPlaylist}
                     playlistsDatas={playlists}
                     onRefreshPlaylists={fetchPlaylists}
+                    uid={uid}
+                    followedSingers={followedSingers}
+                    onSelectedArtist={toggleArtistScreen}
                 ></LeftBar>
                 <div className={styles.mainSpace}>
                     <div className={styles.mainContainer}>
@@ -432,7 +504,7 @@ const MainScreen = memo(() => {
                                     animate={{ opacity: 1, y: 0 }}
                                     exit={{ opacity: 0, y: -20 }}
                                     transition={{ duration: 0.15 }}
-                                    style={{ height: '100%', overflowY: 'auto' }}
+                                    style={{ height: '100%', overflowY: 'auto', width: '100%' }}
                                 >
                                     <HomeDataProvider>
                                         <HomeScreen
@@ -441,7 +513,14 @@ const MainScreen = memo(() => {
                                             onCurrentSongId={handleSongChange}
                                             onSelectedArtist={toggleArtistScreen}
                                             onRefreshPlaylists={fetchPlaylists}
-                                            playlistsData={playlists} />
+                                            playlistsData={playlists}
+                                            songs={topSongs}
+                                            setSongs={setTopSongs}
+                                            artists={artists}
+                                            setArtists={setArtists}
+                                            recommentSongs={recommentSongs}
+                                            setRecommentSongs={setRecommentSongs}
+                                        />
                                     </HomeDataProvider>
                                 </motion.div>
                             )}
@@ -472,6 +551,7 @@ const MainScreen = memo(() => {
                                 >
                                     <SearchingScreen
                                         isOpen={true}
+                                        uid={uid}
                                         searchQuery={isSearchQuery}
                                         onCurrentSongId={handleSongChange}
                                     ></SearchingScreen>
@@ -490,6 +570,9 @@ const MainScreen = memo(() => {
                                         isOpen={true}
                                         uid={uid}
                                         onSelectedPlaylist={togglePlaylistScreen}
+                                        onCurrentSongId={handleSongChange}
+                                        onRefreshPlaylists={fetchPlaylists}
+                                        playlistsData={playlists}
                                     ></AccountScreen>
                                 </motion.div>
                             )}
@@ -560,7 +643,13 @@ const MainScreen = memo(() => {
                                         uid={uid}
                                         isOpen={isArtistScreenOpen}
                                         artistId={selectedArtist}
-                                        onSelectedArtist={toggleArtistScreen}>
+                                        artists={artists}
+                                        onCurrentSongId={handleSongChange}
+                                        onSelectedArtist={toggleArtistScreen}
+                                        followArtists={followArtists}
+                                        onFollowArtist={handleFollowArtist}
+                                        onFollowChange={updateFollowedSingers}
+                                    >
                                     </ArtistScreen>
                                 </motion.div>
                             )}

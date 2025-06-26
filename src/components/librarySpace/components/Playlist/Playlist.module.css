@@ -5,10 +5,14 @@
 }
 
 .itemContainer img {
-    width: 72px;
-    height: 72px;
+    width: 60px;
+    height: 60px;
     border-radius: 12px;
     object-fit: cover;
+}
+
+.itemContainer .singerPic {
+    border-radius: 100px;
 }
 
 .itemContainer p {

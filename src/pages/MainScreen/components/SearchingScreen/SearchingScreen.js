@@ -3,9 +3,10 @@ import styles from './SearchingScreen.module.css';
 import ItemOfHistory from './ItemOfHistory';
 import clsx from 'clsx';
 
-const SearchingScreen = ({ isOpen, searchQuery, onCurrentSongId }) => {
+const SearchingScreen = ({ isOpen, searchQuery, onCurrentSongId, uid }) => {
     const [searchResults, setSearchResults] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
+    const [historyItem, setHistoryItem] = useState([]);
 
     useEffect(() => {
         if (searchQuery.trim() === '') {
@@ -58,6 +59,7 @@ const SearchingScreen = ({ isOpen, searchQuery, onCurrentSongId }) => {
     const handleSongItemClick = (songId) => {
         console.log(songId);
         onCurrentSongId(songId); // Xóa ID của bài hát hiện tại
+        setHistoryItem((prev) => [...prev, songId]);
     }
 
     if (!isOpen) return null;
@@ -67,14 +69,19 @@ const SearchingScreen = ({ isOpen, searchQuery, onCurrentSongId }) => {
             <div className={styles.topicContainer}>
                 <h3> {searchQuery.length === 0 ? "Tìm kiếm gần đây" : "Kết quả tìm kiếm"}</h3>
                 {searchQuery.length === 0 && (
-                    <button>
+                    <button onClick={() => setHistoryItem([])}>
                         <p className='uiSemibold o75'>Xóa lịch sử tìm kiếm</p>
                     </button>
                 )}
             </div>
 
             {searchQuery.length === 0 ?
-                <ItemOfHistory /> : (
+                <ItemOfHistory
+                    setHistoryItem={setHistoryItem}
+                    historyItem={historyItem}
+                    uid={uid}
+                    onCurrentSongId={onCurrentSongId}
+                /> : (
                     <div className={styles.resultSearchContainer}>
                         {isLoading && <p>Đang tìm kiếm...</p>}
                         {!isLoading && Array.isArray(searchResults) && searchResults.length === 0 ? <p>Không tìm thấy kết quả cho tự khóa "{searchQuery}"</p>
@@ -83,7 +90,7 @@ const SearchingScreen = ({ isOpen, searchQuery, onCurrentSongId }) => {
                                     className={styles.itemResult}
                                     onClick={() => handleSongItemClick(song.id)}>
                                     <div className={styles.itemContainer}>
-                                        <img src={song.avatarUrl || ''} alt="picSong" />
+                                        <img src={song.avatarUrl} alt="picSong" />
                                         <div className={styles.infoSong}>
                                             <p className="uiSemibold" style={{ fontSize: 18, letterSpacing: 2 }}>
                                                 {song.name.length > 20 ? `${song.name.substring(0, 20)}...` : song.name}

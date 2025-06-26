@@ -104,7 +104,7 @@ const WorldScreen = ({ isOpen, uid }) => {
                             id={chatContent.id}
                             userName={chatContent.creator.name}
                             songName={songName}
-                            time={chatContent.time}
+                            time={chatContent.releaseDay}
                             content={chatContent.comment} />
                     );
                 })}
